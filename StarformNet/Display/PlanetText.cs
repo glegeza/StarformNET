@@ -22,14 +22,6 @@ namespace DLS.StarformNet.Display
                 sb.AppendLine();
                 sb.AppendLine();
             }
-            //var next = head;
-            //while (next != null)
-            //{
-            //    sb.AppendLine(GetPlanetText(next, gases));
-            //    sb.AppendLine();
-            //    sb.AppendLine();
-            //    next = next.NextPlanet;
-            //}
             return sb.ToString();
         }
 
