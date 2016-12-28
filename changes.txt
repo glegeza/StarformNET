@@ -12,6 +12,7 @@ In-Progress
 -UI for controlling star mass/luminosity and selecting seed systems
 -Text file output
 -Set up unit tests
+-Move stats recording out of the Generator class
 
 Planned
 -------

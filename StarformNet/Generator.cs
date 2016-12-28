@@ -441,7 +441,7 @@ namespace DLS.StarformNet
             // Check for and list planets with breathable atmospheres
 
             // TODO break this out into another function?
-            Breathability breathe = Environment.Breathability(ref planet, _gasTable.Length, _gasTable);
+            Breathability breathe = Environment.Breathability(planet, _gasTable);
 
             // TODO move this calculation to somewhere else. Also, what units is this in?
             planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
@@ -458,7 +458,7 @@ namespace DLS.StarformNet
             double pressure = (planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS);
             double ice = (planet.IceCover * 100.0);
             double gravity = planet.SurfaceGravity;
-            breathe = Environment.Breathability(ref planet, _gasTable.Length, _gasTable);
+            breathe = Environment.Breathability(planet, _gasTable);
 
             // TODO this needs to be a separate function
             // is the world earthlike? 

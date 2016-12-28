@@ -1001,15 +1001,14 @@ namespace DLS.StarformNet
 
             return (surf_pressure - pH2O) * fraction;
         }
-
+        
         /// <summary>
         /// Returns the breathability state of the planet's atmosphere.
         /// </summary>
         /// <param name="planet"></param>
-        /// <param name="max_gas"></param>
         /// <param name="gases"></param>
         /// <returns></returns>
-        public static Breathability Breathability(ref Planet planet, int max_gas, ChemTable[] gases)
+        public static Breathability Breathability(Planet planet, ChemTable[] gases)
         {
             // This function uses figures on the maximum inspired partial pressures
             // of Oxygen, other atmospheric and traces gases as laid out on pages 15,
@@ -1029,7 +1028,7 @@ namespace DLS.StarformNet
 
                 double ipp = InspiredPartialPressure(planet.SurfPressure, planet.AtmosphericGases[index].surf_pressure);
 
-                for (var n = 0; n < max_gas; n++)
+                for (var n = 0; n < gases.Length; n++)
                 {
                     if (gases[n].num == planet.AtmosphericGases[index].num)
                     {
