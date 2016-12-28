@@ -65,8 +65,6 @@ namespace DLS.StarformNet.Display
             sb.AppendLine();
             sb.AppendFormat("Boiling Point: {0}\n", GetBoilingPoint(planet));
             sb.AppendLine();
-            sb.AppendFormat("Freezing Point: {0}\n", GetFreezingPoint(planet));
-            sb.AppendLine();
             sb.AppendFormat("Greenhouse Rise: {0}\n", GetGreenhouseRise(planet));
             sb.AppendLine();
             sb.AppendFormat("Water Cover: {0}\n", GetHydrosphere(planet));
@@ -80,11 +78,6 @@ namespace DLS.StarformNet.Display
             sb.AppendFormat("Atmosphere: {0}\n", GetAtmoString(planet, gases));
 
             return sb.ToString();
-        }
-
-        private static string GetFreezingPoint(Planet planet)
-        {
-            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.me));
         }
 
         private static string GetBoilingPoint(Planet planet)

@@ -16,7 +16,7 @@ namespace DLS.StarformNet.Data
         public double boil       { get; set; }
         public double density    { get; set; }
         public double abunde     { get; set; }
-        public double abunds     { get; set; }
+        public double abunds     { get; set; } // Solar system abundance
         public double reactivity { get; set; }
         public double max_ipp     { get; set; } // Max inspired partial pressure im millibars
 
@@ -69,6 +69,11 @@ namespace DLS.StarformNet.Data
 
         public static ChemTable[] GetDefaultTable()
         {
+            // ABUNDs source:
+            // Thomas J. Ahrens (ed.), Global Earth Physics : A Handbook of Physical Constants, American Geophysical Union (1995). 
+            // ISBN 0-87590-851-9 Composition of the Solar System, Planets, Meteorites, and Major Terrestrial Reservoirs, Horton E. Newsom. Tables 1, 14, 15.
+            // https://en.wikipedia.org/wiki/Abundances_of_the_elements_(data_page)#Sun_and_solar_system (column Y2)
+
             //                An                     sym     HTML symbol                      name                    Aw    melt    boil   dens       ABUNDe       ABUNDs         Rea    Max inspired pp
             return new ChemTable[]
             {
