@@ -124,7 +124,7 @@ namespace DLS.StarformNet.Display
                     sb.Append(", Unbreathable Atmosphere");
                     break;
                 case Breathability.Poisonous:
-                    sb.AppendFormat(", Poisonous Atmosphere ({0})", planet.PoisonGases[0]);
+                    sb.Append(", Poisonous Atmosphere");
                     break;
                 default:
                     sb.Append(", No Atmosphere");
@@ -230,7 +230,7 @@ namespace DLS.StarformNet.Display
             return String.Format("{0:0.000} atm", planet.surf_pressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS);
         }
 
-        static string GetAtmoString(Planet planet, ChemTable[] gases)
+        static string GetAtmoString(Planet planet, ChemTable[] gases, double minFraction = 0.01)
         {
             if (planet.type == PlanetType.GasGiant || planet.type == PlanetType.SubGasGiant || planet.type == PlanetType.SubSubGasGiant)
             {
@@ -241,8 +241,7 @@ namespace DLS.StarformNet.Display
                 return "None";
             }
             var str = "";
-            //var orderedGases = planet.atmosphere.Where(g => ((g.surf_pressure / planet.surf_pressure) * 100) > 0.01).OrderByDescending(g => g.surf_pressure).ToArray();
-            var orderedGases = planet.atmosphere.OrderByDescending(g => g.surf_pressure).ToArray();
+            var orderedGases = planet.atmosphere.Where(g => ((g.surf_pressure / planet.surf_pressure) * 100) > minFraction).OrderByDescending(g => g.surf_pressure).ToArray();
             if (orderedGases.Length == 0)
             {
                 return "Trace gases only";
