@@ -208,14 +208,14 @@ namespace DLS.StarformNet
             // approximation for our new planet (his eq.13) and take that into account.
             // This is used to find 'change_in_angular_velocity' below.
 
-            double planetaryMassInGrams = planet.mass * GlobalConstants.SOLAR_MASS_IN_GRAMS;
-            double equatorialRadiusInCM = planet.radius * GlobalConstants.CM_PER_KM;
-            double yearInHours = planet.orb_period * 24.0;
-            bool isGasGiant = (planet.type == PlanetType.GasGiant ||
-                         planet.type == PlanetType.SubGasGiant ||
-                         planet.type == PlanetType.SubSubGasGiant);
+            double planetaryMassInGrams = planet.Mass * GlobalConstants.SOLAR_MASS_IN_GRAMS;
+            double equatorialRadiusInCM = planet.Radius * GlobalConstants.CM_PER_KM;
+            double yearInHours = planet.OrbitalPeriod * 24.0;
+            bool isGasGiant = (planet.Type == PlanetType.GasGiant ||
+                         planet.Type == PlanetType.SubGasGiant ||
+                         planet.Type == PlanetType.SubSubGasGiant);
 
-            planet.resonant_period = false; // Warning: Modify the planet
+            planet.HasResonantPeriod = false; // Warning: Modify the planet
 
             double k2 = 0.33;
             if (isGasGiant)
@@ -229,13 +229,13 @@ namespace DLS.StarformNet
             // This next calculation determines how much the planet's rotation is
             // slowed by the presence of the star
             double changeInAngularVelocity = GlobalConstants.CHANGE_IN_EARTH_ANG_VEL *
-                                         (planet.density / GlobalConstants.EARTH_DENSITY) *
+                                         (planet.Density / GlobalConstants.EARTH_DENSITY) *
                                          (equatorialRadiusInCM / GlobalConstants.EARTH_RADIUS) *
                                          (GlobalConstants.EARTH_MASS_IN_GRAMS / planetaryMassInGrams) *
-                                         Math.Pow(planet.sun.mass, 2.0) *
-                                         (1.0 / Math.Pow(planet.a, 6.0));
+                                         Math.Pow(planet.Star.mass, 2.0) *
+                                         (1.0 / Math.Pow(planet.SemiMajorAxisAU, 6.0));
             double angularVelocity = baseAngularVelocity + (changeInAngularVelocity *
-                                                    planet.sun.age);
+                                                    planet.Star.age);
 
             // Now we change from rad/sec to hours/rotation
             bool stopped = false;
@@ -248,10 +248,10 @@ namespace DLS.StarformNet
 
             if ((dayInHours >= yearInHours) || stopped)
             {
-                if (planet.e > 0.1)
+                if (planet.Eccentricity > 0.1)
                 {
-                    double spin_resonance_factor = (1.0 - planet.e) / (1.0 + planet.e);
-                    planet.resonant_period = true;
+                    double spin_resonance_factor = (1.0 - planet.Eccentricity) / (1.0 + planet.Eccentricity);
+                    planet.HasResonantPeriod = true;
                     return (spin_resonance_factor * yearInHours);
                 }
                 else
@@ -742,9 +742,9 @@ namespace DLS.StarformNet
         {
             // Taken from Dole p. 34. He cites Jeans (1916) & Jones (1923)
 
-            double v = RMSVelocity(molecularWeight, planet.exospheric_temp);
-            double g = planet.surf_grav * GlobalConstants.EARTH_ACCELERATION;
-            double r = (planet.radius * GlobalConstants.CM_PER_KM);
+            double v = RMSVelocity(molecularWeight, planet.ExosphereTemp);
+            double g = planet.SurfaceGravity * GlobalConstants.EARTH_ACCELERATION;
+            double r = (planet.Radius * GlobalConstants.CM_PER_KM);
             double t = (Utilities.Pow3(v) / (2.0 * Utilities.Pow2(g) * r)) * Math.Exp((3.0 * g * r) / Utilities.Pow2(v));
             double years = t / (GlobalConstants.SECONDS_PER_HOUR * 24.0 * GlobalConstants.DAYS_IN_A_YEAR);
             
@@ -758,9 +758,9 @@ namespace DLS.StarformNet
         // TODO Pretty much no idea what's going on here. Will figure it out later.
         public static double MinMolecularWeight(Planet planet)
         {
-            double mass = planet.mass;
-            double radius = planet.radius;
-            double temp = planet.exospheric_temp;
+            double mass = planet.Mass;
+            double radius = planet.Radius;
+            double temp = planet.ExosphereTemp;
             double target = 5.0E9;
 
             double guess_1 = MoleculeLimit(mass, radius, temp);
@@ -770,9 +770,9 @@ namespace DLS.StarformNet
 
             int loops = 0;
 
-            if (planet.sun != null)
+            if (planet.Star != null)
             {
-                target = planet.sun.age;
+                target = planet.Star.age;
             }
 
             if (life > target)
@@ -834,83 +834,83 @@ namespace DLS.StarformNet
 
             if (first)
             {
-                planet.albedo = GlobalConstants.EARTH_ALBEDO;
+                planet.Albedo = GlobalConstants.EARTH_ALBEDO;
 
-                effective_temp = EffTemp(planet.sun.r_ecosphere, planet.a, planet.albedo);
-                greenhouse_temp = GreenRise(Opacity(planet.molec_weight,
-                                                         planet.surf_pressure),
+                effective_temp = EffTemp(planet.Star.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
+                greenhouse_temp = GreenRise(Opacity(planet.MolecularWeightRetained,
+                                                         planet.SurfPressure),
                                                  effective_temp,
-                                                 planet.surf_pressure);
-                planet.surf_temp = effective_temp + greenhouse_temp;
+                                                 planet.SurfPressure);
+                planet.SurfaceTemp = effective_temp + greenhouse_temp;
 
                 SetTempRange(ref planet);
             }
 
-            if (planet.greenhouse_effect && planet.max_temp < planet.boil_point)
+            if (planet.HasGreenhouseEffect && planet.MaxTemp < planet.BoilingPointWater)
             {
                 //Trace.TraceInformation("Deluge: {0}s {1} max ({2}) < boil ({3})",
                 //    planet.sun.name, planet.planet_no, planet.max_temp, planet.boil_point);
 
-                planet.greenhouse_effect = false;
+                planet.HasGreenhouseEffect = false;
 
-                planet.volatile_gas_inventory = VolumeInventory(planet.mass,
-                    planet.esc_velocity, planet.rms_velocity, planet.sun.mass,
-                    planet.orbit_zone, planet.greenhouse_effect, (planet.gas_mass / planet.mass) > 0.000001);
-                planet.surf_pressure = Pressure(planet.volatile_gas_inventory, planet.radius, planet.surf_grav);
+                planet.VolatileGasInventory = VolumeInventory(planet.Mass,
+                    planet.EscapeVelocity, planet.RMSVelocity, planet.Star.mass,
+                    planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
+                planet.SurfPressure = Pressure(planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
 
-                planet.boil_point = BoilingPoint(planet.surf_pressure);
+                planet.BoilingPointWater = BoilingPoint(planet.SurfPressure);
             }
 
-            water_raw = planet.hydrosphere = HydroFraction(planet.volatile_gas_inventory, planet.radius);
-            clouds_raw = planet.cloud_cover = CloudFraction(planet.surf_temp,
-                                                     planet.molec_weight,
-                                                     planet.radius,
-                                                     planet.hydrosphere);
-            planet.ice_cover = IceFraction(planet.hydrosphere, planet.surf_temp);
+            water_raw = planet.WaterCover = HydroFraction(planet.VolatileGasInventory, planet.Radius);
+            clouds_raw = planet.CloudCover = CloudFraction(planet.SurfaceTemp,
+                                                     planet.MolecularWeightRetained,
+                                                     planet.Radius,
+                                                     planet.WaterCover);
+            planet.IceCover = IceFraction(planet.WaterCover, planet.SurfaceTemp);
 
-            if ((planet.greenhouse_effect) && (planet.surf_pressure > 0.0))
+            if ((planet.HasGreenhouseEffect) && (planet.SurfPressure > 0.0))
             {
-                planet.cloud_cover = 1.0;
+                planet.CloudCover = 1.0;
             }
 
-            if ((planet.high_temp >= planet.boil_point) && (!first) && !((int)planet.day == (int)(planet.orb_period * 24.0) || (planet.resonant_period)))
+            if ((planet.DaytimeTemp >= planet.BoilingPointWater) && (!first) && !((int)planet.Day == (int)(planet.OrbitalPeriod * 24.0) || (planet.HasResonantPeriod)))
             {
-                planet.hydrosphere = 0.0;
+                planet.WaterCover = 0.0;
                 boil_off = true;
 
-                if (planet.molec_weight > GlobalConstants.WATER_VAPOR)
+                if (planet.MolecularWeightRetained > GlobalConstants.WATER_VAPOR)
                 {
-                    planet.cloud_cover = 0.0;
+                    planet.CloudCover = 0.0;
                 }
                 else
                 {
-                    planet.cloud_cover = 1.0;
+                    planet.CloudCover = 1.0;
                 }
             }
 
-            if (planet.surf_temp < (GlobalConstants.FREEZING_POINT_OF_WATER - 3.0))
+            if (planet.SurfaceTemp < (GlobalConstants.FREEZING_POINT_OF_WATER - 3.0))
             {
-                planet.hydrosphere = 0.0;
+                planet.WaterCover = 0.0;
             }
 
-            planet.albedo = PlanetAlbedo(planet.hydrosphere, planet.cloud_cover, planet.ice_cover, planet.surf_pressure);
+            planet.Albedo = PlanetAlbedo(planet.WaterCover, planet.CloudCover, planet.IceCover, planet.SurfPressure);
 
-            effective_temp = EffTemp(planet.sun.r_ecosphere, planet.a, planet.albedo);
+            effective_temp = EffTemp(planet.Star.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
             greenhouse_temp = GreenRise(
-                Opacity(planet.molec_weight, planet.surf_pressure),
-                effective_temp, planet.surf_pressure);
-            planet.surf_temp = effective_temp + greenhouse_temp;
+                Opacity(planet.MolecularWeightRetained, planet.SurfPressure),
+                effective_temp, planet.SurfPressure);
+            planet.SurfaceTemp = effective_temp + greenhouse_temp;
 
             if (!first)
             {
                 if (!boil_off)
                 {
-                    planet.hydrosphere = (planet.hydrosphere + (last_water * 2)) / 3;
+                    planet.WaterCover = (planet.WaterCover + (last_water * 2)) / 3;
                 }
-                planet.cloud_cover = (planet.cloud_cover + (last_clouds * 2)) / 3;
-                planet.ice_cover = (planet.ice_cover + (last_ice * 2)) / 3;
-                planet.albedo = (planet.albedo + (last_albedo * 2)) / 3;
-                planet.surf_temp = (planet.surf_temp + (last_temp * 2)) / 3;
+                planet.CloudCover = (planet.CloudCover + (last_clouds * 2)) / 3;
+                planet.IceCover = (planet.IceCover + (last_ice * 2)) / 3;
+                planet.Albedo = (planet.Albedo + (last_albedo * 2)) / 3;
+                planet.SurfaceTemp = (planet.SurfaceTemp + (last_temp * 2)) / 3;
             }
 
             SetTempRange(ref planet);
@@ -937,7 +937,7 @@ namespace DLS.StarformNet
         // TODO write summary
         public static void IterateSurfaceTemp(ref Planet planet)
         {
-            double initial_temp = EstTemp(planet.sun.r_ecosphere, planet.a, planet.albedo);
+            double initial_temp = EstTemp(planet.Star.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
 
             double h2_life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
             double h2o_life = GasLife(GlobalConstants.WATER_VAPOR, planet);
@@ -960,19 +960,19 @@ namespace DLS.StarformNet
 
             for (var count = 0; count <= 25; count++)
             {
-                double last_water = planet.hydrosphere;
-                double last_clouds = planet.cloud_cover;
-                double last_ice = planet.ice_cover;
-                double last_temp = planet.surf_temp;
-                double last_albedo = planet.albedo;
+                double last_water = planet.WaterCover;
+                double last_clouds = planet.CloudCover;
+                double last_ice = planet.IceCover;
+                double last_temp = planet.SurfaceTemp;
+                double last_albedo = planet.Albedo;
 
                 CalculateSurfaceTemperature(ref planet, false, last_water, last_clouds, last_ice, last_temp, last_albedo);
 
-                if (Math.Abs(planet.surf_temp - last_temp) < 0.25)
+                if (Math.Abs(planet.SurfaceTemp - last_temp) < 0.25)
                     break;
             }
 
-            planet.greenhs_rise = planet.surf_temp - initial_temp;
+            planet.GreenhouseRise = planet.SurfaceTemp - initial_temp;
 
             // TODO logging
             //if (flag_verbose & 0x20000)
@@ -1018,20 +1018,20 @@ namespace DLS.StarformNet
 
             bool oxygen_ok = false;
 
-            if (planet.gases == 0)
+            if (planet.GasCount == 0)
             {
                 return Data.Breathability.None;
             }
 
-            for (var index = 0; index < planet.gases; index++)
+            for (var index = 0; index < planet.GasCount; index++)
             {
                 int gas_no = 0;
 
-                double ipp = InspiredPartialPressure(planet.surf_pressure, planet.atmosphere[index].surf_pressure);
+                double ipp = InspiredPartialPressure(planet.SurfPressure, planet.AtmosphericGases[index].surf_pressure);
 
                 for (var n = 0; n < max_gas; n++)
                 {
-                    if (gases[n].num == planet.atmosphere[index].num)
+                    if (gases[n].num == planet.AtmosphericGases[index].num)
                     {
                         gas_no = n;
                     }
@@ -1039,11 +1039,10 @@ namespace DLS.StarformNet
 
                 if (ipp > gases[gas_no].max_ipp)
                 {
-                    planet.PoisonGases.Add(String.Format("{0} {1:0.0000}/{2:0.0000}", gases[gas_no].Name, ipp, gases[gas_no].max_ipp));
                     return Data.Breathability.Poisonous;
                 }
 
-                if (planet.atmosphere[index].num == GlobalConstants.AN_O)
+                if (planet.AtmosphericGases[index].num == GlobalConstants.AN_O)
                 {
                     oxygen_ok = ((ipp >= GlobalConstants.MIN_O2_IPP) && (ipp <= GlobalConstants.MAX_O2_IPP));
                 }
@@ -1073,26 +1072,26 @@ namespace DLS.StarformNet
 
         private static void SetTempRange(ref Planet planet)
         {
-            double pressmod = 1 / Math.Sqrt(1 + 20 * planet.surf_pressure / 1000.0);
-            double ppmod = 1 / Math.Sqrt(10 + 5 * planet.surf_pressure / 1000.0);
-            double tiltmod = Math.Abs(Math.Cos(planet.axial_tilt * Math.PI / 180) * Math.Pow(1 + planet.e, 2));
-            double daymod = 1 / (200 / planet.day + 1);
+            double pressmod = 1 / Math.Sqrt(1 + 20 * planet.SurfPressure / 1000.0);
+            double ppmod = 1 / Math.Sqrt(10 + 5 * planet.SurfPressure / 1000.0);
+            double tiltmod = Math.Abs(Math.Cos(planet.AxialTilt * Math.PI / 180) * Math.Pow(1 + planet.Eccentricity, 2));
+            double daymod = 1 / (200 / planet.Day + 1);
             double mh = Math.Pow(1 + daymod, pressmod);
             double ml = Math.Pow(1 - daymod, pressmod);
-            double hi = mh * planet.surf_temp;
-            double lo = ml * planet.surf_temp;
+            double hi = mh * planet.SurfaceTemp;
+            double lo = ml * planet.SurfaceTemp;
             double sh = hi + Math.Pow((100 + hi) * tiltmod, Math.Sqrt(ppmod));
             double wl = lo - Math.Pow((150 + lo) * tiltmod, Math.Sqrt(ppmod));
-            double max = planet.surf_temp + Math.Sqrt(planet.surf_temp) * 10;
-            double min = planet.surf_temp / Math.Sqrt(planet.day + 24);
+            double max = planet.SurfaceTemp + Math.Sqrt(planet.SurfaceTemp) * 10;
+            double min = planet.SurfaceTemp / Math.Sqrt(planet.Day + 24);
 
             if (lo < min) lo = min;
             if (wl < 0) wl = 0;
 
-            planet.high_temp = Soft(hi, max, min);
-            planet.low_temp = Soft(lo, max, min);
-            planet.max_temp = Soft(sh, max, min);
-            planet.min_temp = Soft(wl, max, min);
+            planet.DaytimeTemp = Soft(hi, max, min);
+            planet.NighttimeTemp = Soft(lo, max, min);
+            planet.MaxTemp = Soft(sh, max, min);
+            planet.MinTemp = Soft(wl, max, min);
         }
     }
 }

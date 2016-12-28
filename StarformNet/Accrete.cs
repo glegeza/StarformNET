@@ -53,9 +53,9 @@ namespace DLS.StarformNet
                 double a, e;
                 if (seeds != null)
                 {
-                    a = seeds.a;
-                    e = seeds.e;
-                    seeds = seeds.next_planet;
+                    a = seeds.SemiMajorAxisAU;
+                    e = seeds.Eccentricity;
+                    seeds = seeds.NextPlanet;
                 }
                 else
                 {
@@ -400,9 +400,9 @@ namespace DLS.StarformNet
 
             // First we try to find an existing planet with an over-lapping orbit.
 
-            for (the_planet = _planetHead; the_planet != null; the_planet = the_planet.next_planet)
+            for (the_planet = _planetHead; the_planet != null; the_planet = the_planet.NextPlanet)
             {
-                double diff = the_planet.a - a;
+                double diff = the_planet.SemiMajorAxisAU - a;
                 double dist1;
                 double dist2;
 
@@ -410,28 +410,28 @@ namespace DLS.StarformNet
                 {
                     dist1 = (a * (1.0 + e) * (1.0 + _reducedMass)) - a;
                     /* x aphelion	 */
-                    _reducedMass = Math.Pow((the_planet.mass / (1.0 + the_planet.mass)), (1.0 / 4.0));
-                    dist2 = the_planet.a
-                        - (the_planet.a * (1.0 - the_planet.e) * (1.0 - _reducedMass));
+                    _reducedMass = Math.Pow((the_planet.Mass / (1.0 + the_planet.Mass)), (1.0 / 4.0));
+                    dist2 = the_planet.SemiMajorAxisAU
+                        - (the_planet.SemiMajorAxisAU * (1.0 - the_planet.Eccentricity) * (1.0 - _reducedMass));
                 }
                 else
                 {
                     dist1 = a - (a * (1.0 - e) * (1.0 - _reducedMass));
                     /* x perihelion */
-                    _reducedMass = Math.Pow((the_planet.mass / (1.0 + the_planet.mass)), (1.0 / 4.0));
-                    dist2 = (the_planet.a * (1.0 + the_planet.e) * (1.0 + _reducedMass))
-                        - the_planet.a;
+                    _reducedMass = Math.Pow((the_planet.Mass / (1.0 + the_planet.Mass)), (1.0 / 4.0));
+                    dist2 = (the_planet.SemiMajorAxisAU * (1.0 + the_planet.Eccentricity) * (1.0 + _reducedMass))
+                        - the_planet.SemiMajorAxisAU;
                 }
 
                 if (Math.Abs(diff) <= Math.Abs(dist1) || Math.Abs(diff) <= Math.Abs(dist2))
                 {
                     double new_dust = 0;
                     double new_gas = 0;
-                    double new_a = (the_planet.mass + mass) / ((the_planet.mass / the_planet.a) + (mass / a));
+                    double new_a = (the_planet.Mass + mass) / ((the_planet.Mass / the_planet.SemiMajorAxisAU) + (mass / a));
 
-                    double temp = the_planet.mass * Math.Sqrt(the_planet.a) * Math.Sqrt(1.0 - Math.Pow(the_planet.e, 2.0));
+                    double temp = the_planet.Mass * Math.Sqrt(the_planet.SemiMajorAxisAU) * Math.Sqrt(1.0 - Math.Pow(the_planet.Eccentricity, 2.0));
                     temp = temp + (mass * Math.Sqrt(a) * Math.Sqrt(Math.Sqrt(1.0 - Math.Pow(e, 2.0))));
-                    temp = temp / ((the_planet.mass + mass) * Math.Sqrt(new_a));
+                    temp = temp / ((the_planet.Mass + mass) * Math.Sqrt(new_a));
                     temp = 1.0 - Math.Pow(temp, 2.0);
                     if (temp < 0.0 || temp >= 1.0)
                     {
@@ -444,66 +444,66 @@ namespace DLS.StarformNet
                     {
                         double existing_mass = 0.0;
 
-                        if (the_planet.first_moon != null)
+                        if (the_planet.FirstMoon != null)
                         {
                             Planet m;
 
-                            for (m = the_planet.first_moon; m != null; m = m.next_planet)
+                            for (m = the_planet.FirstMoon; m != null; m = m.NextPlanet)
                             {
-                                existing_mass += m.mass;
+                                existing_mass += m.Mass;
                             }
                         }
 
                         if (mass < crit_mass)
                         {
-                            if (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES < 2.5 && mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .0001 && existing_mass < the_planet.mass * .05)
+                            if (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES < 2.5 && mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .0001 && existing_mass < the_planet.Mass * .05)
                             {
                                 Planet the_moon = new Planet();
 
-                                the_moon.type = PlanetType.Unknown;
+                                the_moon.Type = PlanetType.Unknown;
                                 /* 					the_moon.A 			= a; */
                                 /* 					the_moon.e 			= e; */
-                                the_moon.mass = mass;
-                                the_moon.dust_mass = dust_mass;
-                                the_moon.gas_mass = gas_mass;
-                                the_moon.atmosphere = null;
-                                the_moon.next_planet = null;
-                                the_moon.first_moon = null;
-                                the_moon.gas_giant = false;
-                                the_moon.atmosphere = null;
-                                the_moon.albedo = 0;
-                                the_moon.gases = 0;
-                                the_moon.surf_temp = 0;
-                                the_moon.high_temp = 0;
-                                the_moon.low_temp = 0;
-                                the_moon.max_temp = 0;
-                                the_moon.min_temp = 0;
-                                the_moon.greenhs_rise = 0;
-                                the_moon.minor_moons = 0;
+                                the_moon.Mass = mass;
+                                the_moon.DustMass = dust_mass;
+                                the_moon.GasMass = gas_mass;
+                                the_moon.AtmosphericGases = null;
+                                the_moon.NextPlanet = null;
+                                the_moon.FirstMoon = null;
+                                the_moon.IsGasGiant = false;
+                                the_moon.AtmosphericGases = null;
+                                the_moon.Albedo = 0;
+                                the_moon.GasCount = 0;
+                                the_moon.SurfaceTemp = 0;
+                                the_moon.DaytimeTemp = 0;
+                                the_moon.NighttimeTemp = 0;
+                                the_moon.MaxTemp = 0;
+                                the_moon.MinTemp = 0;
+                                the_moon.GreenhouseRise = 0;
+                                the_moon.MinorMoonCount = 0;
 
-                                if (the_moon.dust_mass + the_moon.gas_mass > the_planet.dust_mass + the_planet.gas_mass)
+                                if (the_moon.DustMass + the_moon.GasMass > the_planet.DustMass + the_planet.GasMass)
                                 {
-                                    double temp_dust = the_planet.dust_mass;
-                                    double temp_gas = the_planet.gas_mass;
-                                    double temp_mass = the_planet.mass;
+                                    double temp_dust = the_planet.DustMass;
+                                    double temp_gas = the_planet.GasMass;
+                                    double temp_mass = the_planet.Mass;
 
-                                    the_planet.dust_mass = the_moon.dust_mass;
-                                    the_planet.gas_mass = the_moon.gas_mass;
-                                    the_planet.mass = the_moon.mass;
+                                    the_planet.DustMass = the_moon.DustMass;
+                                    the_planet.GasMass = the_moon.GasMass;
+                                    the_planet.Mass = the_moon.Mass;
 
-                                    the_moon.dust_mass = temp_dust;
-                                    the_moon.gas_mass = temp_gas;
-                                    the_moon.mass = temp_mass;
+                                    the_moon.DustMass = temp_dust;
+                                    the_moon.GasMass = temp_gas;
+                                    the_moon.Mass = temp_mass;
                                 }
 
-                                if (the_planet.first_moon == null)
+                                if (the_planet.FirstMoon == null)
                                 {
-                                    the_planet.first_moon = the_moon;
+                                    the_planet.FirstMoon = the_moon;
                                 }
                                 else
                                 {
-                                    the_moon.next_planet = the_planet.first_moon;
-                                    the_planet.first_moon = the_moon;
+                                    the_moon.NextPlanet = the_planet.FirstMoon;
+                                    the_planet.FirstMoon = the_moon;
                                 }
 
                                 finished = true;
@@ -535,24 +535,24 @@ namespace DLS.StarformNet
                         //    crit_mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
                         //    new_a, e);
 
-                        temp = the_planet.mass + mass;
+                        temp = the_planet.Mass + mass;
                         AccreteDust(ref temp, ref new_dust, ref new_gas,
                                      new_a, e, stell_luminosity_ratio,
                                      body_inner_bound, body_outer_bound);
 
-                        the_planet.a = new_a;
-                        the_planet.e = e;
-                        the_planet.mass = temp;
-                        the_planet.dust_mass += dust_mass + new_dust;
-                        the_planet.gas_mass += gas_mass + new_gas;
+                        the_planet.SemiMajorAxisAU = new_a;
+                        the_planet.Eccentricity = e;
+                        the_planet.Mass = temp;
+                        the_planet.DustMass += dust_mass + new_dust;
+                        the_planet.GasMass += gas_mass + new_gas;
                         if (temp >= crit_mass)
                         {
-                            the_planet.gas_giant = true;
+                            the_planet.IsGasGiant = true;
                         }
 
-                        while (the_planet.next_planet != null && the_planet.next_planet.a < new_a)
+                        while (the_planet.NextPlanet != null && the_planet.NextPlanet.SemiMajorAxisAU < new_a)
                         {
-                            next_planet = the_planet.next_planet;
+                            next_planet = the_planet.NextPlanet;
 
                             if (the_planet == _planetHead)
                             {
@@ -560,11 +560,11 @@ namespace DLS.StarformNet
                             }
                             else
                             {
-                                prev_planet.next_planet = next_planet;
+                                prev_planet.NextPlanet = next_planet;
                             }
 
-                            the_planet.next_planet = next_planet.next_planet;
-                            next_planet.next_planet = the_planet;
+                            the_planet.NextPlanet = next_planet.NextPlanet;
+                            next_planet.NextPlanet = the_planet;
                             prev_planet = next_planet;
                         }
                     }
@@ -582,59 +582,59 @@ namespace DLS.StarformNet
             {
                 the_planet = new Planet();
 
-                the_planet.type = PlanetType.Unknown;
-                the_planet.a = a;
-                the_planet.e = e;
-                the_planet.mass = mass;
-                the_planet.dust_mass = dust_mass;
-                the_planet.gas_mass = gas_mass;
-                the_planet.atmosphere = null;
-                the_planet.first_moon = null;
-                the_planet.atmosphere = null;
-                the_planet.albedo = 0;
-                the_planet.gases = 0;
-                the_planet.surf_temp = 0;
-                the_planet.high_temp = 0;
-                the_planet.low_temp = 0;
-                the_planet.max_temp = 0;
-                the_planet.min_temp = 0;
-                the_planet.greenhs_rise = 0;
-                the_planet.minor_moons = 0;
+                the_planet.Type = PlanetType.Unknown;
+                the_planet.SemiMajorAxisAU = a;
+                the_planet.Eccentricity = e;
+                the_planet.Mass = mass;
+                the_planet.DustMass = dust_mass;
+                the_planet.GasMass = gas_mass;
+                the_planet.AtmosphericGases = null;
+                the_planet.FirstMoon = null;
+                the_planet.AtmosphericGases = null;
+                the_planet.Albedo = 0;
+                the_planet.GasCount = 0;
+                the_planet.SurfaceTemp = 0;
+                the_planet.DaytimeTemp = 0;
+                the_planet.NighttimeTemp = 0;
+                the_planet.MaxTemp = 0;
+                the_planet.MinTemp = 0;
+                the_planet.GreenhouseRise = 0;
+                the_planet.MinorMoonCount = 0;
 
                 if ((mass >= crit_mass))
                 {
-                    the_planet.gas_giant = true;
+                    the_planet.IsGasGiant = true;
                 }
                 else
                 {
-                    the_planet.gas_giant = false;
+                    the_planet.IsGasGiant = false;
                 }
 
                 if ((_planetHead == null))
                 {
                     _planetHead = the_planet;
-                    the_planet.next_planet = null;
+                    the_planet.NextPlanet = null;
                 }
-                else if ((a < _planetHead.a))
+                else if ((a < _planetHead.SemiMajorAxisAU))
                 {
-                    the_planet.next_planet = _planetHead;
+                    the_planet.NextPlanet = _planetHead;
                     _planetHead = the_planet;
                 }
-                else if ((_planetHead.next_planet == null))
+                else if ((_planetHead.NextPlanet == null))
                 {
-                    _planetHead.next_planet = the_planet;
-                    the_planet.next_planet = null;
+                    _planetHead.NextPlanet = the_planet;
+                    the_planet.NextPlanet = null;
                 }
                 else
                 {
                     next_planet = _planetHead;
-                    while (((next_planet != null) && (next_planet.a < a)))
+                    while (((next_planet != null) && (next_planet.SemiMajorAxisAU < a)))
                     {
                         prev_planet = next_planet;
-                        next_planet = next_planet.next_planet;
+                        next_planet = next_planet.NextPlanet;
                     }
-                    the_planet.next_planet = next_planet;
-                    prev_planet.next_planet = the_planet;
+                    the_planet.NextPlanet = next_planet;
+                    prev_planet.NextPlanet = the_planet;
                 }
             }
         }

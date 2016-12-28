@@ -11,9 +11,11 @@ In-Progress
 -Better output
 -UI for controlling star mass/luminosity and selecting seed systems
 -Text file output
+-Set up unit tests
 
 Planned
 -------
 -HTML output
 -Save/load star systems
 -Generate compounds found planet crusts and cores?
+-Break most of the generation code into a separate library

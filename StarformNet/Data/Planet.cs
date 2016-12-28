@@ -1,72 +1,69 @@
-using System.Collections.Generic;
-
 namespace DLS.StarformNet.Data
 {
-    // TODO Create orbit class to store orbit parameters
-    // TODO Switch fields to properties
-    // TODO Class for temperature and other climate data?
+    // TODO break this class up
 
     public class Planet
     {
-        public Planet()
-        {
-            PoisonGases = new List<string>();
-        }
+        public int Position;
+        public Star Star { get; set; }
+        public Planet NextPlanet { get; set; }
 
-        public int planet_no;
-        public double a                            { get; set; } // semi-major axis of solar orbit (in AU)
-        public double e                            { get; set; } // eccentricity of solar orbit		 
-        public double axial_tilt                    { get; set; } // units of degrees					 
-        public double mass                         { get; set; } // mass (in solar masses)			 
-        public bool gas_giant                       { get; set; } // TRUE if the planet is a gas giant 
-        public double dust_mass                     { get; set; } // mass, ignoring gas				 
-        public double gas_mass                      { get; set; } // mass, ignoring dust
-        public bool one_face { get; set; }		 
-        public bool earthlike { get; set; }
+        // Orbit data
+        public double SemiMajorAxisAU { get; set; } // semi-major axis of solar orbit (in AU)
+        public double Eccentricity { get; set; }    // eccentricity of solar orbit		 
+        public double AxialTilt { get; set; }       // units of degrees
+        public int OrbitZone { get; set; }          // the 'zone' of the planet
+        public double OrbitalPeriod { get; set; }   // length of the local year (days)
+        public double Day { get; set; }             // length of the local day (hours)
+
+        // Size & mass data
+        public double Mass { get; set; }                // mass (in solar masses)			 
+        public double DustMass { get; set; }            // mass, ignoring gas				 
+        public double GasMass { get; set; }             // mass, ignoring dust
+        public double EscapeVelocity { get; set; }      // units of cm/sec
+        public double SurfaceAcceleration { get; set; } // units of cm/sec2
+        public double SurfaceGravity { get; set; }      // units of Earth gravities
+        public double CoreRadius { get; set; }          // radius of the rocky core (in km)
+        public double Radius { get; set; }              // equatorial radius (in km)
+        public double Density { get; set; }             // density (in g/cc)
+
+        // Properties
+        public bool IsGasGiant { get; set; }
+        public bool IsTidallyLocked { get; set; }		 
+        public bool IsEarthlike { get; set; }
+        public bool HasResonantPeriod { get; set; }
+        public bool HasGreenhouseEffect { get; set; }
+        public PlanetType Type { get; set; }
+
+        // Moon data
+        public int MinorMoonCount { get; set; }
+        public Planet FirstMoon { get; set; }
+        public double MoonSemiMajorAxisAU { get; set; } // semi-major axis of lunar orbit (in AU)
+        public double MoonEccentricity { get; set; }    // eccentricity of lunar orbit
+
+        // Atmospheric data
+        public double RMSVelocity { get; set; }             // units of cm/sec
+        public double MolecularWeightRetained { get; set; } // smallest molecular weight retained
+        public double VolatileGasInventory { get; set; } 
+        public double SurfPressure { get; set; }            // units of millibars (mb)
+        public double BoilingPointWater { get; set; }       // the boiling point of water (Kelvin)
+        public double Albedo { get; set; }                  // albedo of the planet
+        public int GasCount { get; set; }                   // Count of gases in the atmosphere:
+        public Gas[] AtmosphericGases { get; set; }
         public Breathability breathability { get; set; }
-        public List<string> PoisonGases { get; set; }
-        
-        //   ZEROES start here               
-        public double moon_a                        { get; set; } // semi-major axis of lunar orbit (in AU)
-        public double moon_e                        { get; set; } // eccentricity of lunar orbit		 
-        public double core_radius                   { get; set; } // radius of the rocky core (in km)
-        public double radius                       { get; set; } // equatorial radius (in km)
-        public int    orbit_zone                    { get; set; } // the 'zone' of the planet			 
-        public double density                      { get; set; } // density (in g/cc)
-        public double orb_period                { get; set; } // length of the local year (days)
-        public double day                          { get; set; } // length of the local day (hours)
-        public bool   resonant_period               { get; set; } // TRUE if in resonant rotation
-        public double esc_velocity               { get; set; } // units of cm/sec		 
-        public double surf_accel          { get; set; } // units of cm/sec2
-        public double surf_grav               { get; set; } // units of Earth gravities
-        public double rms_velocity                  { get; set; } // units of cm/sec
-        public double molec_weight              { get; set; } // smallest molecular weight retained
-        public double volatile_gas_inventory         { get; set; } 
-        public double surf_pressure              { get; set; } // units of millibars (mb)
-        public bool   greenhouse_effect             { get; set; } // runaway greenhouse effect?
-        public double boil_point                 { get; set; } // the boiling point of water (Kelvin)
-        public double albedo                       { get; set; } // albedo of the planet
-        public double exospheric_temp               { get; set; } // units of degrees Kelvin
-        public double estimated_temp                { get; set; } // quick non-iterative estimate (K)
-        public double estimated_terr_temp     { get; set; } // for terrestrial moons and the like
-        public double surf_temp                  { get; set; } // surface temperature in Kelvin
-        public double greenhs_rise               { get; set; } // Temperature rise due to greenhouse
-        public double high_temp                     { get; set; } // Day-time temperature
-        public double low_temp                      { get; set; } // Night-time temperature
-        public double max_temp                      { get; set; } // Summer/Day
-        public double min_temp                      { get; set; } // Winter/Night
-        public double hydrosphere                  { get; set; } // fraction of surface covered
-        public double cloud_cover                   { get; set; } // fraction of surface covered
-        public double ice_cover                     { get; set; } // fraction of surface covered
-        public int    gases                        { get; set; } // Count of gases in the atmosphere:
-        public Gas[]  atmosphere                   { get; set; } 
-        public PlanetType type                     { get; set; }
 
-        public Star sun                             { get; set; } 
-        public int minor_moons                      { get; set; } 
-        public Planet first_moon                    { get; set; }
-        //   ZEROES end here               
-
-        public Planet next_planet                   { get; set; }
+        // Temperature data
+        public double ExosphereTemp { get; set; }     // units of degrees Kelvin
+        public double EstimatedTemp { get; set; }     // quick non-iterative estimate (K)
+        public double EstimatedTerrTemp { get; set; } // for terrestrial moons and the like
+        public double SurfaceTemp { get; set; }       // surface temperature in Kelvin
+        public double GreenhouseRise { get; set; }    // Temperature rise due to greenhouse
+        public double DaytimeTemp { get; set; }       // Day-time temperature
+        public double NighttimeTemp { get; set; }     // Night-time temperature
+        public double MaxTemp { get; set; }           // Summer/Day
+        public double MinTemp { get; set; }           // Winter/Night
+        public double WaterCover { get; set; }        // fraction of surface covered
+        public double CloudCover { get; set; }        // fraction of surface covered
+        public double IceCover { get; set; }          // fraction of surface covered
     }
 }

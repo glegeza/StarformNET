@@ -26,8 +26,8 @@ namespace DLS.StarformNet.Display
             var next = _systemHead;
             while (next != null)
             {
-                var sprite = SpriteSheet.GetSprite(next.type);
-                next = next.next_planet;
+                var sprite = SpriteSheet.GetSprite(next.Type);
+                next = next.NextPlanet;
                 _planetSprites.Add(sprite);
             }
 
