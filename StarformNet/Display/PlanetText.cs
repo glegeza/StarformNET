@@ -63,6 +63,10 @@ namespace DLS.StarformNet.Display
             sb.AppendLine();
             sb.AppendFormat("Average Night Temperature: {0}\n", GetNightTemp(planet));
             sb.AppendLine();
+            sb.AppendFormat("Boiling Point: {0}\n", GetBoilingPoint(planet));
+            sb.AppendLine();
+            sb.AppendFormat("Freezing Point: {0}\n", GetFreezingPoint(planet));
+            sb.AppendLine();
             sb.AppendFormat("Greenhouse Rise: {0}\n", GetGreenhouseRise(planet));
             sb.AppendLine();
             sb.AppendFormat("Water Cover: {0}\n", GetHydrosphere(planet));
@@ -78,9 +82,19 @@ namespace DLS.StarformNet.Display
             return sb.ToString();
         }
 
+        private static string GetFreezingPoint(Planet planet)
+        {
+            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.me));
+        }
+
+        private static string GetBoilingPoint(Planet planet)
+        {
+            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.BoilingPointWater));
+        }
+
         private static string GetGreenhouseRise(Planet planet)
         {
-            return String.Format("{0:0.00} F", planet.GreenhouseRise * (9.0 / 5.0) - 459.67);
+            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.GreenhouseRise));
         }
 
         private static string GetEscapeVelocity(Planet planet)
@@ -174,12 +188,12 @@ namespace DLS.StarformNet.Display
 
         static string GetDayTemp(Planet planet)
         {
-            return String.Format("{0:0.0} F", planet.DaytimeTemp * (9.0/5.0) - 459.67);
+            return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.DaytimeTemp));
         }
 
         static string GetNightTemp(Planet planet)
         {
-            return String.Format("{0:0.0} F", planet.NighttimeTemp * (9.0 / 5.0) - 459.67);
+            return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.NighttimeTemp));
         }
 
         static string GetLengthofDayHours(Planet planet)

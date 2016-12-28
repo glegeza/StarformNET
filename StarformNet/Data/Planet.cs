@@ -29,7 +29,7 @@ namespace DLS.StarformNet.Data
 
         // Properties
         public bool IsGasGiant { get; set; }
-        public bool IsTidallyLocked { get; set; }		 
+        public bool IsTidallyLocked { get; set; }
         public bool IsEarthlike { get; set; }
         public bool IsHabitable { get; set; }
         public bool HasResonantPeriod { get; set; }
