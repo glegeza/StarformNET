@@ -438,7 +438,7 @@ namespace DLS.StarformNet
         }
 
         // TODO This should be moved out of this class entirely
-        private static void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
+        private void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
         {
             // Check for and list planets with breathable atmospheres
 
