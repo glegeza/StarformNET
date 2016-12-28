@@ -437,7 +437,8 @@ namespace DLS.StarformNet
             }
         }
 
-        private void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
+        // TODO This should be moved out of this class entirely
+        private static void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
         {
             // Check for and list planets with breathable atmospheres
 
@@ -471,7 +472,7 @@ namespace DLS.StarformNet
             planet.breathability = breathe;
         }
                 
-        private double GetOuterLimit(Star star)
+        private static double GetOuterLimit(Star star)
         {
             if (star.BinaryMass < .001)
             {
