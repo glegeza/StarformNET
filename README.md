@@ -13,3 +13,5 @@ See the changes.txt file for an up-to-date list of current and planned updates a
 
 ## Credits
 Aside from porting the code from C to C#, none of the work on the accretion simulation is mine. Starform.NET's core is a direct port of [Jim Burrows' StarGen](http://www.eldacur.com/~brons/NerdCorner/StarGen/StarGen.html). The original readme and credits from that version are included in this repository as StarGen-ReadMe.txt and StarGen-Credits.txt. The StarGen-Credits.txt file contains a more complete history of all of the authors who have contributed to Accrete/Starform/StarGen as well as a bibliography for the papers and books used to design it.
+
+The planet sprites used in the output are Master484's planet sprite set from [OpenGameArt.org](http://opengameart.org/content/pixel-planets).
