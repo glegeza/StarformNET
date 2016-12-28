@@ -2,7 +2,6 @@ namespace DLS.StarformNet
 {
 
     using System;
-    using System.Diagnostics;
     using Data;
 
     public class Accrete
@@ -69,8 +68,7 @@ namespace DLS.StarformNet
 
                 //Trace.TraceInformation("Checking {0:0.00} AU", a);
 
-                if (DustAvailable(InnerEffectLimit(a, e, mass),
-                                   OuterEffectLimit(a, e, mass)))
+                if (DustAvailable(InnerEffectLimit(a, e, mass), OuterEffectLimit(a, e, mass)))
                 {
                     //Trace.TraceInformation("Injecting protoplanet at {0:0.00} AU", a);
 
@@ -142,24 +140,26 @@ namespace DLS.StarformNet
             bool dust_here;
 
             current_dust_band = _dustHead;
-            while ((current_dust_band != null) && (current_dust_band.OuterEdge < inside_range))
+            while (current_dust_band != null && current_dust_band.OuterEdge < inside_range)
             {
                 current_dust_band = current_dust_band.NextBand;
             }
+
             if (current_dust_band == null)
             {
                 dust_here = false;
             }
-            else dust_here = current_dust_band.DustPresent;
+            else
             {
-                while ((current_dust_band != null) && (current_dust_band.InnerEdge < outside_range))
+                dust_here = current_dust_band.DustPresent;
+                while (current_dust_band != null && current_dust_band.InnerEdge < outside_range)
                 {
                     dust_here = dust_here || current_dust_band.DustPresent;
                     current_dust_band = current_dust_band.NextBand;
                 }
             }
 
-            return (dust_here);
+            return dust_here;
         }
 
         private void UpdateDustLanes(double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
@@ -170,7 +170,7 @@ namespace DLS.StarformNet
             DustRecord node3 = null;
 
             _dustLeft = false;
-            if ((mass > crit_mass))
+            if (mass > crit_mass)
             {
                 gas = false;
             }
@@ -180,9 +180,9 @@ namespace DLS.StarformNet
             }
 
             node1 = _dustHead;
-            while ((node1 != null))
+            while (node1 != null)
             {
-                if (((node1.InnerEdge < min) && (node1.OuterEdge > max)))
+                if (node1.InnerEdge < min && node1.OuterEdge > max)
                 {
                     node2 = new DustRecord();
                     node2.InnerEdge = min;
@@ -207,7 +207,7 @@ namespace DLS.StarformNet
                     node1.OuterEdge = min;
                     node1 = node3.NextBand;
                 }
-                else if (((node1.InnerEdge < max) && (node1.OuterEdge > max)))
+                else if (node1.InnerEdge < max && node1.OuterEdge > max)
                 {
                     node2 = new DustRecord();
                     node2.NextBand = node1.NextBand;
@@ -228,7 +228,7 @@ namespace DLS.StarformNet
                     node1.DustPresent = false;
                     node1 = node2.NextBand;
                 }
-                else if (((node1.InnerEdge < min) && (node1.OuterEdge > min)))
+                else if (node1.InnerEdge < min && node1.OuterEdge > min)
                 {
                     node2 = new DustRecord();
                     node2.NextBand = node1.NextBand;
@@ -247,33 +247,32 @@ namespace DLS.StarformNet
                     node1.OuterEdge = min;
                     node1 = node2.NextBand;
                 }
-                else if (((node1.InnerEdge >= min) && (node1.OuterEdge <= max)))
+                else if (node1.InnerEdge >= min && node1.OuterEdge <= max)
                 {
-                    if ((node1.GasPresent == true))
+                    if (node1.GasPresent == true)
                     {
                         node1.GasPresent = gas;
                     }
                     node1.DustPresent = false;
                     node1 = node1.NextBand;
                 }
-                else if (((node1.OuterEdge < min) || (node1.InnerEdge > max)))
+                else if (node1.OuterEdge < min || node1.InnerEdge > max)
                 {
                     node1 = node1.NextBand;
                 }
             }
             node1 = _dustHead;
-            while ((node1 != null))
+            while (node1 != null)
             {
-                if (((node1.DustPresent) && (((node1.OuterEdge >= body_inner_bound) && (node1.InnerEdge <= body_outer_bound)))))
+                if (node1.DustPresent && (node1.OuterEdge >= body_inner_bound && node1.InnerEdge <= body_outer_bound))
                 {
                     _dustLeft = true;
                 }
 
                 node2 = node1.NextBand;
-                if ((node2 != null))
+                if (node2 != null)
                 {
-                    if (((node1.DustPresent == node2.DustPresent)
-                        && (node1.GasPresent == node2.GasPresent)))
+                    if (node1.DustPresent == node2.DustPresent && node1.GasPresent == node2.GasPresent)
                     {
                         node1.OuterEdge = node2.OuterEdge;
                         node1.NextBand = node2.NextBand;
@@ -291,12 +290,12 @@ namespace DLS.StarformNet
             _rInner = InnerEffectLimit(a, e, _reducedMass);
             _rOuter = OuterEffectLimit(a, e, _reducedMass);
 
-            if ((_rInner < 0.0))
+            if (_rInner < 0.0)
             {
                 _rInner = 0.0;
             }
 
-            if ((dust_band == null))
+            if (dust_band == null)
             {
                 return (0.0);
             }
@@ -305,7 +304,7 @@ namespace DLS.StarformNet
                 double gas_density = 0.0;
                 double temp_density;
                 double mass_density;
-                if ((dust_band.DustPresent == false))
+                if (dust_band.DustPresent == false)
                 {
                     temp_density = 0.0;
                 }
@@ -314,7 +313,7 @@ namespace DLS.StarformNet
                     temp_density = _dustDensity;
                 }
 
-                if (((last_mass < crit_mass) || (dust_band.GasPresent == false)))
+                if (last_mass < crit_mass || dust_band.GasPresent == false)
                 {
                     mass_density = temp_density;
                 }
@@ -324,7 +323,7 @@ namespace DLS.StarformNet
                     gas_density = mass_density - temp_density;
                 }
 
-                if (((dust_band.OuterEdge <= _rInner) || (dust_band.InnerEdge >= _rOuter)))
+                if (dust_band.OuterEdge <= _rInner || dust_band.InnerEdge >= _rOuter)
                 {
                     return (CollectDust(last_mass, ref new_dust, ref new_gas, a, e, crit_mass, ref dust_band.NextBand));
                 }
@@ -369,7 +368,7 @@ namespace DLS.StarformNet
         {
             double perihelion_dist = (orb_radius - orb_radius * eccentricity);
             double temp = perihelion_dist * Math.Sqrt(stell_luminosity_ratio);
-            return (GlobalConstants.B * Math.Pow(temp, -0.75));
+            return GlobalConstants.B * Math.Pow(temp, -0.75);
         }
 
         private void AccreteDust(ref double seed_mass, ref double new_dust, ref double new_gas, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
@@ -382,7 +381,7 @@ namespace DLS.StarformNet
                 temp_mass = new_mass;
                 new_mass = CollectDust(new_mass, ref new_dust, ref new_gas, a, e, crit_mass, ref _dustHead);
             }
-            while (!((new_mass - temp_mass) < (0.0001 * temp_mass)));
+            while (!(new_mass - temp_mass < 0.0001 * temp_mass));
 
             seed_mass = seed_mass + new_mass;
             UpdateDustLanes(_rInner, _rOuter, seed_mass, crit_mass, body_inner_bound, body_outer_bound);
@@ -406,7 +405,7 @@ namespace DLS.StarformNet
                 double dist1;
                 double dist2;
 
-                if ((diff > 0.0))
+                if (diff > 0.0)
                 {
                     dist1 = (a * (1.0 + e) * (1.0 + _reducedMass)) - a;
                     /* x aphelion	 */
@@ -461,8 +460,6 @@ namespace DLS.StarformNet
                                 Planet the_moon = new Planet();
 
                                 the_moon.Type = PlanetType.Unknown;
-                                /* 					the_moon.A 			= a; */
-                                /* 					the_moon.e 			= e; */
                                 the_moon.Mass = mass;
                                 the_moon.DustMass = dust_mass;
                                 the_moon.GasMass = gas_mass;
@@ -601,7 +598,7 @@ namespace DLS.StarformNet
                 the_planet.GreenhouseRise = 0;
                 the_planet.MinorMoonCount = 0;
 
-                if ((mass >= crit_mass))
+                if (mass >= crit_mass)
                 {
                     the_planet.IsGasGiant = true;
                 }
@@ -610,17 +607,17 @@ namespace DLS.StarformNet
                     the_planet.IsGasGiant = false;
                 }
 
-                if ((_planetHead == null))
+                if (_planetHead == null)
                 {
                     _planetHead = the_planet;
                     the_planet.NextPlanet = null;
                 }
-                else if ((a < _planetHead.SemiMajorAxisAU))
+                else if (a < _planetHead.SemiMajorAxisAU)
                 {
                     the_planet.NextPlanet = _planetHead;
                     _planetHead = the_planet;
                 }
-                else if ((_planetHead.NextPlanet == null))
+                else if (_planetHead.NextPlanet == null)
                 {
                     _planetHead.NextPlanet = the_planet;
                     the_planet.NextPlanet = null;
@@ -628,7 +625,7 @@ namespace DLS.StarformNet
                 else
                 {
                     next_planet = _planetHead;
-                    while (((next_planet != null) && (next_planet.SemiMajorAxisAU < a)))
+                    while (next_planet != null && next_planet.SemiMajorAxisAU < a)
                     {
                         prev_planet = next_planet;
                         next_planet = next_planet.NextPlanet;
