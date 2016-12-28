@@ -5,44 +5,18 @@ namespace DLS.StarformNet
 
     public class Generator
     {
-        private Accrete _accrete = new Accrete();
-        private ChemTable[] gases;
-        int max_gas;
-
         public Planet innermost_planet;
-        double dust_density_coeff = GlobalConstants.DUST_DENSITY_COEFF;
-        long flag_seed = 0;
+        public double min_sun_age = 1.0E9;
+        public double max_sun_age = 6.0E9;
 
-        int earthlike = 0;
-        int total_earthlike = 0;
-        int habitable = 0;
-        int habitable_jovians = 0;
-        int total_habitable = 0;
-
-        double min_sun_age = 1.0E9;
-        double max_sun_age = 6.0E9;
-        double min_breathable_terrestrial_g = 1000.0;
-        double min_breathable_g = 1000.0;
-        double max_breathable_terrestrial_g = 0.0;
-        double max_breathable_g = 0.0;
-        double min_breathable_temp = 1000.0;
-        double max_breathable_temp = 0.0;
-        double min_breathable_p = 100000.0;
-        double max_breathable_p = 0.0;
-        double min_breathable_terrestrial_l = 1000.0;
-        double min_breathable_l = 1000.0;
-        double max_breathable_terrestrial_l = 0.0;
-        double max_breathable_l = 0.0;
-        double max_moon_mass = 0.0;
-
-        int[] type_counts = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        int type_count = 0;
-        int max_type_count = 0;
+        private double _dustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
+        private long _flagSeed = 0;
+        private Accrete _accrete = new Accrete();
+        private ChemTable[] _gasTable;
 
         public Generator(ChemTable[] g)
         {
-            gases = g;
-            max_gas = gases.Length;
+            _gasTable = g;
         }
 
         public void GenerateStellarSystem(ref Star sun, Planet seedSystem, string flagChar, int systemNo, string systemName, bool doGases, bool doMoons)
@@ -78,7 +52,7 @@ namespace DLS.StarformNet
                 double outer_planet_limit = GetOuterLimit(sun);
                 innermost_planet = _accrete.DistPlanetaryMasses(sun.Mass, 
                     sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
-                    dust_density_coeff, seedSystem, doMoons);
+                    _dustDensityCoeff, seedSystem, doMoons);
             }
 
             GeneratePlanets(ref sun, seedSystem == null, flagChar, systemNo, systemName, doGases, doMoons);
@@ -93,8 +67,7 @@ namespace DLS.StarformNet
 
             for (planet = innermost_planet, planet_no = 1; planet != null; planet = planet.NextPlanet, planet_no++)
             {
-                //sprintf(planet_id, "%s (-s%ld -%c%d) %d", system_name, flag_seed, flag_char, sys_no, planet_no);
-                string planet_id = String.Format("{0} (-{1} -{2}{3}) {4}", systemName, flag_seed, flatChar, systemNo, planet_no);
+                string planet_id = String.Format("{0} (-{1} -{2}{3}) {4}", systemName, _flagSeed, flatChar, systemNo, planet_no);
 
                 GeneratePlanet(planet, planet_no, ref sun, useRandomTilt, planet_id, doGases, doMoons, false);
 
@@ -104,7 +77,6 @@ namespace DLS.StarformNet
 
                 for (moon = planet.FirstMoon, moons = 1; moon != null;  moon = moon.NextPlanet, moons++)
                 {
-                    //sprintf(moon_id, "%s.%d", planet_id, moons);
                     string moon_id = String.Format("{0}.{1}", planet_id, moons);
 
                     CheckPlanet(ref moon, moon_id, true);
@@ -206,12 +178,6 @@ namespace DLS.StarformNet
                         planet.SurfaceAcceleration = Environment.Acceleration(planet.Mass, planet.Radius);
                         planet.SurfaceGravity = Environment.Gravity(planet.SurfaceAcceleration);
                     }
-
-                    // TODO logging
-                    //if (((h2_loss + he_loss) > .000001) && (flag_verbose & 0x0080))
-                    //    fprintf(stderr, "%s\tLosing gas: H2: %5.3Lf EM, He: %5.3Lf EM\n",
-                    //             planet_id,
-                    //             h2_loss * GlobalConstants.SUN_MASS_IN_EARTH_MASSES, he_loss * GlobalConstants.SUN_MASS_IN_EARTH_MASSES);
                 }
             }
 
@@ -241,27 +207,9 @@ namespace DLS.StarformNet
                 {
                     double temp = planet.EstimatedTerrTemp;
 
+                    // Indicates habitable (??) Jovian planet
                     if ((temp >= GlobalConstants.FREEZING_POINT_OF_WATER) && (temp <= GlobalConstants.EARTH_AVERAGE_KELVIN + 10.0) && (sun.Age > 2.0E9))
-                    {
-                        habitable_jovians++;
-
-                        // TODO logging
-                        //if (flag_verbose & 0x8000)
-                        //{
-                        //    fprintf(stderr, "%s\t%s (%4.2LfEM %5.3Lf By)%s with earth-like temperature (%.1Lf C, %.1Lf F, %+.1Lf C Earth).\n",
-                        //             planet_id,
-                        //             planet.type == PlanetType.GasGiant ? "Jovian" :
-                        //             planet.type == PlanetType.SubGasGiant ? "Sub-Jovian" :
-                        //             planet.type == PlanetType.SubSubGasGiant ? "Gas Dwarf" :
-                        //             "Big",
-                        //             planet.mass * SUN_MASS_IN_EARTH_MASSES,
-                        //             sun.age / 1.0E9,
-                        //             planet.first_moon == null ? "" : " WITH MOON",
-                        //             temp - FREEZING_POINT_OF_WATER,
-                        //             32 + ((temp - FREEZING_POINT_OF_WATER) * 1.8),
-                        //             temp - EARTH_AVERAGE_KELVIN);
-                        //}
-                    }
+                    { }
                 }
             }
             else
@@ -291,9 +239,7 @@ namespace DLS.StarformNet
                 // Sets: planet.surf_temp, planet.greenhs_rise, planet.albedo, planet.hydrosphere,
                 // planet.cloud_cover, planet.ice_cover
                 Environment.IterateSurfaceTemp(ref planet);
-
-                // GL: Atmosphere was only being calculated for planets with liquid water for some reason?
-                //if (do_gases && (planet.max_temp >= GlobalConstants.FREEZING_POINT_OF_WATER) && (planet.min_temp <= planet.boil_point))
+                
                 if (doGases)
                 {
                     CalculateGases(ref sun, planet, planetID);
@@ -325,6 +271,7 @@ namespace DLS.StarformNet
                 else
                 {
                     // Atmospheres:
+                    // TODO remove PlanetType enum entirely and replace it with a more flexible classification systme
                     if (planet.WaterCover >= 0.95) // >95% water
                     {
                         planet.Type = PlanetType.Water;
@@ -357,19 +304,6 @@ namespace DLS.StarformNet
                     else
                     {
                         planet.Type = PlanetType.Unknown;
-
-                        // TODO logging
-                        //if (flag_verbose & 0x0001)
-                        //    fprintf(stderr, "%12s\tp=%4.2Lf\tm=%4.2Lf\tg=%4.2Lf\tt=%+.1Lf\t%s\t Unknown %s\n",
-                        //                    type_string(planet.type),
-                        //                    planet.surf_pressure,
-                        //                    planet.mass * SUN_MASS_IN_EARTH_MASSES,
-                        //                    planet.surf_grav,
-                        //                    planet.surf_temp - EARTH_AVERAGE_KELVIN,
-                        //                    planet_id,
-                        //                    ((int)planet.day == (int)(planet.orb_period * 24.0) ||
-                        //                     (planet.resonant_period)) ? "(1-Face)" : ""
-                        //             );
                     }
                 }
             }
@@ -389,8 +323,7 @@ namespace DLS.StarformNet
                             ptr.Eccentricity = planet.Eccentricity;
 
                             n++;
-
-                            //sprintf(moon_id, "%s.%d", planet_id, n);
+                            
                             string moon_id = String.Format("{0}.{1}", planetID, n);
 
                             GeneratePlanet(ptr, n, ref sun, useRandomTilt, moon_id, doGases, doMoons, true);    // Adjusts ptr.density
@@ -408,33 +341,6 @@ namespace DLS.StarformNet
                                 ptr.MoonSemiMajorAxisAU = 0;
                                 ptr.MoonEccentricity = 0;
                             }
-
-                            // TODO logging
-                            //if (flag_verbose & 0x40000)
-                            //{
-                            //    fprintf(stderr,
-                            //                "   Roche limit: R = %4.2Lg, rM = %4.2Lg, rm = %4.2Lg . %.0Lf km\n"
-    
-                            //                "   Hill Sphere: a = %4.2Lg, m = %4.2Lg, M = %4.2Lg . %.0Lf km\n"
-    
-                            //                "%s Moon orbit: a = %.0Lf km, e = %.0Lg\n",
-                            //                planet.radius, planet.density, ptr.density,
-                            //                roche_limit,
-                            //                planet.a * KM_PER_AU, planet.mass * SOLAR_MASS_IN_KILOGRAMS, sun.mass * SOLAR_MASS_IN_KILOGRAMS,
-                            //                hill_sphere,
-                            //                moon_id,
-                            //                ptr.moon_a * KM_PER_AU, ptr.moon_e
-                            //            );
-                            //}
-
-                            //if (flag_verbose & 0x1000)
-                            //{
-                            //    fprintf(stderr, "  %s: (%7.2LfEM) %d %4.2LgEM\n",
-                            //        planet_id,
-                            //        planet.mass * SUN_MASS_IN_EARTH_MASSES,
-                            //        n,
-                            //        ptr.mass * SUN_MASS_IN_EARTH_MASSES);
-                            //}
                         }
                     }
                 }
@@ -446,73 +352,56 @@ namespace DLS.StarformNet
         {
             if (planet.SurfPressure > 0)
             {
-                //Trace.TraceInformation("Calculating surface gases.");
-
-                double[] amount = new double[max_gas + 1];
+                double[] amount = new double[_gasTable.Length];
                 double totamount = 0;
                 double pressure = planet.SurfPressure / GlobalConstants.MILLIBARS_PER_BAR;
                 int n = 0;
                 int i;
 
-                for (i = 0; i < max_gas; i++)
+                for (i = 0; i < _gasTable.Length; i++)
                 {
-                    double yp = gases[i].boil / (373.0 * ((Math.Log((pressure) + 0.001) / -5050.5) + (1.0 / 373.0)));
+                    double yp = _gasTable[i].boil / (373.0 * ((Math.Log((pressure) + 0.001) / -5050.5) + (1.0 / 373.0)));
 
-                    if ((yp >= 0 && yp < planet.NighttimeTemp) && (gases[i].weight >= planet.MolecularWeightRetained))
+                    if ((yp >= 0 && yp < planet.NighttimeTemp) && (_gasTable[i].weight >= planet.MolecularWeightRetained))
                     {
-                        double vrms = Environment.RMSVelocity(gases[i].weight, planet.ExosphereTemp);
+                        double vrms = Environment.RMSVelocity(_gasTable[i].weight, planet.ExosphereTemp);
                         double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocity), sun.Age / 1e9);
-                        double abund = gases[i].abunds; // gases[i].abunde
+                        double abund = _gasTable[i].abunds; // gases[i].abunde
                         double react = 1.0;
                         double fract = 1.0;
                         double pres2 = 1.0;
 
-                        if (gases[i].symbol == "Ar")
+                        if (_gasTable[i].symbol == "Ar")
                         {
                             react = .15 * sun.Age / 4e9;
                         }
-                        else if (gases[i].symbol == "He")
+                        else if (_gasTable[i].symbol == "He")
                         {
                             abund = abund * (0.001 + (planet.GasMass / planet.Mass));
                             pres2 = (0.75 + pressure);
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), sun.Age / 2e9 * pres2);
+                            react = Math.Pow(1 / (1 + _gasTable[i].reactivity), sun.Age / 2e9 * pres2);
                         }
-                        else if ((gases[i].symbol == "O" || gases[i].symbol == "O2") && sun.Age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
+                        else if ((_gasTable[i].symbol == "O" || _gasTable[i].symbol == "O2") && sun.Age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
                         {
                             // pres2 = (0.65 + pressure/2); // Breathable - M: .55-1.4
                             pres2 = (0.89 + pressure / 4);  // Breathable - M: .6 -1.8
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), Math.Pow(sun.Age / 2e9, 0.25) * pres2);
+                            react = Math.Pow(1 / (1 + _gasTable[i].reactivity), Math.Pow(sun.Age / 2e9, 0.25) * pres2);
                         }
-                        else if (gases[i].symbol == "CO2" && sun.Age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
+                        else if (_gasTable[i].symbol == "CO2" && sun.Age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
                         {
                             pres2 = (0.75 + pressure);
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), Math.Pow(sun.Age / 2e9, 0.5) * pres2);
+                            react = Math.Pow(1 / (1 + _gasTable[i].reactivity), Math.Pow(sun.Age / 2e9, 0.5) * pres2);
                             react *= 1.5;
                         }
                         else
                         {
                             pres2 = (0.75 + pressure);
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), sun.Age / 2e9 * pres2);
+                            react = Math.Pow(1 / (1 + _gasTable[i].reactivity), sun.Age / 2e9 * pres2);
                         }
 
-                        fract = (1 - (planet.MolecularWeightRetained / gases[i].weight));
+                        fract = (1 - (planet.MolecularWeightRetained / _gasTable[i].weight));
 
                         amount[i] = abund * pvrms * react * fract;
-
-                        //if (gases[i].symbol == "O" || gases[i].symbol == "N" || gases[i].symbol == "Ar" || gases[i].symbol == "He" || gases[i].symbol == "CO2")
-                        //{
-                        //    Trace.TraceInformation("{0} {1}s, {2} = a {3} * p {4} * r {5} * p2 {6} * f {7}\t({8}%)\n",
-                        //              planet.mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
-                        //              gases[i].symbol,
-                        //              amount[i],
-                        //              abund,
-                        //              pvrms,
-                        //              react,
-                        //              pres2,
-                        //              fract,
-                        //              100.0 * (planet.gas_mass / planet.mass)
-                        //             );
-                        //}
 
                         totamount += amount[i];
                         if (amount[i] > 0.0)
@@ -531,19 +420,14 @@ namespace DLS.StarformNet
                     planet.GasCount = n;
                     planet.AtmosphericGases = new Gas[n];
 
-                    for (i = 0, n = 0; i < max_gas; i++)
+                    for (i = 0, n = 0; i < _gasTable.Length; i++)
                     {
                         if (amount[i] > 0.0)
                         {
                             planet.AtmosphericGases[n] = new Gas();
-                            planet.AtmosphericGases[n].num = gases[i].num;
+                            planet.AtmosphericGases[n].num = _gasTable[i].num;
                             planet.AtmosphericGases[n].surf_pressure = planet.SurfPressure
                                                                 * amount[i] / totamount;
-
-                            //if ((planet.atmosphere[n].num == GlobalConstants.AN_O) && Environment.InspiredPartialPressure(planet.surf_pressure, planet.atmosphere[n].surf_pressure) > gases[i].max_ipp)
-                            //{
-                            //    Trace.TraceInformation("{0}\t Poisoned by O2", planet_id);
-                            //}
 
                             n++;
                         }
@@ -554,186 +438,19 @@ namespace DLS.StarformNet
 
         private void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
         {
-            
-            int tIndex = 0;
-
-            switch (planet.Type)
-            {
-                case PlanetType.Unknown: tIndex = 0; break;
-                case PlanetType.Barren: tIndex = 1; break;
-                case PlanetType.Venusian: tIndex = 2; break;
-                case PlanetType.Terrestrial: tIndex = 3; break;
-                case PlanetType.SubSubGasGiant: tIndex = 4; break;
-                case PlanetType.SubGasGiant: tIndex = 5; break;
-                case PlanetType.GasGiant: tIndex = 6; break;
-                case PlanetType.Martian: tIndex = 7; break;
-                case PlanetType.Water: tIndex = 8; break;
-                case PlanetType.Ice: tIndex = 9; break;
-                case PlanetType.Asteroids: tIndex = 10; break;
-            }
-
-            if (type_counts[tIndex] == 0)
-                ++type_count;
-
-            ++type_counts[tIndex];
-
             // Check for and list planets with breathable atmospheres
+
             // TODO break this out into another function?
-            Breathability breathe = Environment.Breathability(ref planet, max_gas, gases);
+            Breathability breathe = Environment.Breathability(ref planet, _gasTable.Length, _gasTable);
+
+            // TODO move this calculation to somewhere else. Also, what units is this in?
+            planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
 
             // Option needed? <-- what is this referring to?
             if ((breathe == Breathability.Breathable) && (!planet.HasResonantPeriod) && ((int)planet.Day != (int)(planet.OrbitalPeriod * 24.0)))
             {
-                //bool list_it = false;
-                double illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU)
-                                            * (planet.Star).Luminosity;
-
-                habitable++;
-
-                if (min_breathable_temp > planet.SurfaceTemp)
-                {
-                    min_breathable_temp = planet.SurfaceTemp;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (max_breathable_temp < planet.SurfaceTemp)
-                {
-                    max_breathable_temp = planet.SurfaceTemp;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (min_breathable_g > planet.SurfaceGravity)
-                {
-                    min_breathable_g = planet.SurfaceGravity;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (max_breathable_g < planet.SurfaceGravity)
-                {
-                    max_breathable_g = planet.SurfaceGravity;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (min_breathable_l > illumination)
-                {
-                    min_breathable_l = illumination;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (max_breathable_l < illumination)
-                {
-                    max_breathable_l = illumination;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (planet.Type == PlanetType.Terrestrial)
-                {
-                    if (min_breathable_terrestrial_g > planet.SurfaceGravity)
-                    {
-                        min_breathable_terrestrial_g = planet.SurfaceGravity;
-
-                        //if (flag_verbose & 0x0002)
-                        //    list_it = true;
-                    }
-
-                    if (max_breathable_terrestrial_g < planet.SurfaceGravity)
-                    {
-                        max_breathable_terrestrial_g = planet.SurfaceGravity;
-
-                        //if (flag_verbose & 0x0002)
-                        //    list_it = true;
-                    }
-
-                    if (min_breathable_terrestrial_l > illumination)
-                    {
-                        min_breathable_terrestrial_l = illumination;
-
-                        //if (flag_verbose & 0x0002)
-                        //    list_it = true;
-                    }
-
-                    if (max_breathable_terrestrial_l < illumination)
-                    {
-                        max_breathable_terrestrial_l = illumination;
-
-                        //if (flag_verbose & 0x0002)
-                        //    list_it = true;
-                    }
-                }
-
-                if (min_breathable_p > planet.SurfPressure)
-                {
-                    min_breathable_p = planet.SurfPressure;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                if (max_breathable_p < planet.SurfPressure)
-                {
-                    max_breathable_p = planet.SurfPressure;
-
-                    //if (flag_verbose & 0x0002)
-                    //    list_it = true;
-                }
-
-                //if (flag_verbose & 0x0004)
-                //    list_it = true;
-
-                //if (list_it)
-                //    fprintf(stderr, "%12s\tp=%4.2Lf\tm=%4.2Lf\tg=%4.2Lf\tt=%+.1Lf\tl=%4.2Lf\t%s\n",
-                //                type_string(planet.type),
-                //                planet.surf_pressure,
-                //                planet.mass * SUN_MASS_IN_EARTH_MASSES,
-                //                planet.surf_grav,
-                //                planet.surf_temp - EARTH_AVERAGE_KELVIN,
-                //                illumination,
-                //                planet_id);
+                planet.IsHabitable = true;
             }
-            
-
-            if (is_moon && max_moon_mass < planet.Mass)
-            {
-                max_moon_mass = planet.Mass;
-
-                //if (flag_verbose & 0x0002)
-                //    fprintf(stderr, "%12s\tp=%4.2Lf\tm=%4.2Lf\tg=%4.2Lf\tt=%+.1Lf\t%s Moon Mass\n",
-                //            type_string(planet.type),
-                //            planet.surf_pressure,
-                //            planet.mass * SUN_MASS_IN_EARTH_MASSES,
-                //            planet.surf_grav,
-                //            planet.surf_temp - EARTH_AVERAGE_KELVIN,
-                //            planet_id);
-            }
-
-            //if ((flag_verbose & 0x0800) && (planet.dust_mass * SUN_MASS_IN_EARTH_MASSES >= 0.0006) && (planet.gas_mass * SUN_MASS_IN_EARTH_MASSES >= 0.0006) && (planet.type != tGasGiant) && (planet.type != tSubGasGiant))
-            //{
-            //    int core_size = (int)((50. * planet.core_radius) / planet.radius);
-
-            //    if (core_size <= 49)
-            //    {
-            //        fprintf(stderr, "%12s\tp=%4.2Lf\tr=%4.2Lf\tm=%4.2Lf\t%s\t%d\n",
-            //                type_string(planet.type),
-            //                planet.core_radius,
-            //                planet.radius,
-            //                planet.mass * SUN_MASS_IN_EARTH_MASSES,
-            //                planet_id,
-            //                50 - core_size);
-            //    }
-            //}
-
             
             double rel_temp = (planet.SurfaceTemp - GlobalConstants.FREEZING_POINT_OF_WATER) - GlobalConstants.EARTH_AVERAGE_CELSIUS;
             double seas = (planet.WaterCover * 100.0);
@@ -741,38 +458,16 @@ namespace DLS.StarformNet
             double pressure = (planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS);
             double ice = (planet.IceCover * 100.0);
             double gravity = planet.SurfaceGravity;
-            breathe = Environment.Breathability(ref planet, max_gas, gases);
+            breathe = Environment.Breathability(ref planet, _gasTable.Length, _gasTable);
 
             // TODO this needs to be a separate function
             // is the world earthlike? 
             if ((gravity >= .8) && (gravity <= 1.2) && (rel_temp >= -2.0) && (rel_temp <= 3.0) && (ice <= 10.0) && (pressure >= 0.5) && (pressure <= 2.0) && (clouds >= 40.0) && (clouds <= 80.0) && (seas >= 50.0) && (seas <= 80.0) && (planet.Type != PlanetType.Water) && (breathe == Breathability.Breathable))
             {
                 planet.IsEarthlike = true;
-                earthlike++;
-                //if (flag_verbose & 0x0008)
-                //{
-                //    fprintf(stderr, "%12s\tp=%4.2Lf\tm=%4.2Lf\tg=%4.2Lf\tt=%+.1Lf\t%d %s\tEarth-like\n",
-                //                    type_string(planet.type),
-                //                    planet.surf_pressure,
-                //                    planet.mass * SUN_MASS_IN_EARTH_MASSES,
-                //                    planet.surf_grav,
-                //                    planet.surf_temp - EARTH_AVERAGE_KELVIN,
-                //                    habitable,
-                //                    planet_id);
-                //}
             }
 
             planet.breathability = breathe;
-            //else if ((flag_verbose & 0x0008) && (breathe == BREATHABLE) && (gravity > 1.3) && (habitable > 1) && ((rel_temp < -2.0) || (ice > 10.0)))
-            //{
-            //    fprintf(stderr, "%12s\tp=%4.2Lf\tm=%4.2Lf\tg=%4.2Lf\tt=%+.1Lf\t%s\tSphinx-like\n",
-            //            type_string(planet.type),
-            //            planet.surf_pressure,
-            //            planet.mass * SUN_MASS_IN_EARTH_MASSES,
-            //            planet.surf_grav,
-            //            planet.surf_temp - EARTH_AVERAGE_KELVIN,
-            //            planet_id);
-            //}
         }
                 
         private double GetOuterLimit(Star star)
