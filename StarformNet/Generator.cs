@@ -2,6 +2,7 @@ namespace DLS.StarformNet
 {
     using System;
     using Data;
+    using System.Collections.Generic;
 
     public class Generator
     {
@@ -9,6 +10,7 @@ namespace DLS.StarformNet
         private static double MAX_SUN_AGE = 6.0E9;
 
         public Planet InnermostPlanet { get; private set; }
+        public List<Planet> Planets { get; private set; }
 
         private double _dustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
         private long _flagSeed = 0;
@@ -23,6 +25,7 @@ namespace DLS.StarformNet
         public void GenerateStellarSystem(ref Star sun, Planet seedSystem, string flagChar, int systemNo, string systemName, bool doGases, bool doMoons)
         {
             _accrete = new Accrete();           
+            Planets = new List<Planet>();
 
             // TODO why is this randomizing for high and low sun masses?
             if (sun.Mass < 0.2 || sun.Mass > 1.5)
@@ -71,6 +74,7 @@ namespace DLS.StarformNet
                 string planet_id = String.Format("{0} (-{1} -{2}{3}) {4}", systemName, _flagSeed, flatChar, systemNo, planet_no);
 
                 GeneratePlanet(planet, planet_no, ref sun, useRandomTilt, planet_id, doGases, doMoons, false);
+                Planets.Add(planet);
 
                 // Now we're ready to test for habitable planets,
                 // so we can count and log them and such

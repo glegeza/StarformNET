@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DLS.StarformNet.Display
 {
     using System.Collections.Generic;
@@ -16,18 +10,14 @@ namespace DLS.StarformNet.Display
         public PlanetSpriteSheet SpriteSheet;
         public int PlanetPadding { get; set; }
 
-        private Planet _systemHead;
         private List<Sprite> _planetSprites = new List<Sprite>();
 
-        public void SetNewSystem(Planet systemHead)
+        public void SetNewSystem(List<Planet> planets)
         {
-            _systemHead = systemHead;
             _planetSprites.Clear();
-            var next = _systemHead;
-            while (next != null)
+            foreach (var p in planets)
             {
-                var sprite = SpriteSheet.GetSprite(next.Type);
-                next = next.NextPlanet;
+                var sprite = SpriteSheet.GetSprite(p.Type);
                 _planetSprites.Add(sprite);
             }
 
@@ -47,10 +37,6 @@ namespace DLS.StarformNet.Display
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            if (_systemHead == null)
-            {
-                return;
-            }
             foreach (var sprite in _planetSprites)
             {
                 sprite.DrawSprite(e);

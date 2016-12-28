@@ -6,7 +6,7 @@ namespace DLS.StarformNet.Data
     {
         public int Position;
         public Star Star { get; set; }
-        public Planet NextPlanet { get; set; }
+        public Planet NextPlanet { get; set; } // this should be considered deprecated
 
         // Orbit data
         public double SemiMajorAxisAU { get; set; } // semi-major axis of solar orbit (in AU)

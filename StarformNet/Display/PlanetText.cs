@@ -5,24 +5,31 @@ namespace DLS.StarformNet.Display
     using System.Linq;
     using System.Text;
     using Data;
+    using System.Collections.Generic;
 
     public static class PlanetText
     {
-        public static string GetSystemText(Planet head, ChemTable[] gases)
+        public static string GetSystemText(List<Planet> planets, ChemTable[] gases)
         {
             var sb = new StringBuilder();
-            var sun = head.Star;
+            var sun = planets[0].Star;// head.Star;
             sb.AppendLine(GetSunText(sun, gases));
             sb.AppendLine();
 
-            var next = head;
-            while (next != null)
+            foreach (var p in planets)
             {
-                sb.AppendLine(GetPlanetText(next, gases));
+                sb.AppendLine(GetPlanetText(p, gases));
                 sb.AppendLine();
                 sb.AppendLine();
-                next = next.NextPlanet;
             }
+            //var next = head;
+            //while (next != null)
+            //{
+            //    sb.AppendLine(GetPlanetText(next, gases));
+            //    sb.AppendLine();
+            //    sb.AppendLine();
+            //    next = next.NextPlanet;
+            //}
             return sb.ToString();
         }
 
