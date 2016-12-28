@@ -50,34 +50,34 @@ namespace DLS.StarformNet
             _accrete = new Accrete();           
 
             // TODO why is this randomizing for high and low sun masses?
-            if (sun.mass < 0.2 || sun.mass > 1.5)
+            if (sun.Mass < 0.2 || sun.Mass > 1.5)
             {
-                sun.mass = Utilities.RandomNumber(0.7, 1.4);
+                sun.Mass = Utilities.RandomNumber(0.7, 1.4);
             }
-            double outer_dust_limit = _accrete.stellar_dust_limit(sun.mass);
+            double outer_dust_limit = _accrete.stellar_dust_limit(sun.Mass);
 
-            if (sun.luminosity == 0)
+            if (sun.Luminosity == 0)
             {
-                sun.luminosity = Environment.Luminosity(sun.mass);
+                sun.Luminosity = Environment.Luminosity(sun.Mass);
             }
 
-            sun.r_ecosphere = Math.Sqrt(sun.luminosity);
-            sun.life = 1.0E10 * (sun.mass / sun.luminosity);
+            sun.EcosphereRadius = Math.Sqrt(sun.Luminosity);
+            sun.Life = 1.0E10 * (sun.Mass / sun.Luminosity);
             
             if (seedSystem != null)
             {
                 innermost_planet = seedSystem;
-                sun.age = 5.0E9;
+                sun.Age = 5.0E9;
             }
             else
             {
-                sun.age = Utilities.RandomNumber(
+                sun.Age = Utilities.RandomNumber(
                     min_sun_age,
-                    sun.life < max_sun_age ? sun.life : max_sun_age);
+                    sun.Life < max_sun_age ? sun.Life : max_sun_age);
 
                 double outer_planet_limit = GetOuterLimit(sun);
-                innermost_planet = _accrete.DistPlanetaryMasses(sun.mass, 
-                    sun.luminosity, 0.0, outer_dust_limit, outer_planet_limit,
+                innermost_planet = _accrete.DistPlanetaryMasses(sun.Mass, 
+                    sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
                     dust_density_coeff, seedSystem, doMoons);
             }
 
@@ -127,13 +127,13 @@ namespace DLS.StarformNet
             planet.Star = sun;
             planet.HasResonantPeriod = false;
 
-            planet.OrbitZone = Environment.OrbitalZone(sun.luminosity, planet.SemiMajorAxisAU);
-            planet.OrbitalPeriod = Environment.Period(planet.SemiMajorAxisAU, planet.Mass, sun.mass);
+            planet.OrbitZone = Environment.OrbitalZone(sun.Luminosity, planet.SemiMajorAxisAU);
+            planet.OrbitalPeriod = Environment.Period(planet.SemiMajorAxisAU, planet.Mass, sun.Mass);
             if (useRandomTilt)
             {
                 planet.AxialTilt = Environment.Inclination(planet.SemiMajorAxisAU);
             }
-            planet.ExosphereTemp = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / sun.r_ecosphere);
+            planet.ExosphereTemp = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / sun.EcosphereRadius);
             planet.RMSVelocity = Environment.RMSVelocity(GlobalConstants.MOL_NITROGEN, planet.ExosphereTemp);
             planet.CoreRadius = Environment.KothariRadius(planet.DustMass, false, planet.OrbitZone);
 
@@ -141,7 +141,7 @@ namespace DLS.StarformNet
             // Then if mass > Earth, it's at least 5% gas and retains He, it's
             // some flavor of gas giant.
 
-            planet.Density = Environment.EmpiricalDensity(planet.Mass, planet.SemiMajorAxisAU, sun.r_ecosphere, true);
+            planet.Density = Environment.EmpiricalDensity(planet.Mass, planet.SemiMajorAxisAU, sun.EcosphereRadius, true);
             planet.Radius = Environment.VolumeRadius(planet.Mass, planet.Density);
 
             planet.SurfaceAcceleration = Environment.Acceleration(planet.Mass, planet.Radius);
@@ -185,9 +185,9 @@ namespace DLS.StarformNet
                     double h2_life = Environment.GasLife(GlobalConstants.MOL_HYDROGEN, planet);
                     double he_life = Environment.GasLife(GlobalConstants.HELIUM, planet);
 
-                    if (h2_life < sun.age)
+                    if (h2_life < sun.Age)
                     {
-                        h2_loss = ((1.0 - (1.0 / Math.Exp(sun.age / h2_life))) * h2_mass);
+                        h2_loss = ((1.0 - (1.0 / Math.Exp(sun.Age / h2_life))) * h2_mass);
 
                         planet.GasMass -= h2_loss;
                         planet.Mass -= h2_loss;
@@ -196,9 +196,9 @@ namespace DLS.StarformNet
                         planet.SurfaceGravity = Environment.Gravity(planet.SurfaceAcceleration);
                     }
 
-                    if (he_life < sun.age)
+                    if (he_life < sun.Age)
                     {
-                        he_loss = ((1.0 - (1.0 / Math.Exp(sun.age / he_life))) * he_mass);
+                        he_loss = ((1.0 - (1.0 / Math.Exp(sun.Age / he_life))) * he_mass);
 
                         planet.GasMass -= he_loss;
                         planet.Mass -= he_loss;
@@ -235,13 +235,13 @@ namespace DLS.StarformNet
                 planet.SurfaceGravity = Environment.Gravity(planet.SurfaceAcceleration);
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
                 planet.SurfaceGravity = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
-                planet.EstimatedTemp = Environment.EstTemp(sun.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
-                planet.EstimatedTerrTemp = Environment.EstTemp(sun.r_ecosphere, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
+                planet.EstimatedTemp = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
+                planet.EstimatedTerrTemp = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
 
                 {
                     double temp = planet.EstimatedTerrTemp;
 
-                    if ((temp >= GlobalConstants.FREEZING_POINT_OF_WATER) && (temp <= GlobalConstants.EARTH_AVERAGE_KELVIN + 10.0) && (sun.age > 2.0E9))
+                    if ((temp >= GlobalConstants.FREEZING_POINT_OF_WATER) && (temp <= GlobalConstants.EARTH_AVERAGE_KELVIN + 10.0) && (sun.Age > 2.0E9))
                     {
                         habitable_jovians++;
 
@@ -266,15 +266,15 @@ namespace DLS.StarformNet
             }
             else
             {
-                planet.EstimatedTemp = Environment.EstTemp(sun.r_ecosphere, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
-                planet.EstimatedTerrTemp = Environment.EstTemp(sun.r_ecosphere, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
+                planet.EstimatedTemp = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
+                planet.EstimatedTerrTemp = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
 
                 planet.SurfaceGravity = Environment.Gravity(planet.SurfaceAcceleration);
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
 
-                planet.HasGreenhouseEffect = Environment.Greenhouse(sun.r_ecosphere, planet.SemiMajorAxisAU);
+                planet.HasGreenhouseEffect = Environment.Greenhouse(sun.EcosphereRadius, planet.SemiMajorAxisAU);
                 planet.VolatileGasInventory = Environment.VolumeInventory(
-                    planet.Mass, planet.EscapeVelocity, planet.RMSVelocity, sun.mass,
+                    planet.Mass, planet.EscapeVelocity, planet.RMSVelocity, sun.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
                 planet.SurfPressure = Environment.Pressure(
                     planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
@@ -396,7 +396,7 @@ namespace DLS.StarformNet
                             GeneratePlanet(ptr, n, ref sun, useRandomTilt, moon_id, doGases, doMoons, true);    // Adjusts ptr.density
 
                             double roche_limit = 2.44 * planet.Radius * Math.Pow((planet.Density / ptr.Density), (1.0 / 3.0));
-                            double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.Mass / (3.0 * sun.mass)), (1.0 / 3.0));
+                            double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.Mass / (3.0 * sun.Mass)), (1.0 / 3.0));
 
                             if ((roche_limit * 3.0) < hill_sphere)
                             {
@@ -461,7 +461,7 @@ namespace DLS.StarformNet
                     if ((yp >= 0 && yp < planet.NighttimeTemp) && (gases[i].weight >= planet.MolecularWeightRetained))
                     {
                         double vrms = Environment.RMSVelocity(gases[i].weight, planet.ExosphereTemp);
-                        double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocity), sun.age / 1e9);
+                        double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocity), sun.Age / 1e9);
                         double abund = gases[i].abunds; // gases[i].abunde
                         double react = 1.0;
                         double fract = 1.0;
@@ -469,30 +469,30 @@ namespace DLS.StarformNet
 
                         if (gases[i].symbol == "Ar")
                         {
-                            react = .15 * sun.age / 4e9;
+                            react = .15 * sun.Age / 4e9;
                         }
                         else if (gases[i].symbol == "He")
                         {
                             abund = abund * (0.001 + (planet.GasMass / planet.Mass));
                             pres2 = (0.75 + pressure);
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), sun.age / 2e9 * pres2);
+                            react = Math.Pow(1 / (1 + gases[i].reactivity), sun.Age / 2e9 * pres2);
                         }
-                        else if ((gases[i].symbol == "O" || gases[i].symbol == "O2") && sun.age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
+                        else if ((gases[i].symbol == "O" || gases[i].symbol == "O2") && sun.Age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
                         {
                             // pres2 = (0.65 + pressure/2); // Breathable - M: .55-1.4
                             pres2 = (0.89 + pressure / 4);  // Breathable - M: .6 -1.8
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), Math.Pow(sun.age / 2e9, 0.25) * pres2);
+                            react = Math.Pow(1 / (1 + gases[i].reactivity), Math.Pow(sun.Age / 2e9, 0.25) * pres2);
                         }
-                        else if (gases[i].symbol == "CO2" && sun.age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
+                        else if (gases[i].symbol == "CO2" && sun.Age > 2e9 && planet.SurfaceTemp > 270 && planet.SurfaceTemp < 400)
                         {
                             pres2 = (0.75 + pressure);
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), Math.Pow(sun.age / 2e9, 0.5) * pres2);
+                            react = Math.Pow(1 / (1 + gases[i].reactivity), Math.Pow(sun.Age / 2e9, 0.5) * pres2);
                             react *= 1.5;
                         }
                         else
                         {
                             pres2 = (0.75 + pressure);
-                            react = Math.Pow(1 / (1 + gases[i].reactivity), sun.age / 2e9 * pres2);
+                            react = Math.Pow(1 / (1 + gases[i].reactivity), sun.Age / 2e9 * pres2);
                         }
 
                         fract = (1 - (planet.MolecularWeightRetained / gases[i].weight));
@@ -586,7 +586,7 @@ namespace DLS.StarformNet
             {
                 //bool list_it = false;
                 double illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU)
-                                            * (planet.Star).luminosity;
+                                            * (planet.Star).Luminosity;
 
                 habitable++;
 
@@ -777,7 +777,7 @@ namespace DLS.StarformNet
                 
         private double GetOuterLimit(Star star)
         {
-            if (star.m2 < .001)
+            if (star.BinaryMass < .001)
             {
                 return 0.0;
             }
@@ -785,12 +785,12 @@ namespace DLS.StarformNet
             // The following is Holman & Wiegert's equation 1 from
             // Long-Term Stability of Planets in Binary Systems
             // The Astronomical Journal, 117:621-628, Jan 1999
-            double m1 = star.mass;
-            double m2 = star.m2;
+            double m1 = star.Mass;
+            double m2 = star.BinaryMass;
             double mu = m2 / (m1 + m2);
-            double e = star.e;
+            double e = star.SemiMajorAxis;
             double e2 = Utilities.Pow2(e);
-            double a = star.a;
+            double a = star.Eccentricity;
 
             return (0.464 + (-0.380 * mu) + (-0.631 * e) + (0.586 * mu * e) + (0.150 * e2) + (-0.198 * mu * e2)) * a;
         }

@@ -31,11 +31,11 @@ namespace DLS.StarformNet.Display
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Star");
             sb.AppendLine("=========================");
-            sb.AppendFormat("Luminosity: {0:0.00}", star.luminosity);
+            sb.AppendFormat("Luminosity: {0:0.00}", star.Luminosity);
             sb.AppendLine();
-            sb.AppendFormat("Mass: {0:0.00} SM", star.mass);
+            sb.AppendFormat("Mass: {0:0.00} SM", star.Mass);
             sb.AppendLine();
-            sb.AppendFormat("Age: {0:E2} years", star.age);
+            sb.AppendFormat("Age: {0:E2} years", star.Age);
             return sb.ToString();
         }
 

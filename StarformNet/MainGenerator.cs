@@ -39,8 +39,8 @@ namespace DLS.StarformNet
             var generator = new Generator(_gases);
             var star = new Star()
             {
-                mass = 1.0f,
-                luminosity = 1.0f
+                Mass = 1.0f,
+                Luminosity = 1.0f
             };
             generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, false);
             _systemMap.SetNewSystem(generator.innermost_planet);

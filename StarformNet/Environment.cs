@@ -232,10 +232,10 @@ namespace DLS.StarformNet
                                          (planet.Density / GlobalConstants.EARTH_DENSITY) *
                                          (equatorialRadiusInCM / GlobalConstants.EARTH_RADIUS) *
                                          (GlobalConstants.EARTH_MASS_IN_GRAMS / planetaryMassInGrams) *
-                                         Math.Pow(planet.Star.mass, 2.0) *
+                                         Math.Pow(planet.Star.Mass, 2.0) *
                                          (1.0 / Math.Pow(planet.SemiMajorAxisAU, 6.0));
             double angularVelocity = baseAngularVelocity + (changeInAngularVelocity *
-                                                    planet.Star.age);
+                                                    planet.Star.Age);
 
             // Now we change from rad/sec to hours/rotation
             bool stopped = false;
@@ -772,7 +772,7 @@ namespace DLS.StarformNet
 
             if (planet.Star != null)
             {
-                target = planet.Star.age;
+                target = planet.Star.Age;
             }
 
             if (life > target)
@@ -836,7 +836,7 @@ namespace DLS.StarformNet
             {
                 planet.Albedo = GlobalConstants.EARTH_ALBEDO;
 
-                effective_temp = EffTemp(planet.Star.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
+                effective_temp = EffTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
                 greenhouse_temp = GreenRise(Opacity(planet.MolecularWeightRetained,
                                                          planet.SurfPressure),
                                                  effective_temp,
@@ -854,7 +854,7 @@ namespace DLS.StarformNet
                 planet.HasGreenhouseEffect = false;
 
                 planet.VolatileGasInventory = VolumeInventory(planet.Mass,
-                    planet.EscapeVelocity, planet.RMSVelocity, planet.Star.mass,
+                    planet.EscapeVelocity, planet.RMSVelocity, planet.Star.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
                 planet.SurfPressure = Pressure(planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
 
@@ -895,7 +895,7 @@ namespace DLS.StarformNet
 
             planet.Albedo = PlanetAlbedo(planet.WaterCover, planet.CloudCover, planet.IceCover, planet.SurfPressure);
 
-            effective_temp = EffTemp(planet.Star.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
+            effective_temp = EffTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
             greenhouse_temp = GreenRise(
                 Opacity(planet.MolecularWeightRetained, planet.SurfPressure),
                 effective_temp, planet.SurfPressure);
@@ -937,7 +937,7 @@ namespace DLS.StarformNet
         // TODO write summary
         public static void IterateSurfaceTemp(ref Planet planet)
         {
-            double initial_temp = EstTemp(planet.Star.r_ecosphere, planet.SemiMajorAxisAU, planet.Albedo);
+            double initial_temp = EstTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
 
             double h2_life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
             double h2o_life = GasLife(GlobalConstants.WATER_VAPOR, planet);
