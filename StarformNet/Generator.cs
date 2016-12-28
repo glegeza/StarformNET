@@ -5,9 +5,10 @@ namespace DLS.StarformNet
 
     public class Generator
     {
-        public Planet innermost_planet;
-        public double min_sun_age = 1.0E9;
-        public double max_sun_age = 6.0E9;
+        private static double MIN_SUN_AGE = 1.0E9;
+        private static double MAX_SUN_AGE = 6.0E9;
+
+        public Planet InnermostPlanet { get; private set; }
 
         private double _dustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
         private long _flagSeed = 0;
@@ -40,17 +41,17 @@ namespace DLS.StarformNet
             
             if (seedSystem != null)
             {
-                innermost_planet = seedSystem;
+                InnermostPlanet = seedSystem;
                 sun.Age = 5.0E9;
             }
             else
             {
                 sun.Age = Utilities.RandomNumber(
-                    min_sun_age,
-                    sun.Life < max_sun_age ? sun.Life : max_sun_age);
+                    MIN_SUN_AGE,
+                    sun.Life < MAX_SUN_AGE ? sun.Life : MAX_SUN_AGE);
 
                 double outer_planet_limit = GetOuterLimit(sun);
-                innermost_planet = _accrete.DistPlanetaryMasses(sun.Mass, 
+                InnermostPlanet = _accrete.DistPlanetaryMasses(sun.Mass, 
                     sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
                     _dustDensityCoeff, seedSystem, doMoons);
             }
@@ -65,7 +66,7 @@ namespace DLS.StarformNet
             Planet moon;
             int moons = 0;
 
-            for (planet = innermost_planet, planet_no = 1; planet != null; planet = planet.NextPlanet, planet_no++)
+            for (planet = InnermostPlanet, planet_no = 1; planet != null; planet = planet.NextPlanet, planet_no++)
             {
                 string planet_id = String.Format("{0} (-{1} -{2}{3}) {4}", systemName, _flagSeed, flatChar, systemNo, planet_no);
 

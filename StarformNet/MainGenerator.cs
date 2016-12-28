@@ -43,9 +43,9 @@ namespace DLS.StarformNet
                 Luminosity = 1.0f
             };
             generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, false);
-            _systemMap.SetNewSystem(generator.innermost_planet);
+            _systemMap.SetNewSystem(generator.InnermostPlanet);
 
-            var text = PlanetText.GetSystemText(generator.innermost_planet, _gases);
+            var text = PlanetText.GetSystemText(generator.InnermostPlanet, _gases);
             _descriptionBox.Text = text;
         }
     }
