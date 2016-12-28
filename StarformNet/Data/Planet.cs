@@ -54,6 +54,7 @@ namespace DLS.StarformNet.Data
         public Breathability breathability { get; set; }
 
         // Temperature data
+        public double Illumination { get; set; }      // units?
         public double ExosphereTemp { get; set; }     // units of degrees Kelvin
         public double EstimatedTemp { get; set; }     // quick non-iterative estimate (K)
         public double EstimatedTerrTemp { get; set; } // for terrestrial moons and the like
