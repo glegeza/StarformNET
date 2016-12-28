@@ -46,11 +46,11 @@ namespace DLS.StarformNet
                 return (3);
             }
         }
-
-        // TODO Write a summary
+        
         /// <summary>
+        /// Calculates the radius of a planet.
         /// </summary>
-        /// <param name="mass">Mass is in units of solar masses</param>
+        /// <param name="mass">Mass in units of solar masses</param>
         /// <param name="density">Density in units of grams/cc</param>
         /// <returns>Radius in units of km</returns>
         public static double VolumeRadius(double mass, double density)
@@ -342,9 +342,22 @@ namespace DLS.StarformNet
         {
             return (acceleration / GlobalConstants.EARTH_ACCELERATION);
         }
-
-        // TODO look up Fogg's eq.17 to figure out what this actually does
-        public static double VolumeInventory(double mass, double escapeVelocity, double rmsVelocity, double stellarMass, int zone, bool hasGreenhouseEffect, bool hasAccretedGas)
+        
+        /// <summary>
+        /// Calculates the inventory of volatiles in a planet's atmosphere.
+        /// This value is used to calculate the planet's surface pressure.
+        /// </summary>
+        /// <param name="mass">Planet mass in solar masses</param>
+        /// <param name="escapeVelocity">Planet escape velocity in cm/sec</param>
+        /// <param name="rmsVelocity">Planet RMS velocity in cm/sec</param>
+        /// <param name="stellarMass">Mass of the planet's star in solar masses</param>
+        /// <param name="zone">Planet's "zone" in the system</param>
+        /// <param name="hasGreenhouseEffect">True if the planet is experiencing
+        /// a runaway greenhouse effect</param>
+        /// <param name="hasAccretedGas">True if the planet has accreted any
+        /// gas</param>
+        /// <returns></returns>
+        public static double VolatileInventory(double mass, double escapeVelocity, double rmsVelocity, double stellarMass, int zone, bool hasGreenhouseEffect, bool hasAccretedGas)
         {
             // This implements Fogg's eq.17.  The 'inventory' returned is unitless.
 
@@ -365,8 +378,6 @@ namespace DLS.StarformNet
                         break;
                     default:
                         proportionConst = 0.0;
-                        // TODO add debug logging
-                        //printf("Error: orbital zone not initialized correctly!\n");
                         break;
                 }
                 double earth_units = mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES;
@@ -523,20 +534,27 @@ namespace DLS.StarformNet
         }
 
         // TODO figure out how this function differs from EffTemp, write summary
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ecosphereRadius"></param>
+        /// <param name="orbitalRadius"></param>
+        /// <param name="albedo"></param>
+        /// <returns></returns>
         public static double EstTemp(double ecosphereRadius, double orbitalRadius, double albedo)
         {
             return (Math.Sqrt(ecosphereRadius / orbitalRadius)
                   * Utilities.Pow1_4((1.0 - albedo) / (1.0 - GlobalConstants.EARTH_ALBEDO))
                   * GlobalConstants.EARTH_AVERAGE_KELVIN);
         }
-
-        // TODO write summary
+        
         /// <summary>
-        /// 
+        /// Calculates whether or not a planet is suffering from a runaway greenhouse
+        /// effect.
         /// </summary>
-        /// <param name="ecosphereRadius"></param>
-        /// <param name="orbitalRadius"></param>
-        /// <returns></returns>
+        /// <param name="ecosphereRadius">Radius of the star's ecosphere in AU</param>
+        /// <param name="orbitalRadius">Orbital radius of the planet in AU</param>
+        /// <returns>True if the planet is suffering a runaway greenhouse effect.</returns>
         public static bool Greenhouse(double ecosphereRadius, double orbitalRadius)
         {
             // Old grnhouse:  
@@ -545,12 +563,16 @@ namespace DLS.StarformNet
             //	surface reservoirs (otherwise, it suffers from the greenhouse effect).
 
             //	if ((orb_radius < r_greenhouse) && (zone == 1)) 
-            
+
             //	The new definition is based on the inital surface temperature and what
             //	state water is in. If it's too hot, the water will never condense out
             //	of the atmosphere, rain down and form an ocean. The albedo used here
             //	was chosen so that the boundary is about the same as the old method	
             //	Neither zone, nor r_greenhouse are used in this version				JLB
+
+            // TODO Reevaluate this method since it apparently only considers water vapor as
+            // as a greenhouse gas. 
+            //                                                                      GL
 
             double temp = EffTemp(ecosphereRadius, orbitalRadius, GlobalConstants.GREENHOUSE_TRIGGER_ALBEDO);
 
@@ -577,11 +599,8 @@ namespace DLS.StarformNet
             //	Earth's Atmosphere" article.  The effective temperature given is in
             //	units of Kelvin, as is the rise in temperature produced by the
             //	greenhouse effect, which is returned.
-            //	I tuned this by changing a pow(x,.25) to pow(x,.4) to match Venus - JLB	
 
-            double convection_factor = GlobalConstants.EARTH_CONVECTION_FACTOR *
-                                            Math.Pow(surfPressure /
-                                                GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS, 0.25);
+            double convection_factor = GlobalConstants.EARTH_CONVECTION_FACTOR * Math.Pow(surfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS, 0.25);
             double rise = (Utilities.Pow1_4(1.0 + 0.75 * opticalDepth) - 1.0) *
                                effectiveTemp * convection_factor;
 
@@ -589,16 +608,15 @@ namespace DLS.StarformNet
 
             return rise;
         }
-
-        // TODO write summary
+        
         /// <summary>
-        /// 
+        /// Calculates the albedo of a planetary body.
         /// </summary>
-        /// <param name="waterFraction"></param>
-        /// <param name="cloudFraction"></param>
-        /// <param name="iceFraction"></param>
-        /// <param name="surfPressure"></param>
-        /// <returns></returns>
+        /// <param name="waterFraction">Fraction of surface covered by water.</param>
+        /// <param name="cloudFraction">Fraction of planet covered by clouds.</param>
+        /// <param name="iceFraction">Fraction of planet covered by ice.</param>
+        /// <param name="surfPressure">Surface pressure in mb.</param>
+        /// <returns>Average overall albedo of the body.</returns>
         public static double PlanetAlbedo(double waterFraction, double cloudFraction, double iceFraction, double surfPressure)
         {
             // The surface temperature passed in is in units of Kelvin.
@@ -756,6 +774,11 @@ namespace DLS.StarformNet
         }
 
         // TODO Pretty much no idea what's going on here. Will figure it out later.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="planet"></param>
+        /// <returns></returns>
         public static double MinMolecularWeight(Planet planet)
         {
             double mass = planet.Mass;
@@ -848,12 +871,9 @@ namespace DLS.StarformNet
 
             if (planet.HasGreenhouseEffect && planet.MaxTemp < planet.BoilingPointWater)
             {
-                //Trace.TraceInformation("Deluge: {0}s {1} max ({2}) < boil ({3})",
-                //    planet.sun.name, planet.planet_no, planet.max_temp, planet.boil_point);
-
                 planet.HasGreenhouseEffect = false;
 
-                planet.VolatileGasInventory = VolumeInventory(planet.Mass,
+                planet.VolatileGasInventory = VolatileInventory(planet.Mass,
                     planet.EscapeVelocity, planet.RMSVelocity, planet.Star.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
                 planet.SurfPressure = Pressure(planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
@@ -914,76 +934,6 @@ namespace DLS.StarformNet
             }
 
             SetTempRange(ref planet);
-
-            // TODO: More logging stuff to take care of
-            //if (flag_verbose & 0x0020)
-            //{
-            //    fprintf(stderr, "%5.1Lf AU: %5.1Lf = %5.1Lf ef + %5.1Lf gh%c "
-
-
-            //            "(W: %4.2Lf (%4.2Lf) C: %4.2Lf (%4.2Lf) I: %4.2Lf A: (%4.2Lf))\n",
-            //            planet.a,
-            //            planet.surf_temp - FREEZING_POINT_OF_WATER,
-            //            effective_temp - FREEZING_POINT_OF_WATER,
-            //            greenhouse_temp,
-            //            (planet.greenhouse_effect) ? '*' : ' ',
-            //            planet.hydrosphere, water_raw,
-            //            planet.cloud_cover, clouds_raw,
-            //            planet.ice_cover,
-            //            planet.albedo);
-            //}
-        }
-
-        // TODO write summary
-        public static void IterateSurfaceTemp(ref Planet planet)
-        {
-            double initial_temp = EstTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
-
-            double h2_life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
-            double h2o_life = GasLife(GlobalConstants.WATER_VAPOR, planet);
-            double n2_life = GasLife(GlobalConstants.MOL_NITROGEN, planet);
-            double n_life = GasLife(GlobalConstants.ATOMIC_NITROGEN, planet);
-
-            // TODO logging 
-            //if (flag_verbose & 0x20000)
-            //    fprintf(stderr, "%d:                     %5.1Lf it [%5.1Lf re %5.1Lf a %5.1Lf alb]\n",
-            //            planet.planet_no,
-            //            initial_temp,
-            //            planet.sun.r_ecosphere, planet.a, planet.albedo
-            //            );
-
-            //if (flag_verbose & 0x0040)
-            //    fprintf(stderr, "\nGas lifetimes: H2 - %Lf, H2O - %Lf, N - %Lf, N2 - %Lf\n",
-            //            h2_life, h2o_life, n_life, n2_life);
-
-            CalculateSurfaceTemperature(ref planet, true, 0, 0, 0, 0, 0);
-
-            for (var count = 0; count <= 25; count++)
-            {
-                double last_water = planet.WaterCover;
-                double last_clouds = planet.CloudCover;
-                double last_ice = planet.IceCover;
-                double last_temp = planet.SurfaceTemp;
-                double last_albedo = planet.Albedo;
-
-                CalculateSurfaceTemperature(ref planet, false, last_water, last_clouds, last_ice, last_temp, last_albedo);
-
-                if (Math.Abs(planet.SurfaceTemp - last_temp) < 0.25)
-                    break;
-            }
-
-            planet.GreenhouseRise = planet.SurfaceTemp - initial_temp;
-
-            // TODO logging
-            //if (flag_verbose & 0x20000)
-            //    fprintf(stderr, "%d: %5.1Lf gh = %5.1Lf (%5.1Lf C) st - %5.1Lf it [%5.1Lf re %5.1Lf a %5.1Lf alb]\n",
-            //            planet.planet_no,
-            //            planet.greenhs_rise,
-            //            planet.surf_temp,
-            //            planet.surf_temp - FREEZING_POINT_OF_WATER,
-            //            initial_temp,
-            //            planet.sun.r_ecosphere, planet.a, planet.albedo
-            //            );
         }
 
         /// <summary>
@@ -1055,6 +1005,40 @@ namespace DLS.StarformNet
             {
                 return Data.Breathability.Unbreathable;
             }
+        }
+
+        // TODO write summary
+        // TODO parameter for number of iterations? does it matter?
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="planet"></param>
+        public static void IterateSurfaceTemp(ref Planet planet)
+        {
+            double initial_temp = EstTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
+
+            double h2_life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
+            double h2o_life = GasLife(GlobalConstants.WATER_VAPOR, planet);
+            double n2_life = GasLife(GlobalConstants.MOL_NITROGEN, planet);
+            double n_life = GasLife(GlobalConstants.ATOMIC_NITROGEN, planet);
+
+            CalculateSurfaceTemperature(ref planet, true, 0, 0, 0, 0, 0);
+
+            for (var count = 0; count <= 25; count++)
+            {
+                double last_water = planet.WaterCover;
+                double last_clouds = planet.CloudCover;
+                double last_ice = planet.IceCover;
+                double last_temp = planet.SurfaceTemp;
+                double last_albedo = planet.Albedo;
+
+                CalculateSurfaceTemperature(ref planet, false, last_water, last_clouds, last_ice, last_temp, last_albedo);
+
+                if (Math.Abs(planet.SurfaceTemp - last_temp) < 0.25)
+                    break;
+            }
+
+            planet.GreenhouseRise = planet.SurfaceTemp - initial_temp;
         }
 
         private static double Lim(double x)

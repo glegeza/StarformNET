@@ -222,7 +222,7 @@ namespace DLS.StarformNet
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
 
                 planet.HasGreenhouseEffect = Environment.Greenhouse(sun.EcosphereRadius, planet.SemiMajorAxisAU);
-                planet.VolatileGasInventory = Environment.VolumeInventory(
+                planet.VolatileGasInventory = Environment.VolatileInventory(
                     planet.Mass, planet.EscapeVelocity, planet.RMSVelocity, sun.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
                 planet.SurfPressure = Environment.Pressure(
