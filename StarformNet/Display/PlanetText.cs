@@ -75,7 +75,9 @@ namespace DLS.StarformNet.Display
             sb.AppendLine();
             sb.AppendFormat("Surface Pressure: {0}\n", GetSurfacePressureStringAtm(planet));
             sb.AppendLine();
-            sb.AppendFormat("Atmosphere: {0}\n", GetAtmoString(planet, gases));
+            sb.AppendFormat("Atmospheric Composition (Percentage): {0}\n", GetAtmoString(planet, gases));
+            sb.AppendLine();
+            sb.AppendFormat("Atmospheric Composition (Partial Pressure): {0}\n", GetAtmoStringPP(planet, gases));
 
             return sb.ToString();
         }
@@ -234,6 +236,35 @@ namespace DLS.StarformNet.Display
                 return "Uh, a lot";
             }
             return String.Format("{0:0.000} atm", UnitConversions.MillibarsToAtm(planet.SurfPressure));
+        }
+
+        static string GetAtmoStringPP(Planet planet, ChemTable[] gases)
+        {
+            if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
+            {
+                return "Yes";
+            }
+            if (planet.GasCount == 0)
+            {
+                return "None";
+            }
+            var str = "";
+            var orderedGases = planet.AtmosphericGases.OrderByDescending(g => g.surf_pressure).ToArray();
+            if (orderedGases.Length == 0)
+            {
+                return "Trace gases only";
+            }
+            for (var i = 0; i < orderedGases.Length; i++)
+            {
+                var gas = orderedGases[i];
+                var curGas = gases.First(g => g.num == gas.num);
+                str += String.Format("{0} [{1:0.0000} mb]", curGas.symbol, gas.surf_pressure);
+                if (i < orderedGases.Length - 1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
         }
 
         static string GetAtmoString(Planet planet, ChemTable[] gases, double minFraction = 0.01)
