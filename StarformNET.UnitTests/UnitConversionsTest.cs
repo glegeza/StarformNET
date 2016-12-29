@@ -239,16 +239,34 @@ namespace DLS.StarformNET.UnitTests
             [TestMethod]
             public void ConvertZeroPPM()
             {
+                var expected = new double[]
+                {
+                    0.0,  // 1atm
+                    0.0,  // 1.5atm
+                    0.0,  // 0.5atm
+                    0.0,  // 4atm
+                    0.0   // 0.1atm
+                };
+
                 for (var i = 0; i < ATMOS.Length; i++)
                 {
                     var result = UnitConversions.PPMToMillibars(0, ATMOS[i]);
-                    Assert.AreEqual(0.0, result, DELTA);
+                    Assert.AreEqual(expected[i], result, DELTA);
                 }
             }
 
             [TestMethod]
             public void Convert1MPPM()
             {
+                var expected = new double[]
+                {
+                    1013.25,   // 1 atm
+                    1519.875,  // 1.5 atm
+                    506.625,   // 0.5 atm
+                    4053,      // 4 atm
+                    101.325    // 0.1 atm
+                };
+
                 for (var i = 0; i < ATMOS.Length; i++)
                 {
                     var result = UnitConversions.PPMToMillibars(1000000, ATMOS[i]);
@@ -259,31 +277,72 @@ namespace DLS.StarformNET.UnitTests
             [TestMethod]
             public void ConvertPositivePPMWholeNumbers1Atm()
             {
+                var expected = new double[]
+                {
+                    0.0203,    // 20ppm
+                    0.0791,    // 78ppm
+                    0.1216,    // 120ppm
+                    0.0010,    // 1ppm
+                    1.2504,    // 1234ppm
+                    55.7288,   // 55000ppm
+                    101.3250,  // 100000ppm
+                    25.3313    // 25000ppm
+                };
+
                 for (var i = 0; i < PPM_VALUES.Length; i++)
                 {
-                    var fract = PPM_VALUES[i] / 1000000;
-                    var expected = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * fract;
                     var result = UnitConversions.PPMToMillibars(PPM_VALUES[i]);
-                    Assert.AreEqual(expected, result, DELTA,
+                    Assert.AreEqual(expected[i], result, DELTA,
                         String.Format("expected: {0} ppm @ {1} atm -> {2} mb, result: {3}",
-                        PPM_VALUES[i], 1.0, expected, result));
+                        PPM_VALUES[i], 1.0, expected[i], result));
                 }
             }
 
             [TestMethod]
-            public void ConvertPositivePPMWholeNumbersAboveBelow1Atm()
+            public void ConvertPositivePPMWholeNumbersBelow1Atm()
             {
+                var expected = new double[]
+                {
+                    0.0102,  // 20ppm
+                    0.0396,  // 78ppm
+                    0.0608,  // 120ppm
+                    0.0005,  // 1ppm
+                    0.6252,  // 1234ppm
+                    27.8644, // 55000ppm
+                    50.6625, // 100000ppm
+                    12.6657  // 25000ppm
+                };
+
                 for (var i = 0; i < PPM_VALUES.Length; i++)
                 {
-                    var fract = PPM_VALUES[i] / 1000000;
-                    for (var k = 0; k < ATMOS.Length; k++)
-                    {
-                        var expected = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * ATMOS[k] * fract;
-                        var result = UnitConversions.PPMToMillibars(PPM_VALUES[i], ATMOS[k]);
-                        Assert.AreEqual(expected, result, DELTA,
-                            String.Format("expected: {0} ppm @ {1} atm -> {2} mb, result: {3}",
-                            PPM_VALUES[i], ATMOS[k], expected, result));
-                    }
+                    var result = UnitConversions.PPMToMillibars(PPM_VALUES[i], 0.5);
+                    Assert.AreEqual(expected[i], result, DELTA,
+                        String.Format("expected: {0} ppm @ {1} atm -> {2} mb, result: {3}",
+                        PPM_VALUES[i], 0.5, expected[i], result));
+                }
+            }
+
+            [TestMethod]
+            public void ConvertPositivePPMWholeNumbersAbove1Atm()
+            {
+                var expected = new double[]
+                {
+                    0.0406,   // 20ppm
+                    0.1582,   // 78ppm
+                    0.2432,   // 120ppm
+                    0.0020,   // 1ppm
+                    2.5008,   // 1234ppm
+                    111.4576, // 55000ppm
+                    202.6500, // 100000ppm
+                    50.6626   // 25000ppm
+                };
+
+                for (var i = 0; i < PPM_VALUES.Length; i++)
+                {
+                    var result = UnitConversions.PPMToMillibars(PPM_VALUES[i], 2.0);
+                    Assert.AreEqual(expected[i], result, DELTA,
+                        String.Format("expected: {0} ppm @ {1} atm -> {2} mb, result: {3}",
+                        PPM_VALUES[i], 2.0, expected[i], result));
                 }
             }
         }
