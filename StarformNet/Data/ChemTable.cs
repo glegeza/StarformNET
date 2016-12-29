@@ -7,7 +7,7 @@ namespace DLS.StarformNet.Data
 {
     public class ChemTable
     {
-        public int    num     { get; set; }
+        public int    num        { get; set; }
         public string symbol     { get; set; }
         public string HTMLSymbol { get; set; }
         public string Name       { get; set; }
@@ -16,7 +16,7 @@ namespace DLS.StarformNet.Data
         public double boil       { get; set; }
         public double density    { get; set; }
         public double abunde     { get; set; }
-        public double abunds     { get; set; } // Solar system abundance
+        public double abunds     { get; set; }  // Solar system abundance
         public double reactivity { get; set; }
         public double max_ipp     { get; set; } // Max inspired partial pressure im millibars
 
