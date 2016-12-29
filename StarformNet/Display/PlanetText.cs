@@ -126,13 +126,9 @@ namespace DLS.StarformNet.Display
             switch (planet.breathability)
             {
                 case Breathability.Breathable:
-                    sb.Append(", Breathable Atmosphere");
-                    break;
                 case Breathability.Unbreathable:
-                    sb.Append(", Unbreathable Atmosphere");
-                    break;
                 case Breathability.Poisonous:
-                    sb.Append(", Poisonous Atmosphere");
+                    sb.AppendFormat(", {0} Atmosphere", planet.breathability);
                     break;
                 default:
                     sb.Append(", No Atmosphere");
