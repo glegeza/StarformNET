@@ -42,7 +42,7 @@ namespace DLS.StarformNet
                 Mass = 1.0f,
                 Luminosity = 1.0f
             };
-            generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, false);
+            generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
             _systemMap.SetNewSystem(generator.Planets);
 
             var text = PlanetText.GetSystemText(generator.Planets, _gases);

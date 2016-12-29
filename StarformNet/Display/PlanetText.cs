@@ -92,7 +92,7 @@ namespace DLS.StarformNet.Display
 
         private static string GetEscapeVelocity(Planet planet)
         {
-            return String.Format("{0:0.00} km/sec", planet.EscapeVelocity / GlobalConstants.CM_PER_KM);
+            return String.Format("{0:0.00} km/sec", UnitConversions.CMToKM(planet.EscapeVelocity));
         }
 
         private static string GetPlanetTypeText(Planet planet)
@@ -224,7 +224,7 @@ namespace DLS.StarformNet.Display
 
         static string GetMassStringEM(Planet planet)
         {
-            return String.Format("{0:0.00} EM", planet.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES);
+            return String.Format("{0:0.00} EM", UnitConversions.SolarMassesToEarthMasses(planet.Mass));
         }
 
         static string GetSurfacePressureStringAtm(Planet planet)
@@ -233,7 +233,7 @@ namespace DLS.StarformNet.Display
             {
                 return "Uh, a lot";
             }
-            return String.Format("{0:0.000} atm", planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS);
+            return String.Format("{0:0.000} atm", UnitConversions.MillibarsToAtm(planet.SurfPressure));
         }
 
         static string GetAtmoString(Planet planet, ChemTable[] gases, double minFraction = 0.01)

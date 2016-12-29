@@ -29,24 +29,26 @@ namespace DLS.StarformNet
         public static double MMHG_TO_MILLIBARS            = (EARTH_SURF_PRES_IN_MILLIBARS / EARTH_SURF_PRES_IN_MMHG);
         public static double PSI_TO_MILLIBARS             = (EARTH_SURF_PRES_IN_MILLIBARS / EARTH_SURF_PRES_IN_PSI);
         public static double H20_ASSUMED_PRESSURE         = (47.0 * MMHG_TO_MILLIBARS);    // Dole p. 15      
-        public static double MIN_O2_IPP                   = (72.0 * MMHG_TO_MILLIBARS);    // Dole, p. 15				
-        public static double MAX_O2_IPP                   = (400.0 * MMHG_TO_MILLIBARS);   // Dole, p. 15				
-        public static double MAX_HE_IPP                   = (61000.0 * MMHG_TO_MILLIBARS); // Dole, p. 16			
-        public static double MAX_NE_IPP                   = (3900.0 * MMHG_TO_MILLIBARS);  // Dole, p. 16				
-        public static double MAX_N2_IPP                   = (2330.0 * MMHG_TO_MILLIBARS);  // Dole, p. 16				
-        public static double MAX_AR_IPP                   = (1220.0 * MMHG_TO_MILLIBARS);  // Dole, p. 16				
-        public static double MAX_KR_IPP                   = (350.0 * MMHG_TO_MILLIBARS);   // Dole, p. 16				
-        public static double MAX_XE_IPP                   = (160.0 * MMHG_TO_MILLIBARS);   // Dole, p. 16				
-        public static double MAX_CO2_IPP                  = (7.0 * MMHG_TO_MILLIBARS);     // Dole, p. 16				
-        public static double MAX_HABITABLE_PRESSURE       = (118 * PSI_TO_MILLIBARS);      // Dole, p. 16		
+        public static double PPM_PRSSURE = (EARTH_SURF_PRES_IN_MILLIBARS / 1000000.0);
         
+        // Maximum inspired partial pressures in mmHg for common atmospheric gases - Dole pg. 15-16
+        public static double MIN_O2_IPP                   = UnitConversions.MMHGToMillibars(72.0);
+        public static double MAX_O2_IPP                   = UnitConversions.MMHGToMillibars(400.0);
+        public static double MAX_HE_IPP                   = UnitConversions.MMHGToMillibars(61000.0);
+        public static double MAX_NE_IPP                   = UnitConversions.MMHGToMillibars(3900.0);
+        public static double MAX_N2_IPP                   = UnitConversions.MMHGToMillibars(2330.0);
+        public static double MAX_AR_IPP                   = UnitConversions.MMHGToMillibars(1220.0);
+        public static double MAX_KR_IPP                   = UnitConversions.MMHGToMillibars(350.0); 
+        public static double MAX_XE_IPP                   = UnitConversions.MMHGToMillibars(160.0);
+        public static double MAX_CO2_IPP                  = UnitConversions.MMHGToMillibars(7.0);
+        public static double MAX_HABITABLE_PRESSURE       = UnitConversions.MMHGToMillibars(118);
+
         // The next gases are listed as poisonous in parts per million by volume at 1 atm:
-        public static double PPM_PRSSURE                  = (EARTH_SURF_PRES_IN_MILLIBARS / 1000000.0);
-        public static double MAX_F_IPP                    = (0.1 * PPM_PRSSURE);           // Dole, p. 18				
-        public static double MAX_CL_IPP                   = (1.0 * PPM_PRSSURE);           // Dole, p. 18				
-        public static double MAX_NH3_IPP                  = (100.0 * PPM_PRSSURE);         // Dole, p. 18				
-        public static double MAX_O3_IPP                   = (0.1 * PPM_PRSSURE);           // Dole, p. 18				
-        public static double MAX_CH4_IPP                  = (50000.0 * PPM_PRSSURE);       // Dole, p. 18				
+        public static double MAX_F_IPP                    = UnitConversions.PPMToMillibars(0.1);
+        public static double MAX_CL_IPP                   = UnitConversions.PPMToMillibars(1.0);
+        public static double MAX_NH3_IPP                  = UnitConversions.PPMToMillibars(100.0);
+        public static double MAX_O3_IPP                   = UnitConversions.PPMToMillibars(0.1);
+        public static double MAX_CH4_IPP                  = UnitConversions.PPMToMillibars(50000.0);
 
         public static double EARTH_CONVECTION_FACTOR      = (0.43);                        // from Hart, eq.20			
         public static double FREEZING_POINT_OF_WATER      = (273.15);                      // Units of degrees Kelvin (was 273.0)
