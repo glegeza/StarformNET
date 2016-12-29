@@ -371,7 +371,7 @@ namespace DLS.StarformNet
                     {
                         double vrms = Environment.RMSVelocity(_gasTable[i].weight, planet.ExosphereTemp);
                         double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocity), sun.Age / 1e9);
-                        double abund = _gasTable[i].abunds; // gases[i].abunde
+                        double abund = _gasTable[i].abunds;
                         double react = 1.0;
                         double fract = 1.0;
                         double pres2 = 1.0;
