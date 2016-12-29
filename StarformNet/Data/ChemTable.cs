@@ -1,10 +1,11 @@
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace DLS.StarformNet.Data
 {
+
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+
     public class ChemTable
     {
         public int    num        { get; set; }
