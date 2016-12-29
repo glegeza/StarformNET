@@ -1,7 +1,15 @@
 namespace DLS.StarformNet
 {
+    /// <summary>
+    /// Simple helper methods for converting between different unit types.
+    /// </summary>
     public static class UnitConversions
     {
+        public static double MB_IN_MMHG = 1.3332239;
+        public static double CM_PER_KM = 1.0E5;
+        public static double EARTH_SURF_PRES_IN_MILLIBARS = 1013.25;
+        public static double SUN_MASS_IN_EARTH_MASSES = 332775.64;
+
         /// <summary>
         /// Converts temperature from Kelvin to Fahrenheit degrees.
         /// </summary>
@@ -19,7 +27,7 @@ namespace DLS.StarformNet
         /// <returns><Pressure in millibars/returns>
         public static double MMHGToMillibars(double presmmHg)
         {
-            return presmmHg * GlobalConstants.MMHG_TO_MILLIBARS;
+            return presmmHg * MB_IN_MMHG;
         }
 
         /// <summary>
@@ -29,7 +37,7 @@ namespace DLS.StarformNet
         /// <returns>Units km</returns>
         public static double CMToKM(double cm)
         {
-            return cm / GlobalConstants.CM_PER_KM;
+            return cm / CM_PER_KM;
         }
 
         /// <summary>
@@ -39,7 +47,7 @@ namespace DLS.StarformNet
         /// <returns>Mass in Earth masses</returns>
         public static double SolarMassesToEarthMasses(double sm)
         {
-            return sm * GlobalConstants.SUN_MASS_IN_EARTH_MASSES;
+            return sm * SUN_MASS_IN_EARTH_MASSES;
         }
 
         /// <summary>
@@ -49,7 +57,7 @@ namespace DLS.StarformNet
         /// <returns>Pressure in atm</returns>
         public static double MillibarsToAtm(double mb)
         {
-            return mb / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS;
+            return mb / EARTH_SURF_PRES_IN_MILLIBARS;
         }
 
         /// <summary>
@@ -61,7 +69,7 @@ namespace DLS.StarformNet
         /// <returns>Partial pressure in millibars</returns>
         public static double PPMToMillibars(double ppm, double atm=1.0)
         {
-            var presPerPart1Atm = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS / 1000000.0;
+            var presPerPart1Atm = EARTH_SURF_PRES_IN_MILLIBARS / 1000000.0;
             return ppm * presPerPart1Atm * atm;
         }
     }
