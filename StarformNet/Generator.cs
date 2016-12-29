@@ -353,7 +353,7 @@ namespace DLS.StarformNet
 
         }
 
-        private void CalculateGases(ref Star sun, Planet planet, string planet_id)
+        public void CalculateGases(ref Star sun, Planet planet, string planet_id)
         {
             if (planet.SurfPressure > 0)
             {
