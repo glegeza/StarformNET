@@ -5,13 +5,14 @@ v0.01
 -Ported StarGen code to C#
 -Basic WinForms output
 
-In-Progress
------------
+In-Progress/Todo
+----------------
 -Better support for generating atmospheric compounds
 -Better output
 -UI for controlling star mass/luminosity and selecting seed systems
+-Planet "profiles" for compound concentrations
 -Text file output
--Set up unit tests
+-Increase unit test coverage where it makes sense
 -Add compounds for sulfur atmospheres
 
 Planned
