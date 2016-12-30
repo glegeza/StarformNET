@@ -38,6 +38,33 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
+        /// Returns true if the planet's conditions are similar to Earth
+        /// </summary>
+        public static bool IsEarthlike(Planet planet)
+        {
+            double relTemp = (planet.SurfaceTemp - GlobalConstants.FREEZING_POINT_OF_WATER) - GlobalConstants.EARTH_AVERAGE_CELSIUS;
+            double seas = planet.WaterCover * 100.0;
+            double clouds = planet.CloudCover * 100.0;
+            double pressure = planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS;
+            double ice = planet.IceCover * 100.0;
+
+            return
+                planet.SurfaceGravity >= .8 &&
+                planet.SurfaceGravity <= 1.2 &&
+                relTemp >= -2.0 &&
+                relTemp <= 3.0 &&
+                ice <= 10.0 &&
+                pressure >= 0.5 &&
+                pressure <= 2.0 &&
+                clouds >= 40.0 &&
+                clouds <= 80.0 &&
+                seas >= 50.0 &&
+                seas <= 80.0 &&
+                planet.Type != PlanetType.Water &&
+                planet.breathability == Data.Breathability.Breathable;
+        }
+
+        /// <summary>
         /// This function, given the orbital radius of a planet in AU, returns
         /// the orbital 'zone' of the planet.
         /// </summary>
