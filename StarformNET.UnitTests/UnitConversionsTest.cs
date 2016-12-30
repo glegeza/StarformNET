@@ -13,6 +13,7 @@ namespace DLS.StarformNET.UnitTests
         public class KelvinToFahrenheitTests
         {
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertAbsoluteZero()
             {
@@ -20,6 +21,7 @@ namespace DLS.StarformNET.UnitTests
                 Assert.AreEqual(resultZero, -459.67, DELTA, "Absolute zero converted incorrectly.");
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositiveKelvin()
             {
@@ -56,6 +58,7 @@ namespace DLS.StarformNET.UnitTests
         [TestClass]
         public class MMHGToMillibarsTests
         {
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertZeroPressure()
             {
@@ -63,6 +66,7 @@ namespace DLS.StarformNET.UnitTests
                 Assert.AreEqual(result, 0.0, DELTA, "Incorrect conversion for zero mmHg");
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePressureLessThanOne()
             {
@@ -97,6 +101,7 @@ namespace DLS.StarformNET.UnitTests
                 }
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePressureWholeNumbers()
             {
@@ -135,6 +140,7 @@ namespace DLS.StarformNET.UnitTests
         [TestClass]
         public class MillibarsToAtmTests
         {
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertZeroPressure()
             {
@@ -142,6 +148,7 @@ namespace DLS.StarformNET.UnitTests
                 Assert.AreEqual(result, 0.0, DELTA, "Incorrect conversion for zero mmHg");
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertEarthSurfacePressure()
             {
@@ -149,6 +156,7 @@ namespace DLS.StarformNET.UnitTests
                 Assert.AreEqual(result, 1.0, DELTA, "Incorrect conversion for Earth surface pressure.");
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePressureLessThanOne()
             {
@@ -185,6 +193,7 @@ namespace DLS.StarformNET.UnitTests
                 }
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePressureWholeNumbers()
             {
@@ -236,6 +245,7 @@ namespace DLS.StarformNET.UnitTests
                 25000
             };
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertZeroPPM()
             {
@@ -255,6 +265,7 @@ namespace DLS.StarformNET.UnitTests
                 }
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void Convert1MPPM()
             {
@@ -274,6 +285,7 @@ namespace DLS.StarformNET.UnitTests
                 }
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePPMWholeNumbers1Atm()
             {
@@ -298,6 +310,7 @@ namespace DLS.StarformNET.UnitTests
                 }
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePPMWholeNumbersBelow1Atm()
             {
@@ -322,6 +335,7 @@ namespace DLS.StarformNET.UnitTests
                 }
             }
 
+            [TestCategory("Unit Conversions")]
             [TestMethod]
             public void ConvertPositivePPMWholeNumbersAbove1Atm()
             {
