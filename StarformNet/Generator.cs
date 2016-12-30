@@ -414,7 +414,6 @@ namespace DLS.StarformNET
                     {
                         planet.AtmosphericGases[n] = new Gas();
                         planet.AtmosphericGases[n].GasType = _gasTable[i];
-                        //planet.AtmosphericGases[n].num = _gasTable[i].num;
                         planet.AtmosphericGases[n].surf_pressure = planet.SurfPressure * amount[i] / totamount;
 
                         n++;
