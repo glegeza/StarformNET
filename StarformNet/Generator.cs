@@ -250,10 +250,7 @@ namespace DLS.StarformNET
                     CalculateGases(planet);
                 }
 
-                if ( ((int)planet.Day == (int)(planet.OrbitalPeriod * 24.0)) || planet.HasResonantPeriod)
-                {
-                    planet.IsTidallyLocked = true;
-                }
+                planet.IsTidallyLocked = Environment.IsTidallyLocked(planet);
 
                 // Assign planet type
                 if (planet.SurfPressure < 1.0)
