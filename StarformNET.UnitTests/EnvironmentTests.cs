@@ -24,8 +24,8 @@ namespace DLS.StarformNET.UnitTests
             {
                 return new Gas[]
                 {
-                    new Gas() { GasType = TestGases["O"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.21 },   // Oxygen
-                    new Gas() { GasType = TestGases["N"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.78 }    // Nitrogen
+                    new Gas(TestGases["O"], GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.21 ),
+                    new Gas(TestGases["N"], GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.78 )
                 };
             }
 
@@ -33,7 +33,7 @@ namespace DLS.StarformNET.UnitTests
             {
                 return new Gas[]
                 {
-                    new Gas() { GasType = TestGases["CO2"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS } // CO2
+                    new Gas(TestGases["CO2"], GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS )
                 };
             }
 
@@ -41,7 +41,7 @@ namespace DLS.StarformNET.UnitTests
             {
                 return new Gas[]
                 {
-                    new Gas() {GasType = TestGases["N"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS } // Nitrogen
+                    new Gas(TestGases["N"], GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS )
                 };
             }
 
