@@ -1,4 +1,4 @@
-namespace DLS.StarformNet
+namespace DLS.StarformNET
 {
     using System;
 

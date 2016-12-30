@@ -3,7 +3,7 @@ namespace DLS.StarformNET.UnitTests
 
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using StarformNet;
+    using StarformNET;
 
     public class UnitConversionsTest
     {

@@ -1,5 +1,5 @@
 
-namespace DLS.StarformNet
+namespace DLS.StarformNET
 {
 using System;
 using System.Collections.Generic;

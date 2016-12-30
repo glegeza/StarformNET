@@ -1,4 +1,4 @@
-namespace DLS.StarformNet
+namespace DLS.StarformNET
 {
     /// <summary>
     /// Simple helper methods for converting between different unit types.

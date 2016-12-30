@@ -1,4 +1,4 @@
-namespace DLS.StarformNet
+namespace DLS.StarformNET
 {
     partial class MainGenerator
     {
@@ -30,7 +30,7 @@ namespace DLS.StarformNet
         {
             this._descriptionBox = new System.Windows.Forms.TextBox();
             this._regenButton = new System.Windows.Forms.Button();
-            this._systemMap = new DLS.StarformNet.Display.SystemMap();
+            this._systemMap = new DLS.StarformNET.Display.SystemMap();
             ((System.ComponentModel.ISupportInitialize)(this._systemMap)).BeginInit();
             this.SuspendLayout();
             // 

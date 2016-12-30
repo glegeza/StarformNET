@@ -1,4 +1,4 @@
-namespace DLS.StarformNet.Data
+namespace DLS.StarformNET.Data
 {
     // TODO break this class up
 

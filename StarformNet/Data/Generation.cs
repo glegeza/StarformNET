@@ -1,4 +1,4 @@
-namespace DLS.StarformNet.Data
+namespace DLS.StarformNET.Data
 {
     public class Generation
     {

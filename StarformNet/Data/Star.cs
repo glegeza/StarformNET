@@ -1,4 +1,4 @@
-namespace DLS.StarformNet.Data
+namespace DLS.StarformNET.Data
 {
     // TODO KnownPlanets should probably be a list? Or leaving it as a linked list might be fine too.
     // TODO units?

@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StarformNet\StarformNet.csproj">
+    <ProjectReference Include="..\StarformNet\StarformNET.csproj">
       <Project>{EDE19080-B97B-418C-86B8-909512579C1D}</Project>
-      <Name>StarformNet</Name>
+      <Name>StarformNET</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

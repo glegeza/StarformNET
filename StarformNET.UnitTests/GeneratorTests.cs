@@ -2,8 +2,8 @@ namespace DLS.StarformNET.UnitTests
 {
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using StarformNet;
-    using StarformNet.Data;
+    using StarformNET;
+    using StarformNET.Data;
     using System.Linq;
     using System.Collections.Generic;
 

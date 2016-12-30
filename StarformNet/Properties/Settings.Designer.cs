@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DLS.StarformNet.Properties {
+namespace DLS.StarformNET.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

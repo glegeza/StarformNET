@@ -1,4 +1,4 @@
-namespace DLS.StarformNet.Data
+namespace DLS.StarformNET.Data
 {
 
     using Newtonsoft.Json;

@@ -7,7 +7,7 @@
     <ProjectGuid>{EDE19080-B97B-418C-86B8-909512579C1D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DLS.StarformNet</RootNamespace>
+    <RootNamespace>DLS.StarformNET</RootNamespace>
     <AssemblyName>StarformNet</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

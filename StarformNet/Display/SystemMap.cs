@@ -1,4 +1,4 @@
-namespace DLS.StarformNet.Display
+namespace DLS.StarformNET.Display
 {
     using System.Collections.Generic;
     using System.Drawing;
