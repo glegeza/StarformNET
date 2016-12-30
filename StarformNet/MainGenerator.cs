@@ -13,7 +13,7 @@ namespace DLS.StarformNET
         private static string ArtFolder = "Art";
         private static string PlanetsFile = "PixelPlanets.png";
 
-        private ChemTable[] _gases;
+        private ChemType[] _gases;
         private PlanetSpriteSheet _planetSprites;
 
         public MainGenerator()
@@ -24,7 +24,7 @@ namespace DLS.StarformNET
                 5, 6);
             _systemMap.SpriteSheet = _planetSprites;
             _systemMap.PlanetPadding = 10;
-            _gases = ChemTable.LoadFromFile(Path.Combine(Directory.GetCurrentDirectory(), "elements.dat"));
+            _gases = ChemType.LoadFromFile(Path.Combine(Directory.GetCurrentDirectory(), "elements.dat"));
 
             GenerateSystem();
         }

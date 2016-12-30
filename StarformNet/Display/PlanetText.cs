@@ -9,7 +9,7 @@ namespace DLS.StarformNET.Display
 
     public static class PlanetText
     {
-        public static string GetSystemText(List<Planet> planets, ChemTable[] gases)
+        public static string GetSystemText(List<Planet> planets, ChemType[] gases)
         {
             var sb = new StringBuilder();
             var sun = planets[0].Star;// head.Star;
@@ -25,7 +25,7 @@ namespace DLS.StarformNET.Display
             return sb.ToString();
         }
 
-        public static string GetSunText(Star star, ChemTable[] gases)
+        public static string GetSunText(Star star, ChemType[] gases)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Star");
@@ -38,7 +38,7 @@ namespace DLS.StarformNET.Display
             return sb.ToString();
         }
 
-        public static string GetPlanetText(Planet planet, ChemTable[] gases)
+        public static string GetPlanetText(Planet planet, ChemType[] gases)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0} {1}", GetPlanetNumber(planet), GetPlanetTypeText(planet));
@@ -234,7 +234,7 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.000} atm", UnitConversions.MillibarsToAtm(planet.SurfPressure));
         }
 
-        static string GetAtmoStringPP(Planet planet, ChemTable[] gases)
+        static string GetAtmoStringPP(Planet planet, ChemType[] gases)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -263,7 +263,7 @@ namespace DLS.StarformNET.Display
             return str;
         }
 
-        static string GetAtmoString(Planet planet, ChemTable[] gases, double minFraction = 0.01)
+        static string GetAtmoString(Planet planet, ChemType[] gases, double minFraction = 0.01)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {

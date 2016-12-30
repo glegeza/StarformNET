@@ -53,7 +53,7 @@
     <Compile Include="Accrete.cs" />
     <Compile Include="Data\Breathability.cs" />
     <Compile Include="Data\Catalog.cs" />
-    <Compile Include="Data\ChemTable.cs" />
+    <Compile Include="Data\ChemType.cs" />
     <Compile Include="Data\DustRecord.cs" />
     <Compile Include="Data\Gas.cs" />
     <Compile Include="Data\Generation.cs" />

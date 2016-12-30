@@ -15,9 +15,9 @@ namespace DLS.StarformNET
         private double _dustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
         private long _flagSeed = 0;
         private Accrete _accrete = new Accrete();
-        private ChemTable[] _gasTable;
+        private ChemType[] _gasTable;
 
-        public Generator(ChemTable[] g)
+        public Generator(ChemType[] g)
         {
             _gasTable = g;
         }
@@ -422,7 +422,7 @@ namespace DLS.StarformNET
             
         }
 
-        private void CheckForSpecialRules(out double abund, out double react, double pressure, Planet planet, ChemTable gas)
+        private void CheckForSpecialRules(out double abund, out double react, double pressure, Planet planet, ChemType gas)
         {
             var sun = planet.Star;
             var pres2 = 1.0;
