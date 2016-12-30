@@ -73,7 +73,7 @@ namespace DLS.StarformNET.UnitTests
                 var sun = GetTestStar();
                 planet.Star = sun;
                 var generator = new Generator(new ChemTable[0]);
-                generator.CalculateGases(ref sun, ref planet);
+                generator.CalculateGases(planet);
 
                 Assert.AreEqual(0, planet.GasCount);
                 Assert.AreEqual(0, planet.AtmosphericGases.Length);
@@ -87,7 +87,7 @@ namespace DLS.StarformNET.UnitTests
                 var planet = GetTestPlanetAtmosphere();
                 var star = planet.Star;
                 var chemTable = ChemTable.GetDefaultTable();
-                generator.CalculateGases(ref star, ref planet);
+                generator.CalculateGases(planet);
 
                 Assert.AreEqual(0, planet.GasCount);
                 Assert.AreEqual(0, planet.AtmosphericGases.Length);
@@ -115,7 +115,7 @@ namespace DLS.StarformNET.UnitTests
                 var star = planet.Star;
                 var chemTable = ChemTable.GetDefaultTable();
                 var generator = new Generator(chemTable);
-                generator.CalculateGases(ref star, ref planet);
+                generator.CalculateGases(planet);
 
                 Assert.AreEqual(expected.Count, planet.GasCount);
 
@@ -133,7 +133,7 @@ namespace DLS.StarformNET.UnitTests
                 var planet = GetTestPlanetNoAtmosphere();
                 var generator = new Generator(ChemTable.GetDefaultTable());
                 var star = planet.Star;
-                generator.CalculateGases(ref star, ref planet);
+                generator.CalculateGases(planet);
 
                 Assert.AreEqual(0, planet.GasCount);
                 Assert.AreEqual(0, planet.AtmosphericGases.Length);

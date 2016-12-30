@@ -247,7 +247,7 @@ namespace DLS.StarformNet
                 
                 if (doGases)
                 {
-                    CalculateGases(ref sun, ref planet);
+                    CalculateGases(planet);
                 }
 
                 if ( ((int)planet.Day == (int)(planet.OrbitalPeriod * 24.0)) || planet.HasResonantPeriod)
@@ -353,10 +353,10 @@ namespace DLS.StarformNet
 
         }
 
-        // TODO the star doesn't need to be passed in here since there's a reference in
-        // the planet anyway.
-        public void CalculateGases(ref Star sun, ref Planet planet)
+        // TODO this really should be in a separate class
+        public void CalculateGases(Planet planet)
         {
+            var sun = planet.Star;
             planet.GasCount = 0;
             planet.AtmosphericGases = new Gas[0];
 
