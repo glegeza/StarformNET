@@ -958,14 +958,14 @@ namespace DLS.StarformNET
         /// <param name="planet"></param>
         /// <param name="gases"></param>
         /// <returns></returns>
-        public static Breathability Breathability(Planet planet, ChemTable[] gases)
+        public static Breathability Breathability(Planet planet)
         {
             // This function uses figures on the maximum inspired partial pressures
             // of Oxygen, other atmospheric and traces gases as laid out on pages 15,
             // 16 and 18 of Dole's Habitable Planets for Man to derive breathability
             // of the planet's atmosphere.                                       JLB
 
-            if (planet == null || gases == null)
+            if (planet == null)
             {
                 throw new ArgumentNullException();
             }
@@ -979,24 +979,17 @@ namespace DLS.StarformNET
 
             for (var index = 0; index < planet.GasCount; index++)
             {
-                int gas_no = 0;
+                var gas = planet.AtmosphericGases[index];
 
                 double ipp = InspiredPartialPressure(planet.SurfPressure, planet.AtmosphericGases[index].surf_pressure);
-
-                for (var n = 0; n < gases.Length; n++)
-                {
-                    if (gases[n].num == planet.AtmosphericGases[index].num)
-                    {
-                        gas_no = n;
-                    }
-                }
-
-                if (ipp > gases[gas_no].max_ipp)
+                if (ipp > gas.GasType.max_ipp)
                 {
                     return Data.Breathability.Poisonous;
                 }
 
-                if (planet.AtmosphericGases[index].num == GlobalConstants.AN_O)
+                // TODO why not just have a min_ipp for every gas, even if it's going to be zero
+                // for everything that's not oxygen?
+                if (gas.GasType.num == GlobalConstants.AN_O)
                 {
                     oxygen_ok = ((ipp >= GlobalConstants.MIN_O2_IPP) && (ipp <= GlobalConstants.MAX_O2_IPP));
                 }

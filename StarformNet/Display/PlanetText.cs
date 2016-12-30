@@ -253,7 +253,7 @@ namespace DLS.StarformNET.Display
             for (var i = 0; i < orderedGases.Length; i++)
             {
                 var gas = orderedGases[i];
-                var curGas = gases.First(g => g.num == gas.num);
+                var curGas = gas.GasType;
                 str += String.Format("{0} [{1:0.0000} mb]", curGas.symbol, gas.surf_pressure);
                 if (i < orderedGases.Length - 1)
                 {
@@ -282,7 +282,7 @@ namespace DLS.StarformNET.Display
             for (var i = 0; i < orderedGases.Length; i++)
             {
                 var gas = orderedGases[i];
-                var curGas = gases.First(g => g.num == gas.num);
+                var curGas = gas.GasType;
                 var pct = (gas.surf_pressure / planet.SurfPressure) * 100;
                 str += String.Format("{0} [{1:0.00}%]", curGas.symbol, pct);
                 if (i < orderedGases.Length - 1)

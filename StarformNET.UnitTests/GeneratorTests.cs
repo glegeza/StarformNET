@@ -121,8 +121,7 @@ namespace DLS.StarformNET.UnitTests
 
                 foreach (var gas in planet.AtmosphericGases)
                 {
-                    var chem = chemTable.First(c => c.num == gas.num);
-                    Assert.AreEqual(expected[chem.symbol], gas.surf_pressure, DELTA);
+                    Assert.AreEqual(expected[gas.GasType.symbol], gas.surf_pressure, DELTA);
                 }
             }
 

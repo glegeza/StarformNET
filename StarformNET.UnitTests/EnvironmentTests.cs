@@ -13,12 +13,19 @@ namespace DLS.StarformNET.UnitTests
         [TestClass]
         public class BreathabilityTests
         {
+            private static Dictionary<string, ChemTable> TestGases = new Dictionary<string, ChemTable>()
+            {
+                {"N", new ChemTable(GlobalConstants.AN_N,  "N",    "N<SUB><SMALL>2</SMALL></SUB>",  "Nitrogen",        14.0067,  63.34,  77.40,  0.0012506, 1.99526e-05, 3.13329,       0,     GlobalConstants.MAX_N2_IPP ) },
+                {"O", new ChemTable(GlobalConstants.AN_O,  "O",    "O<SUB><SMALL>2</SMALL></SUB>",  "Oxygen",          15.9994,  54.80,  90.20,  0.001429,  0.501187,    23.8232,       10,    GlobalConstants.MAX_O2_IPP ) },
+                {"CO2", new ChemTable(GlobalConstants.AN_CO2, "CO2", "CO<SUB><SMALL>2</SMALL></SUB>", "CarbonDioxide",   44.0000, 194.66, 194.66,  0.001,     0.01,        0.0005,        0,     GlobalConstants.MAX_CO2_IPP) },
+            };
+
             private Gas[] GetMockBreathableAtmo()
             {
                 return new Gas[]
                 {
-                    new Gas() { num = 8, surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.21 },   // Oxygen
-                    new Gas() { num = 7, surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.78 }    // Nitrogen
+                    new Gas() { GasType = TestGases["O"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.21 },   // Oxygen
+                    new Gas() { GasType = TestGases["N"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS * 0.78 }    // Nitrogen
                 };
             }
 
@@ -26,7 +33,7 @@ namespace DLS.StarformNET.UnitTests
             {
                 return new Gas[]
                 {
-                    new Gas() { num = 902, surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS } // CO2
+                    new Gas() { GasType = TestGases["CO2"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS } // CO2
                 };
             }
 
@@ -34,7 +41,7 @@ namespace DLS.StarformNET.UnitTests
             {
                 return new Gas[]
                 {
-                    new Gas() {num = 7, surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS } // Nitrogen
+                    new Gas() {GasType = TestGases["N"], surf_pressure = GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS } // Nitrogen
                 };
             }
 
@@ -60,24 +67,16 @@ namespace DLS.StarformNET.UnitTests
             [TestMethod]
             public void TestNullPlanet()
             {
-                var breathe = StarformNET.Environment.Breathability(null, ChemTable.GetDefaultTable());
+                var breathe = StarformNET.Environment.Breathability(null);
             }
 
-            [TestCategory("Breathability")]
-            [ExpectedException(typeof(ArgumentNullException))]
-            [TestMethod]
-            public void TestNullChemTable()
-            {
-                var planet = GetMockPlanet(GetMockPoisonousAtmo);
-                var breathe = StarformNET.Environment.Breathability(planet, null);
-            }
 
             [TestCategory("Breathability")]
             [TestMethod]
             public void TestNoAtmoPlanet()
             {
                 var planet = GetMockPlanet(GetMockNoAtmo);
-                var breathe = StarformNET.Environment.Breathability(planet, ChemTable.GetDefaultTable());
+                var breathe = StarformNET.Environment.Breathability(planet);
                 Assert.AreEqual(Breathability.None, breathe);
             }
 
@@ -86,7 +85,7 @@ namespace DLS.StarformNET.UnitTests
             public void TestBreathablePlanet()
             {
                 var planet = GetMockPlanet(GetMockBreathableAtmo);
-                var breathe = StarformNET.Environment.Breathability(planet, ChemTable.GetDefaultTable());
+                var breathe = StarformNET.Environment.Breathability(planet);
                 Assert.AreEqual(Breathability.Breathable, breathe);
             }
 
@@ -95,7 +94,7 @@ namespace DLS.StarformNET.UnitTests
             public void TestUnbreathablePlanet()
             {
                 var planet = GetMockPlanet(GetMockUnbreathableAtmo);
-                var breathe = StarformNET.Environment.Breathability(planet, ChemTable.GetDefaultTable());
+                var breathe = StarformNET.Environment.Breathability(planet);
                 Assert.AreEqual(Breathability.Unbreathable, breathe);
             }
 
@@ -104,7 +103,7 @@ namespace DLS.StarformNET.UnitTests
             public void TestPoisonousPlanet()
             {
                 var planet = GetMockPlanet(GetMockPoisonousAtmo);
-                var breathe = StarformNET.Environment.Breathability(planet, ChemTable.GetDefaultTable());
+                var breathe = StarformNET.Environment.Breathability(planet);
                 Assert.AreEqual(Breathability.Poisonous, breathe);
             }
         }

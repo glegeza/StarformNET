@@ -413,9 +413,9 @@ namespace DLS.StarformNET
                     if (amount[i] > 0.0)
                     {
                         planet.AtmosphericGases[n] = new Gas();
-                        planet.AtmosphericGases[n].num = _gasTable[i].num;
-                        planet.AtmosphericGases[n].surf_pressure = planet.SurfPressure
-                                                            * amount[i] / totamount;
+                        planet.AtmosphericGases[n].GasType = _gasTable[i];
+                        //planet.AtmosphericGases[n].num = _gasTable[i].num;
+                        planet.AtmosphericGases[n].surf_pressure = planet.SurfPressure * amount[i] / totamount;
 
                         n++;
                     }
@@ -465,7 +465,7 @@ namespace DLS.StarformNET
             // Check for and list planets with breathable atmospheres
 
             // TODO break this out into another function?
-            Breathability breathe = Environment.Breathability(planet, _gasTable);
+            Breathability breathe = Environment.Breathability(planet);
 
             // TODO move this calculation to somewhere else. Also, what units is this in?
             planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
@@ -482,7 +482,7 @@ namespace DLS.StarformNET
             double pressure = (planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS);
             double ice = (planet.IceCover * 100.0);
             double gravity = planet.SurfaceGravity;
-            breathe = Environment.Breathability(planet, _gasTable);
+            breathe = Environment.Breathability(planet);
 
             // TODO this needs to be a separate function
             // is the world earthlike? 
