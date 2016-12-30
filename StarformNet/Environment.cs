@@ -28,6 +28,16 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
+        /// Returns true if the planet's conditions can support human life
+        /// </summary>
+        public static bool IsHabitable(Planet planet)
+        {
+            return planet.breathability == Data.Breathability.Breathable &&
+                !planet.HasResonantPeriod &&
+                (int)planet.Day != (int)(planet.OrbitalPeriod * 24.0);
+        }
+
+        /// <summary>
         /// This function, given the orbital radius of a planet in AU, returns
         /// the orbital 'zone' of the planet.
         /// </summary>

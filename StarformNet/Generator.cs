@@ -468,11 +468,7 @@ namespace DLS.StarformNET
             // TODO move this calculation to somewhere else. Also, what units is this in?
             planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
 
-            // Option needed? <-- what is this referring to?
-            if (breathe == Breathability.Breathable && !planet.HasResonantPeriod && (int)planet.Day != (int)(planet.OrbitalPeriod * 24.0))
-            {
-                planet.IsHabitable = true;
-            }
+            planet.IsHabitable = Environment.IsHabitable(planet);
             
             double rel_temp = (planet.SurfaceTemp - GlobalConstants.FREEZING_POINT_OF_WATER) - GlobalConstants.EARTH_AVERAGE_CELSIUS;
             double seas = planet.WaterCover * 100.0;
