@@ -940,9 +940,9 @@ namespace DLS.StarformNET
         /// Inspired partial pressure, taking into account humidification of the air in the nasal
         /// passage and throat.
         /// </summary>
-        /// <param name="surf_pressure"></param>
-        /// <param name="gas_pressure"></param>
-        /// <returns></returns>
+        /// <param name="surf_pressure">Total atmospheric surface pressure in millibars</param>
+        /// <param name="gas_pressure">Partial gas pressure in millibars</param>
+        /// <returns>Inspired partial pressure in millibars</returns>
         public static double InspiredPartialPressure(double surf_pressure, double gas_pressure)
         {
             //  This formula is on Dole's p. 14
