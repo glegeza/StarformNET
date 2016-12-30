@@ -469,22 +469,22 @@ namespace DLS.StarformNET
             planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
 
             // Option needed? <-- what is this referring to?
-            if ((breathe == Breathability.Breathable) && (!planet.HasResonantPeriod) && ((int)planet.Day != (int)(planet.OrbitalPeriod * 24.0)))
+            if (breathe == Breathability.Breathable && !planet.HasResonantPeriod && (int)planet.Day != (int)(planet.OrbitalPeriod * 24.0))
             {
                 planet.IsHabitable = true;
             }
             
             double rel_temp = (planet.SurfaceTemp - GlobalConstants.FREEZING_POINT_OF_WATER) - GlobalConstants.EARTH_AVERAGE_CELSIUS;
-            double seas = (planet.WaterCover * 100.0);
-            double clouds = (planet.CloudCover * 100.0);
-            double pressure = (planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS);
-            double ice = (planet.IceCover * 100.0);
+            double seas = planet.WaterCover * 100.0;
+            double clouds = planet.CloudCover * 100.0;
+            double pressure = planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS;
+            double ice = planet.IceCover * 100.0;
             double gravity = planet.SurfaceGravity;
             breathe = Environment.Breathability(planet);
 
             // TODO this needs to be a separate function
             // is the world earthlike? 
-            if ((gravity >= .8) && (gravity <= 1.2) && (rel_temp >= -2.0) && (rel_temp <= 3.0) && (ice <= 10.0) && (pressure >= 0.5) && (pressure <= 2.0) && (clouds >= 40.0) && (clouds <= 80.0) && (seas >= 50.0) && (seas <= 80.0) && (planet.Type != PlanetType.Water) && (breathe == Breathability.Breathable))
+            if (gravity >= .8 && gravity <= 1.2 && rel_temp >= -2.0 && rel_temp <= 3.0 && ice <= 10.0 && pressure >= 0.5 && pressure <= 2.0 && (clouds >= 40.0) && (clouds <= 80.0) && (seas >= 50.0) && (seas <= 80.0) && (planet.Type != PlanetType.Water) && breathe == Breathability.Breathable)
             {
                 planet.IsEarthlike = true;
             }
