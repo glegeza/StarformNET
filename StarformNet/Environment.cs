@@ -965,6 +965,11 @@ namespace DLS.StarformNET
             // 16 and 18 of Dole's Habitable Planets for Man to derive breathability
             // of the planet's atmosphere.                                       JLB
 
+            if (planet == null || gases == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             bool oxygen_ok = false;
 
             if (planet.GasCount == 0)
