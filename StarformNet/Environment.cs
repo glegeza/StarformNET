@@ -42,7 +42,7 @@ namespace DLS.StarformNET
         {
             return planet.breathability == Data.Breathability.Breathable &&
                 !planet.HasResonantPeriod &&
-                (int)planet.Day != (int)(planet.OrbitalPeriod * 24.0);
+                !IsTidallyLocked(planet);
         }
 
         /// <summary>
@@ -937,7 +937,7 @@ namespace DLS.StarformNET
                 planet.CloudCover = 1.0;
             }
 
-            if ((planet.DaytimeTemp >= planet.BoilingPointWater) && (!first) && !((int)planet.Day == (int)(planet.OrbitalPeriod * 24.0) || (planet.HasResonantPeriod)))
+            if ((planet.DaytimeTemp >= planet.BoilingPointWater) && (!first) && !(IsTidallyLocked(planet) || planet.HasResonantPeriod))
             {
                 planet.WaterCover = 0.0;
                 boil_off = true;
