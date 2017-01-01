@@ -47,7 +47,7 @@ namespace DLS.StarformNET.Display
             sb.AppendLine();
             sb.AppendFormat("Orbital Distance: {0}\n", GetOrbitalDistanceAU(planet));
             sb.AppendLine();
-            sb.AppendFormat("Equatorial Radius: {0}\n", GetRadiusKM(planet));
+            sb.AppendFormat("Equatorial Radius: {0}\n", GetRadiusER(planet));
             sb.AppendLine();
             sb.AppendFormat("Surface Gravity: {0}\n", GetSurfaceGravityG(planet));
             sb.AppendLine();
@@ -218,6 +218,11 @@ namespace DLS.StarformNET.Display
         static string GetRadiusKM(Planet planet)
         {
             return String.Format("{0:0} km", planet.Radius);
+        }
+
+        static string GetRadiusER(Planet planet)
+        {
+            return String.Format("{0:0.00} ER", planet.Radius / GlobalConstants.KM_EARTH_RADIUS);
         }
 
         static string GetMassStringEM(Planet planet)
