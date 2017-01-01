@@ -37,11 +37,7 @@ namespace DLS.StarformNET
         private void GenerateSystem()
         {
             var generator = new Generator(_gases);
-            var star = new Star()
-            {
-                Mass = 1.0f,
-                Luminosity = 1.0f
-            };
+            var star = new Star();
             generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
             _systemMap.SetNewSystem(generator.Planets);
 
