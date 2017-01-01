@@ -104,7 +104,7 @@ namespace DLS.StarformNET
         /// </summary>
         /// <param name="mass">Mass in units of solar mass</param>
         /// <param name="giant">Is the planet a gas giant?</param>
-        /// <param name="zone"></param>
+        /// <param name="zone">Orbital zone</param>
         /// <returns>Radius in km</returns>
         public static double KothariRadius(double mass, bool giant, int zone)
         {
@@ -131,8 +131,7 @@ namespace DLS.StarformNET
                     atomic_num = 8.0;
                 }
             }
-            else
-                if (zone == 2)
+            else if (zone == 2)
             {
                 if (giant)
                 {
