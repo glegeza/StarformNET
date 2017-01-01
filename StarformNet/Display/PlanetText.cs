@@ -55,6 +55,8 @@ namespace DLS.StarformNET.Display
             sb.AppendLine();
             sb.AppendFormat("Mass: {0}\n", GetMassStringEM(planet));
             sb.AppendLine();
+            sb.AppendFormat("Density: {0}\n", GetDensity(planet));
+            sb.AppendLine();
             sb.AppendFormat("Length of Year: {0}\n", GetOrbitalPeriodDay(planet));
             sb.AppendLine();
             sb.AppendFormat("Length of Day: {0}\n", GetLengthofDayHours(planet));
@@ -80,6 +82,11 @@ namespace DLS.StarformNET.Display
             sb.AppendFormat("Atmospheric Composition (Partial Pressure): {0}\n", GetAtmoStringPP(planet, gases));
 
             return sb.ToString();
+        }
+
+        private static string GetDensity(Planet planet)
+        {
+            return String.Format("{0:0.00} g/cm3", planet.Density);
         }
 
         private static string GetBoilingPoint(Planet planet)
