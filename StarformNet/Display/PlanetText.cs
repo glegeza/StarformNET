@@ -122,6 +122,10 @@ namespace DLS.StarformNET.Display
                     sb.Append(planet.Type);
                     break;
             }
+            if (planet.HasResonantPeriod)
+            {
+                sb.Append(", Resonant Orbital Period");
+            }
             if (planet.IsTidallyLocked)
             {
                 sb.Append(", Tidally Locked");

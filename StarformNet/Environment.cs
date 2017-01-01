@@ -28,6 +28,14 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
+        /// Returns true if the planet is tidally locked to its parent body.
+        /// </summary>
+        public static bool IsTidallyLocked(Planet planet)
+        {
+            return (int)planet.Day == (int)(planet.OrbitalPeriod * 24);
+        }
+
+        /// <summary>
         /// Returns true if the planet's conditions can support human life
         /// </summary>
         public static bool IsHabitable(Planet planet)
