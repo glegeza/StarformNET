@@ -12,8 +12,8 @@ namespace DLS.StarformNET.Display
         public static string GetSystemText(List<Planet> planets, ChemType[] gases)
         {
             var sb = new StringBuilder();
-            var sun = planets[0].Star;// head.Star;
-            sb.AppendLine(GetSunText(sun, gases));
+            var sun = planets[0].Star;
+            sb.AppendLine(StarText.GetFullStarTextRelative(sun, true));
             sb.AppendLine();
 
             foreach (var p in planets)
@@ -24,20 +24,6 @@ namespace DLS.StarformNET.Display
             }
             return sb.ToString();
         }
-
-        public static string GetSunText(Star star, ChemType[] gases)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Star");
-            sb.AppendLine("=========================");
-            sb.AppendFormat("Luminosity: {0:0.00}", star.Luminosity);
-            sb.AppendLine();
-            sb.AppendFormat("Mass: {0:0.00} SM", star.Mass);
-            sb.AppendLine();
-            sb.AppendFormat("Age: {0:E2} years", star.Age);
-            return sb.ToString();
-        }
-
         public static string GetPlanetText(Planet planet, ChemType[] gases)
         {
             StringBuilder sb = new StringBuilder();

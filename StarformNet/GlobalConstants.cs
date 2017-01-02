@@ -6,6 +6,7 @@ namespace DLS.StarformNET
     {
         public static double RADIANS_PER_ROTATION         = (2.0 * Math.PI);
 
+        public static double SUN_AGE_IN_YEARS             = (4600000000);
         public static double ECCENTRICITY_COEFF           = (0.077);                       // Dole's was 0.077			
         public static double PROTOPLANET_MASS             = (1.0E-15);                     // Units of solar masses	
         public static double CHANGE_IN_EARTH_ANG_VEL      = (-1.3E-15);                    // Units of radians/sec/year

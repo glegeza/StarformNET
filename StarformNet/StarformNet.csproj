@@ -63,6 +63,7 @@
     <Compile Include="Display\PlanetText.cs" />
     <Compile Include="Display\Sprite.cs" />
     <Compile Include="Display\SpriteSheet.cs" />
+    <Compile Include="Display\StarText.cs" />
     <Compile Include="Display\SystemMap.cs">
       <SubType>Component</SubType>
     </Compile>
