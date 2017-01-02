@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="Accrete.cs" />
     <Compile Include="Data\Breathability.cs" />
-    <Compile Include="Data\Catalog.cs" />
     <Compile Include="Data\ChemType.cs" />
     <Compile Include="Data\DustRecord.cs" />
     <Compile Include="Data\Gas.cs" />
@@ -64,6 +63,9 @@
     <Compile Include="Display\Sprite.cs" />
     <Compile Include="Display\SpriteSheet.cs" />
     <Compile Include="Display\StarText.cs" />
+    <Compile Include="Display\SystemInfoGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Display\SystemMap.cs">
       <SubType>Component</SubType>
     </Compile>
