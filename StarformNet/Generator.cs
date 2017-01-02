@@ -9,9 +9,6 @@ namespace DLS.StarformNET
         private static double MIN_SUN_AGE = 1.0E9;
         private static double MAX_SUN_AGE = 6.0E9;
 
-        public Planet InnermostPlanet { get; private set; }
-        public List<Planet> Planets { get; private set; }
-
         private double _dustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
         private long _flagSeed = 0;
         private Accrete _accrete = new Accrete();
@@ -22,10 +19,9 @@ namespace DLS.StarformNET
             _gasTable = g;
         }
 
-        public void GenerateStellarSystem(ref Star sun, Planet seedSystem, string flagChar, int systemNo, string systemName, bool doGases, bool doMoons)
+        public List<Planet> GenerateStellarSystem(ref Star sun, Planet seedSystem, string flagChar, int systemNo, string systemName, bool doGases, bool doMoons)
         {
-            _accrete = new Accrete();           
-            Planets = new List<Planet>();
+            _accrete = new Accrete();        
 
             // TODO why is this randomizing for high and low sun masses?
             if (sun.Mass < 0.2 || sun.Mass > 1.5)
@@ -41,10 +37,11 @@ namespace DLS.StarformNET
 
             sun.EcosphereRadius = Math.Sqrt(sun.Luminosity);
             sun.Life = 1.0E10 * (sun.Mass / sun.Luminosity);
-            
+
+            Planet seed = null;
             if (seedSystem != null)
             {
-                InnermostPlanet = seedSystem;
+                seed = seedSystem;
                 sun.Age = 5.0E9;
             }
             else
@@ -54,32 +51,32 @@ namespace DLS.StarformNET
                     sun.Life < MAX_SUN_AGE ? sun.Life : MAX_SUN_AGE);
 
                 double outer_planet_limit = GetOuterLimit(sun);
-                InnermostPlanet = _accrete.DistPlanetaryMasses(sun.Mass, 
+                seed = _accrete.DistPlanetaryMasses(sun.Mass, 
                     sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
                     _dustDensityCoeff, seedSystem, doMoons);
             }
 
-            GeneratePlanets(ref sun, seedSystem == null, flagChar, systemNo, systemName, doGases, doMoons);
+            return GeneratePlanets(sun, seed, seedSystem == null, flagChar, systemNo, systemName, doGases, doMoons);
         }
 
-        private void GeneratePlanets(ref Star sun, bool useRandomTilt, string flatChar, int systemNo, string systemName, bool doGases, bool doMoons)
+        private List<Planet> GeneratePlanets(Star sun, Planet seed, bool useRandomTilt, string flatChar, int systemNo, string systemName, bool doGases, bool doMoons)
         {
+            var planets = new List<Planet>();
             Planet planet;
             int planet_no = 0;
-            Planet moon;
-            int moons = 0;
-
-            for (planet = InnermostPlanet, planet_no = 1; planet != null; planet = planet.NextPlanet, planet_no++)
+            for (planet = seed, planet_no = 1; planet != null; planet = planet.NextPlanet, planet_no++)
             {
                 string planet_id = String.Format("{0} (-{1} -{2}{3}) {4}", systemName, _flagSeed, flatChar, systemNo, planet_no);
 
                 GeneratePlanet(planet, planet_no, ref sun, useRandomTilt, planet_id, doGases, doMoons, false);
-                Planets.Add(planet);
+                planets.Add(planet);
 
                 // Now we're ready to test for habitable planets,
                 // so we can count and log them and such
                 CheckPlanet(ref planet, planet_id, false);
 
+                Planet moon;
+                int moons = 0;
                 for (moon = planet.FirstMoon, moons = 1; moon != null;  moon = moon.NextPlanet, moons++)
                 {
                     string moon_id = String.Format("{0}.{1}", planet_id, moons);
@@ -87,6 +84,8 @@ namespace DLS.StarformNET
                     CheckPlanet(ref moon, moon_id, true);
                 }
             }
+
+            return planets;
         }
 
         private void GeneratePlanet(Planet planet, int planetNo, ref Star sun, bool useRandomTilt, string planetID, bool doGases, bool doMoons, bool isMoon)

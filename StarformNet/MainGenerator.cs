@@ -38,10 +38,10 @@ namespace DLS.StarformNET
         {
             var generator = new Generator(_gases);
             var star = new Star();
-            generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
-            _systemMap.SetNewSystem(generator.Planets);
+            var system = generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
+            _systemMap.SetNewSystem(system);
 
-            var text = PlanetText.GetSystemText(generator.Planets, _gases);
+            var text = PlanetText.GetSystemText(system, _gases);
             _descriptionBox.Text = text;
         }
     }
