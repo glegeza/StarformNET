@@ -59,6 +59,12 @@
     <Compile Include="Data\Planet.cs" />
     <Compile Include="Data\PlanetType.cs" />
     <Compile Include="Data\Star.cs" />
+    <Compile Include="Display\InfoGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Display\PlanetInfoGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Display\PlanetText.cs" />
     <Compile Include="Display\Sprite.cs" />
     <Compile Include="Display\SpriteSheet.cs" />
