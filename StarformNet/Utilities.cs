@@ -6,6 +6,11 @@ namespace DLS.StarformNET
     {
         public static Random Random = new Random();
 
+        public static double GetSemiMinorAxis(double a, double e)
+        {
+            return a * Math.Sqrt(1 - Math.Pow(e, 2));
+        }
+
         public static void InitWithSeed(int seed)
         {
             Random = new Random(seed);
@@ -49,16 +54,7 @@ namespace DLS.StarformNET
 
         public static double RandomEccentricity()
         {
-            double e;
-
-            e = 1.0 - Math.Pow(RandomNumber(0.0, 1.0), GlobalConstants.ECCENTRICITY_COEFF);
-
-            if (e > .99)    // Note that this coresponds to a random
-            {
-                e = .99;    // number less than 10E-26
-                            // It happens with GNU C for -S254 -W27
-            }
-            return (e);
+            return 1.0 - Math.Pow(Random.NextDouble(), GlobalConstants.ECCENTRICITY_COEFF);
         }
     }
 }
