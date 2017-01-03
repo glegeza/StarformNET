@@ -79,7 +79,7 @@ namespace DLS.StarformNET
         public static double MOLAR_GAS_CONST              = (8314.41);                     // units: g*m2/ = (sec2*K*mol); 
         public static double K                            = (50.0);                        // K = gas/dust ratio		
         public static double B                            = (1.2E-5);                      // Used in Crit_mass calc	
-        public static double DUST_DENSITY_COEFF           = (2.0E-3);                      // A in Dole's paper		
+        public static double DUST_DENSITY_COEFF           = (0.002);                       // A in Dole's paper		
         public static double ALPHA                        = (5.0);                         // Used in density calcs	
         public static double N                            = (3.0);                         // Used in density calcs	
         public static double J                            = (1.46E-19);                    // Used in day-length calcs (cm2/sec2 g) 

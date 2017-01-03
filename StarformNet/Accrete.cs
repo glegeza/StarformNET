@@ -6,6 +6,8 @@ namespace DLS.StarformNET
 
     public class Accrete
     {
+        public double CloudEccentricity = 0.2;
+
         private bool _dustLeft;
         private double _rInner;
         private double _rOuter;
@@ -107,7 +109,7 @@ namespace DLS.StarformNET
             _dustHead.DustPresent = true;
             _dustHead.GasPresent = true;
             _dustLeft = true;
-            _cloudEccentricity = 0.2;
+            _cloudEccentricity = CloudEccentricity;
 
             _histHead.Dusts = _dustHead;
             _histHead.Planets = _planetHead;
