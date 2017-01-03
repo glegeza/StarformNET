@@ -43,6 +43,8 @@ namespace DLS.StarformNET
 
             var text = PlanetText.GetSystemText(system, _gases);
             _descriptionBox.Text = text;
+            _systemInfo.SetSystem(star, system);
+            _orbitMap.SetSystem(star, system);
         }
     }
 }
