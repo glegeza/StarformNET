@@ -7,6 +7,7 @@ namespace DLS.StarformNET
     using System.IO;
     using Display;
     using Data;
+    using System.Collections.Generic;
 
     public partial class MainGenerator : Form
     {
@@ -15,9 +16,12 @@ namespace DLS.StarformNET
 
         private ChemType[] _gases;
         private PlanetSpriteSheet _planetSprites;
+        private List<Planet> _system;
 
         public MainGenerator()
         {
+            AutoSize = true;
+            AutoScaleMode = AutoScaleMode.Font;
             InitializeComponent();
             var spriteFile = Path.Combine(Directory.GetCurrentDirectory(), ArtFolder, PlanetsFile);
             _planetSprites = new PlanetSpriteSheet(Image.FromFile(spriteFile), new Point(77, 71), new Size(32, 32), 5,
@@ -34,17 +38,31 @@ namespace DLS.StarformNET
             GenerateSystem();
         }
 
+        private void _planetSelector_Click(object sender, EventArgs e)
+        {
+            _planetInfoGroup.SetPlanet(_system[_planetSelector.SelectedIndex], _gases);
+        }
+
         private void GenerateSystem()
         {
             var generator = new Generator(_gases);
             var star = new Star();
-            var system = generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
-            _systemMap.SetNewSystem(system);
+            _system = generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
+            _systemMap.SetNewSystem(_system);
+            _planetSelector.Items.Clear();
 
-            var text = PlanetText.GetSystemText(system, _gases);
-            _descriptionBox.Text = text;
-            _systemInfo.SetSystem(star, system);
-            _orbitMap.SetSystem(star, system);
+            foreach (Planet planet in _system)
+            {
+                _planetSelector.Items.Add(String.Format("Planet {0}", planet.Position));
+            }
+            _planetSelector.SelectedIndex = 0;
+
+            var text = PlanetText.GetSystemText(_system, _gases);
+            //_descriptionBox.Text = text;
+            _systemInfo.SetSystem(star, _system);
+            _orbitMap.SetSystem(star, _system);
+            _planetInfoGroup.TabSpacing = 160;
+            _planetInfoGroup.SetPlanet(_system[0], _gases);
         }
     }
 }

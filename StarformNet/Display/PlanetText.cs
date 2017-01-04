@@ -70,27 +70,31 @@ namespace DLS.StarformNET.Display
             return sb.ToString();
         }
 
-        private static string GetDensity(Planet planet)
+        public static string GetDensity(Planet planet)
         {
             return String.Format("{0:0.00} g/cm3", planet.Density);
         }
 
-        private static string GetBoilingPoint(Planet planet)
+        public static string GetBoilingPoint(Planet planet)
         {
+            if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
+            {
+                return "-";
+            }
             return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.BoilingPointWater));
         }
 
-        private static string GetGreenhouseRise(Planet planet)
+        public static string GetGreenhouseRise(Planet planet)
         {
             return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.GreenhouseRise));
         }
 
-        private static string GetEscapeVelocity(Planet planet)
+        public static string GetEscapeVelocity(Planet planet)
         {
             return String.Format("{0:0.00} km/sec", UnitConversions.CMToKM(planet.EscapeVelocity));
         }
 
-        private static string GetPlanetTypeText(Planet planet)
+        public static string GetPlanetTypeText(Planet planet)
         {
             var sb = new StringBuilder();
             switch (planet.Type)
@@ -138,7 +142,7 @@ namespace DLS.StarformNET.Display
             return sb.ToString();
         }
 
-        private static string GetMoonCount(Planet planet)
+        public static string GetMoonCount(Planet planet)
         {
             var moons = 0;
             var moon = planet.FirstMoon;
@@ -150,7 +154,7 @@ namespace DLS.StarformNET.Display
             return moons.ToString();
         }
 
-        private static string GetSurfaceGravityG(Planet planet)
+        public static string GetSurfaceGravityG(Planet planet)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -159,32 +163,32 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.00} G", planet.SurfaceGravity);
         }
 
-        static string GetHydrosphere(Planet planet)
+        public static string GetHydrosphere(Planet planet)
         {
             return String.Format("{0:0.0}%", planet.WaterCover * 100);
         }
 
-        static string GetIceCover(Planet planet)
+        public static string GetIceCover(Planet planet)
         {
             return String.Format("{0:0.0}%", planet.IceCover * 100);
         }
 
-        static string GetCloudCover(Planet planet)
+        public static string GetCloudCover(Planet planet)
         {
             return String.Format("{0:0.0}%", planet.CloudCover * 100);
         }
 
-        static string GetDayTemp(Planet planet)
+        public static string GetDayTemp(Planet planet)
         {
             return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.DaytimeTemp));
         }
 
-        static string GetNightTemp(Planet planet)
+        public static string GetNightTemp(Planet planet)
         {
             return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.NighttimeTemp));
         }
 
-        static string GetLengthofDayHours(Planet planet)
+        public static string GetLengthofDayHours(Planet planet)
         {
             if (planet.Day > 24 * 7)
             {
@@ -193,7 +197,7 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.0} hours", planet.Day);
         }
 
-        static string GetOrbitalPeriodDay(Planet planet)
+        public static string GetOrbitalPeriodDay(Planet planet)
         {
             if (planet.OrbitalPeriod > 365 * 1.5)
             {
@@ -202,32 +206,32 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.0} days", planet.OrbitalPeriod);
         }
 
-        static string GetOrbitalDistanceAU(Planet planet)
+        public static string GetOrbitalDistanceAU(Planet planet)
         {
             return String.Format("{0:0.00} AU", planet.SemiMajorAxisAU);
         }
 
-        static string GetPlanetNumber(Planet planet)
+        public static string GetPlanetNumber(Planet planet)
         {
             return String.Format("{0}.", planet.Position);
         }
 
-        static string GetRadiusKM(Planet planet)
+        public static string GetRadiusKM(Planet planet)
         {
             return String.Format("{0:0} km", planet.Radius);
         }
 
-        static string GetRadiusER(Planet planet)
+        public static string GetRadiusER(Planet planet)
         {
             return String.Format("{0:0.00} ER", planet.Radius / GlobalConstants.KM_EARTH_RADIUS);
         }
 
-        static string GetMassStringEM(Planet planet)
+        public static string GetMassStringEM(Planet planet)
         {
             return String.Format("{0:0.00} EM", UnitConversions.SolarMassesToEarthMasses(planet.Mass));
         }
 
-        static string GetSurfacePressureStringAtm(Planet planet)
+        public static string GetSurfacePressureStringAtm(Planet planet)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -236,7 +240,7 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.000} atm", UnitConversions.MillibarsToAtm(planet.SurfPressure));
         }
 
-        static string GetAtmoStringPP(Planet planet, ChemType[] gases)
+        public static string GetAtmoStringPP(Planet planet, ChemType[] gases)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -265,7 +269,7 @@ namespace DLS.StarformNET.Display
             return str;
         }
 
-        static string GetAtmoString(Planet planet, ChemType[] gases, double minFraction = 0.01)
+        public static string GetAtmoString(Planet planet, ChemType[] gases, double minFraction = 1.0)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -286,11 +290,15 @@ namespace DLS.StarformNET.Display
                 var gas = orderedGases[i];
                 var curGas = gas.GasType;
                 var pct = (gas.surf_pressure / planet.SurfPressure) * 100;
-                str += String.Format("{0} [{1:0.00}%]", curGas.symbol, pct);
+                str += String.Format("{0:0.0}% {1}", pct, curGas.symbol);
                 if (i < orderedGases.Length - 1)
                 {
                     str += ", ";
                 }
+            }
+            if (orderedGases.Length < planet.AtmosphericGases.Length)
+            {
+                str += ", and trace gases";
             }
             return str;
         }

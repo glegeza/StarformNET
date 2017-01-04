@@ -1,4 +1,4 @@
-﻿namespace DLS.StarformNET.Display
+namespace DLS.StarformNET.Display
 {
     using System;
     using System.Text;
@@ -55,13 +55,35 @@
         }
 
         /// <summary>
-        /// Returns a string containing the luminosity of a star in Solar
+        /// Returns a string containing the luminosity of a star as a
+        /// percentage of Sol's luminosity
+        /// </summary>
+        public static string GetLuminosityPercent(Star star, bool showUnits=true)
+        {
+            var lum = String.Format("{0:0.}", star.Luminosity * 100);
+            var units = showUnits ? "% Sol" : "";
+            return lum + units;
+        }
+
+        /// <summary>
+        /// Returns a string containing the mass of a star in Solar
         /// Mass units.
         /// </summary>
         public static string GetMassRel(Star star, bool showUnits=true)
         {
             var mass = String.Format("{0:0.00}", star.Mass);
             var units = showUnits ? " Solar Masses" : "";
+            return mass + units;
+        }
+
+        /// <summary>
+        /// Returns a string containing the mass of a star as a
+        /// percentage of Sol's mass.
+        /// </summary>
+        public static string GetMassPercent(Star star, bool showUnits = true)
+        {
+            var mass = String.Format("{0:0.}", star.Mass * 100);
+            var units = showUnits ? "% Sol" : "";
             return mass + units;
         }
     }

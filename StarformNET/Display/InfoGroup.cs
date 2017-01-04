@@ -1,12 +1,13 @@
 namespace DLS.StarformNET.Display
 {
+    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Windows.Forms;
 
     public class InfoGroup : GroupBox
     {
-        public int LabelPadding = 20;
+        public int LabelPadding = 4;
         public int TabSpacing = 80;
         public int XPadding = 4;
         public int YPadding = 12;
@@ -24,7 +25,10 @@ namespace DLS.StarformNET.Display
             for (var i = 0; i < labels.Count; i++)
             {
                 AddGroup(x, y, labels[i], values[i]);
-                y += LabelPadding;
+                var lastValue = Controls[Controls.Count - 1];
+                var lastLabel = Controls[Controls.Count - 2];
+                var bottom = Math.Max(lastValue.Bottom, lastLabel.Bottom);
+                y = bottom + LabelPadding;
             }
         }
 
@@ -36,11 +40,11 @@ namespace DLS.StarformNET.Display
                 Location = new Point(x, y),
                 AutoSize = true
             };
-            var valueLabel = new Label()
+            var valueLabel = new GrowLabel()
             {
+                Size = new Size(200, 0),
                 Text = value,
                 Location = new Point(x + TabSpacing, y),
-                AutoSize = true
             };
             Controls.Add(labelLabel);
             Controls.Add(valueLabel);

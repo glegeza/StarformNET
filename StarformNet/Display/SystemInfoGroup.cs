@@ -19,8 +19,8 @@ namespace DLS.StarformNET.Display
             var values = new List<string>()
             {
                 StarText.GetAgeStringYearsSciN(star),
-                StarText.GetLuminosityRel(star),
-                StarText.GetMassRel(star),
+                StarText.GetLuminosityPercent(star),
+                StarText.GetMassPercent(star),
                 planets.Count.ToString()
             };
 
