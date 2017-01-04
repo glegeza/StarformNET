@@ -56,6 +56,7 @@
     <Compile Include="Data\DustRecord.cs" />
     <Compile Include="Data\Gas.cs" />
     <Compile Include="Data\Generation.cs" />
+    <Compile Include="Data\IPlanetTrait.cs" />
     <Compile Include="Data\Planet.cs" />
     <Compile Include="Data\PlanetType.cs" />
     <Compile Include="Data\Star.cs" />
