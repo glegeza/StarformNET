@@ -6,7 +6,7 @@ namespace DLS.StarformNET
 
     public class Accrete
     {
-        public double CloudEccentricity = 0.2;
+        public double CloudEccentricity = 0.25;
 
         private bool _dustLeft;
         private double _rInner;
