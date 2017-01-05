@@ -46,7 +46,7 @@ namespace DLS.StarformNET.UnitTests
                 planet.EscapeVelocity = Environment.EscapeVelocity(planet.Mass, planet.Radius);
 
                 planet.IsGasGiant = false;
-                planet.SurfPressure = 92000;
+                planet.Atmosphere.SurfacePressure = 92000;
                 planet.DaytimeTemp = 737;
                 planet.NighttimeTemp = 737;
                 planet.SurfaceTemp = 737;
@@ -61,7 +61,7 @@ namespace DLS.StarformNET.UnitTests
                 var star = GetTestStar();
                 var planet = new Planet();
                 planet.Star = star;
-                planet.SurfPressure = 0;
+                planet.Atmosphere.SurfacePressure = 0;
                 return planet;
             }
 
@@ -74,9 +74,8 @@ namespace DLS.StarformNET.UnitTests
                 planet.Star = sun;
                 var generator = new Generator(new ChemType[0]);
                 generator.CalculateGases(planet);
-
-                Assert.AreEqual(0, planet.GasCount);
-                Assert.AreEqual(0, planet.AtmosphericGases.Length);
+                
+                Assert.AreEqual(0, planet.Atmosphere.Composition.Count);
             }
 
             [TestCategory("Atmosphere")]
@@ -88,9 +87,8 @@ namespace DLS.StarformNET.UnitTests
                 var star = planet.Star;
                 var chemTable = ChemType.GetDefaultTable();
                 generator.CalculateGases(planet);
-
-                Assert.AreEqual(0, planet.GasCount);
-                Assert.AreEqual(0, planet.AtmosphericGases.Length);
+                
+                Assert.AreEqual(0, planet.Atmosphere.Composition.Count);
             }
 
             [TestCategory("Atmosphere")]
@@ -117,9 +115,9 @@ namespace DLS.StarformNET.UnitTests
                 var generator = new Generator(chemTable);
                 generator.CalculateGases(planet);
 
-                Assert.AreEqual(expected.Count, planet.GasCount);
+                Assert.AreEqual(expected.Count, planet.Atmosphere.Composition.Count);
 
-                foreach (var gas in planet.AtmosphericGases)
+                foreach (var gas in planet.Atmosphere.Composition)
                 {
                     Assert.AreEqual(expected[gas.GasType.symbol], gas.surf_pressure, DELTA);
                 }
@@ -134,8 +132,7 @@ namespace DLS.StarformNET.UnitTests
                 var star = planet.Star;
                 generator.CalculateGases(planet);
 
-                Assert.AreEqual(0, planet.GasCount);
-                Assert.AreEqual(0, planet.AtmosphericGases.Length);
+                Assert.AreEqual(0, planet.Atmosphere.Composition.Count);
             }
         }
     }

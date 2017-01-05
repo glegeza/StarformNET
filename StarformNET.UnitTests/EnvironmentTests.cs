@@ -3,7 +3,7 @@ namespace DLS.StarformNET.UnitTests
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using StarformNET;
-    using StarformNET.Data;
+    using Data;
     using System.Linq;
     using System.Collections.Generic;
     using System;
@@ -53,11 +53,10 @@ namespace DLS.StarformNET.UnitTests
             private Planet GetMockPlanet(Func<Gas[]> mockAtmoGen)
             {
                 var planet = new Planet();
-                planet.AtmosphericGases = mockAtmoGen();
-                planet.GasCount = planet.AtmosphericGases.Length;
-                foreach (var gas in planet.AtmosphericGases)
+                planet.Atmosphere.Composition = mockAtmoGen().ToList();
+                foreach (var gas in planet.Atmosphere.Composition)
                 {
-                    planet.SurfPressure += gas.surf_pressure;
+                    planet.Atmosphere.SurfacePressure += gas.surf_pressure;
                 }
                 return planet;
             }
