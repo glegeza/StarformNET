@@ -465,13 +465,10 @@ namespace DLS.StarformNET
                                 the_moon.Mass = mass;
                                 the_moon.DustMass = dust_mass;
                                 the_moon.GasMass = gas_mass;
-                                the_moon.AtmosphericGases = null;
                                 the_moon.NextPlanet = null;
                                 the_moon.FirstMoon = null;
                                 the_moon.IsGasGiant = false;
-                                the_moon.AtmosphericGases = null;
                                 the_moon.Albedo = 0;
-                                the_moon.GasCount = 0;
                                 the_moon.SurfaceTemp = 0;
                                 the_moon.DaytimeTemp = 0;
                                 the_moon.NighttimeTemp = 0;
@@ -587,11 +584,8 @@ namespace DLS.StarformNET
                 the_planet.Mass = mass;
                 the_planet.DustMass = dust_mass;
                 the_planet.GasMass = gas_mass;
-                the_planet.AtmosphericGases = null;
                 the_planet.FirstMoon = null;
-                the_planet.AtmosphericGases = null;
                 the_planet.Albedo = 0;
-                the_planet.GasCount = 0;
                 the_planet.SurfaceTemp = 0;
                 the_planet.DaytimeTemp = 0;
                 the_planet.NighttimeTemp = 0;
