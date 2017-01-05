@@ -2,7 +2,6 @@ namespace DLS.StarformNET
 {
     using System;
     using Data;
-    using System.Diagnostics;
 
     public static class Environment
     {
