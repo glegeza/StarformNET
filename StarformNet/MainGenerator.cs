@@ -40,7 +40,7 @@ namespace DLS.StarformNET
 
         private void _planetSelector_Click(object sender, EventArgs e)
         {
-            _planetInfoGroup.SetPlanet(_system[_planetSelector.SelectedIndex], _gases);
+            _planetInfoGroup.SetPlanet(_system[_planetSelector.SelectedIndex]);
         }
 
         private void GenerateSystem()
@@ -57,12 +57,11 @@ namespace DLS.StarformNET
             }
             _planetSelector.SelectedIndex = 0;
 
-            var text = PlanetText.GetSystemText(_system, _gases);
-            //_descriptionBox.Text = text;
+            var text = PlanetText.GetSystemText(_system);
             _systemInfo.SetSystem(star, _system);
             _orbitMap.SetSystem(star, _system);
             _planetInfoGroup.TabSpacing = 160;
-            _planetInfoGroup.SetPlanet(_system[0], _gases);
+            _planetInfoGroup.SetPlanet(_system[0]);
         }
     }
 }

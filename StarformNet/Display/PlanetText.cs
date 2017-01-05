@@ -9,7 +9,7 @@ namespace DLS.StarformNET.Display
 
     public static class PlanetText
     {
-        public static string GetSystemText(List<Planet> planets, ChemType[] gases)
+        public static string GetSystemText(List<Planet> planets)
         {
             var sb = new StringBuilder();
             var sun = planets[0].Star;
@@ -18,13 +18,13 @@ namespace DLS.StarformNET.Display
 
             foreach (var p in planets)
             {
-                sb.AppendLine(GetPlanetText(p, gases));
+                sb.AppendLine(GetPlanetText(p));
                 sb.AppendLine();
                 sb.AppendLine();
             }
             return sb.ToString();
         }
-        public static string GetPlanetText(Planet planet, ChemType[] gases)
+        public static string GetPlanetText(Planet planet)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0} {1}", GetPlanetNumber(planet), GetPlanetTypeText(planet));
@@ -63,9 +63,9 @@ namespace DLS.StarformNET.Display
             sb.AppendLine();
             sb.AppendFormat("Surface Pressure: {0}\n", GetSurfacePressureStringAtm(planet));
             sb.AppendLine();
-            sb.AppendFormat("Atmospheric Composition (Percentage): {0}\n", GetAtmoString(planet, gases));
+            sb.AppendFormat("Atmospheric Composition (Percentage): {0}\n", GetAtmoString(planet));
             sb.AppendLine();
-            sb.AppendFormat("Atmospheric Composition (Partial Pressure): {0}\n", GetAtmoStringPP(planet, gases));
+            sb.AppendFormat("Atmospheric Composition (Partial Pressure): {0}\n", GetAtmoStringPP(planet));
 
             return sb.ToString();
         }
@@ -240,7 +240,7 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.000} atm", UnitConversions.MillibarsToAtm(planet.Atmosphere.SurfacePressure));
         }
 
-        public static string GetAtmoStringPP(Planet planet, ChemType[] gases)
+        public static string GetAtmoStringPP(Planet planet)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -269,7 +269,7 @@ namespace DLS.StarformNET.Display
             return str;
         }
 
-        public static string GetAtmoString(Planet planet, ChemType[] gases, double minFraction = 1.0)
+        public static string GetAtmoString(Planet planet, double minFraction = 1.0)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {

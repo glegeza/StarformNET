@@ -5,7 +5,7 @@ namespace DLS.StarformNET.Display
 
     public class PlanetInfoGroup : InfoGroup
     {
-        public void SetPlanet(Planet planet, ChemType[] gases)
+        public void SetPlanet(Planet planet)
         {
             var labels = new List<string>()
             {
@@ -46,7 +46,7 @@ namespace DLS.StarformNET.Display
                 PlanetText.GetIceCover(planet),
                 PlanetText.GetCloudCover(planet),
                 PlanetText.GetSurfacePressureStringAtm(planet),
-                PlanetText.GetAtmoString(planet, gases)
+                PlanetText.GetAtmoString(planet)
             };
 
             SetText(labels, values);
