@@ -3,8 +3,7 @@ namespace DLS.StarformNET.UnitTests
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using StarformNET;
-    using StarformNET.Data;
-    using System.Linq;
+    using Data;
     using System.Collections.Generic;
 
     class GeneratorTests
