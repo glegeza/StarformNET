@@ -40,7 +40,7 @@ namespace DLS.StarformNET
         /// </summary>
         public static bool IsHabitable(Planet planet)
         {
-            return planet.breathability == Data.Breathability.Breathable &&
+            return planet.Atmosphere.Breathability == Data.Breathability.Breathable &&
                 !planet.HasResonantPeriod &&
                 !IsTidallyLocked(planet);
         }
@@ -53,7 +53,7 @@ namespace DLS.StarformNET
             double relTemp = (planet.SurfaceTemp - GlobalConstants.FREEZING_POINT_OF_WATER) - GlobalConstants.EARTH_AVERAGE_CELSIUS;
             double seas = planet.WaterCover * 100.0;
             double clouds = planet.CloudCover * 100.0;
-            double pressure = planet.SurfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS;
+            double pressure = planet.Atmosphere.SurfacePressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS;
             double ice = planet.IceCover * 100.0;
 
             return
@@ -69,7 +69,7 @@ namespace DLS.StarformNET
                 seas >= 50.0 &&
                 seas <= 80.0 &&
                 planet.Type != PlanetType.Water &&
-                planet.breathability == Data.Breathability.Breathable;
+                planet.Atmosphere.Breathability == Data.Breathability.Breathable;
         }
 
         /// <summary>
@@ -905,9 +905,9 @@ namespace DLS.StarformNET
 
                 effective_temp = EffTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
                 greenhouse_temp = GreenRise(Opacity(planet.MolecularWeightRetained,
-                                                         planet.SurfPressure),
+                                                         planet.Atmosphere.SurfacePressure),
                                                  effective_temp,
-                                                 planet.SurfPressure);
+                                                 planet.Atmosphere.SurfacePressure);
                 planet.SurfaceTemp = effective_temp + greenhouse_temp;
 
                 SetTempRange(ref planet);
@@ -920,9 +920,9 @@ namespace DLS.StarformNET
                 planet.VolatileGasInventory = VolatileInventory(planet.Mass,
                     planet.EscapeVelocity, planet.RMSVelocity, planet.Star.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
-                planet.SurfPressure = Pressure(planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
+                planet.Atmosphere.SurfacePressure = Pressure(planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
 
-                planet.BoilingPointWater = BoilingPoint(planet.SurfPressure);
+                planet.BoilingPointWater = BoilingPoint(planet.Atmosphere.SurfacePressure);
             }
 
             water_raw = planet.WaterCover = HydroFraction(planet.VolatileGasInventory, planet.Radius);
@@ -932,7 +932,7 @@ namespace DLS.StarformNET
                                                      planet.WaterCover);
             planet.IceCover = IceFraction(planet.WaterCover, planet.SurfaceTemp);
 
-            if ((planet.HasGreenhouseEffect) && (planet.SurfPressure > 0.0))
+            if ((planet.HasGreenhouseEffect) && (planet.Atmosphere.SurfacePressure > 0.0))
             {
                 planet.CloudCover = 1.0;
             }
@@ -957,12 +957,12 @@ namespace DLS.StarformNET
                 planet.WaterCover = 0.0;
             }
 
-            planet.Albedo = PlanetAlbedo(planet.WaterCover, planet.CloudCover, planet.IceCover, planet.SurfPressure);
+            planet.Albedo = PlanetAlbedo(planet.WaterCover, planet.CloudCover, planet.IceCover, planet.Atmosphere.SurfacePressure);
 
             effective_temp = EffTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
             greenhouse_temp = GreenRise(
-                Opacity(planet.MolecularWeightRetained, planet.SurfPressure),
-                effective_temp, planet.SurfPressure);
+                Opacity(planet.MolecularWeightRetained, planet.Atmosphere.SurfacePressure),
+                effective_temp, planet.Atmosphere.SurfacePressure);
             planet.SurfaceTemp = effective_temp + greenhouse_temp;
 
             if (!first)
@@ -1016,16 +1016,16 @@ namespace DLS.StarformNET
 
             bool oxygen_ok = false;
 
-            if (planet.GasCount == 0)
+            if (planet.Atmosphere.Composition.Count == 0)
             {
                 return Data.Breathability.None;
             }
 
-            for (var index = 0; index < planet.GasCount; index++)
+            for (var index = 0; index < planet.Atmosphere.Composition.Count; index++)
             {
-                var gas = planet.AtmosphericGases[index];
+                var gas = planet.Atmosphere.Composition[index];
 
-                double ipp = InspiredPartialPressure(planet.SurfPressure, planet.AtmosphericGases[index].surf_pressure);
+                double ipp = InspiredPartialPressure(planet.Atmosphere.SurfacePressure, planet.Atmosphere.Composition[index].surf_pressure);
                 if (ipp > gas.GasType.max_ipp)
                 {
                     return Data.Breathability.Poisonous;
@@ -1097,8 +1097,8 @@ namespace DLS.StarformNET
 
         private static void SetTempRange(ref Planet planet)
         {
-            double pressmod = 1 / Math.Sqrt(1 + 20 * planet.SurfPressure / 1000.0);
-            double ppmod = 1 / Math.Sqrt(10 + 5 * planet.SurfPressure / 1000.0);
+            double pressmod = 1 / Math.Sqrt(1 + 20 * planet.Atmosphere.SurfacePressure / 1000.0);
+            double ppmod = 1 / Math.Sqrt(10 + 5 * planet.Atmosphere.SurfacePressure / 1000.0);
             double tiltmod = Math.Abs(Math.Cos(planet.AxialTilt * Math.PI / 180) * Math.Pow(1 + planet.Eccentricity, 2));
             double daymod = 1 / (200 / planet.Day + 1);
             double mh = Math.Pow(1 + daymod, pressmod);

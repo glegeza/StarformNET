@@ -1,5 +1,7 @@
 namespace DLS.StarformNET.Data
 {
+    using System.Collections.Generic;
+
     // TODO break this class up
 
     public class Planet
@@ -7,6 +9,8 @@ namespace DLS.StarformNET.Data
         public int Position;
         public Star Star { get; set; }
         public Planet NextPlanet { get; set; } // this should be considered deprecated
+        public List<IPlanetTrait> Traits { get; set; }
+        public Atmosphere Atmosphere = new Atmosphere();
 
         // Orbit data
         public double SemiMajorAxisAU { get; set; } // semi-major axis of solar orbit (in AU)
@@ -46,12 +50,12 @@ namespace DLS.StarformNET.Data
         public double RMSVelocity { get; set; }             // units of cm/sec
         public double MolecularWeightRetained { get; set; } // smallest molecular weight retained
         public double VolatileGasInventory { get; set; } 
-        public double SurfPressure { get; set; }            // units of millibars (mb)
+        //public double SurfPressure { get; set; }            // units of millibars (mb)
         public double BoilingPointWater { get; set; }       // the boiling point of water (Kelvin)
         public double Albedo { get; set; }                  // albedo of the planet
-        public int GasCount { get; set; }                   // Count of gases in the atmosphere:
-        public Gas[] AtmosphericGases { get; set; }
-        public Breathability breathability { get; set; }
+        //public int GasCount { get; set; }                   // Count of gases in the atmosphere:
+        //public Gas[] AtmosphericGases { get; set; }
+        //public Breathability breathability { get; set; }
 
         // Temperature data
         public double Illumination { get; set; }      // units?

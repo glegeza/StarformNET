@@ -91,8 +91,6 @@ namespace DLS.StarformNET
         private void GeneratePlanet(Planet planet, int planetNo, ref Star sun, bool useRandomTilt, string planetID, bool doGases, bool doMoons, bool isMoon)
         {
             // TODO deal with planet initialization
-            planet.AtmosphericGases = null;
-            planet.GasCount = 0;
             planet.SurfaceTemp = 0;
             planet.DaytimeTemp = 0;
             planet.NighttimeTemp = 0;
@@ -192,7 +190,7 @@ namespace DLS.StarformNET
             {
                 planet.HasGreenhouseEffect = false;
                 planet.VolatileGasInventory = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
-                planet.SurfPressure = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
+                planet.Atmosphere.SurfacePressure = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
 
                 planet.BoilingPointWater = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
 
@@ -228,16 +226,16 @@ namespace DLS.StarformNET
                 planet.VolatileGasInventory = Environment.VolatileInventory(
                     planet.Mass, planet.EscapeVelocity, planet.RMSVelocity, sun.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.Mass) > 0.000001);
-                planet.SurfPressure = Environment.Pressure(
+                planet.Atmosphere.SurfacePressure = Environment.Pressure(
                     planet.VolatileGasInventory, planet.Radius, planet.SurfaceGravity);
 
-                if ((planet.SurfPressure == 0.0))
+                if ((planet.Atmosphere.SurfacePressure == 0.0))
                 {
                     planet.BoilingPointWater = 0.0;
                 }
                 else
                 {
-                    planet.BoilingPointWater = Environment.BoilingPoint(planet.SurfPressure);
+                    planet.BoilingPointWater = Environment.BoilingPoint(planet.Atmosphere.SurfacePressure);
                 }
 
                 // Sets: planet.surf_temp, planet.greenhs_rise, planet.albedo, planet.hydrosphere,
@@ -252,7 +250,7 @@ namespace DLS.StarformNET
                 planet.IsTidallyLocked = Environment.IsTidallyLocked(planet);
 
                 // Assign planet type
-                if (planet.SurfPressure < 1.0)
+                if (planet.Atmosphere.SurfacePressure < 1.0)
                 {
                     if (!isMoon && ((planet.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) < GlobalConstants.ASTEROID_MASS_LIMIT))
                     {
@@ -263,11 +261,10 @@ namespace DLS.StarformNET
                         planet.Type = PlanetType.Barren;
                     }
                 }
-                else if ((planet.SurfPressure > 6000.0) && (planet.MolecularWeightRetained <= 2.0)) // Retains Hydrogen
+                else if ((planet.Atmosphere.SurfacePressure > 6000.0) && (planet.MolecularWeightRetained <= 2.0)) // Retains Hydrogen
                 {
                     planet.Type = PlanetType.SubSubGasGiant;
-                    planet.GasCount = 0;
-                    planet.AtmosphericGases = new Gas[0];
+                    planet.Atmosphere.Composition = new List<Gas>();
                 }
                 else
                 {
@@ -294,7 +291,7 @@ namespace DLS.StarformNET
                         planet.Type = PlanetType.Ice;
                         planet.IceCover = 1.0;
                     }
-                    else if (planet.SurfPressure <= 250.0) // Thin air = Martian
+                    else if (planet.Atmosphere.SurfacePressure <= 250.0) // Thin air = Martian
                     {
                         planet.Type = PlanetType.Martian;
                     }
@@ -353,17 +350,16 @@ namespace DLS.StarformNET
         public void CalculateGases(Planet planet)
         {
             var sun = planet.Star;
-            planet.GasCount = 0;
-            planet.AtmosphericGases = new Gas[0];
+            planet.Atmosphere.Composition = new List<Gas>();
 
-            if (!(planet.SurfPressure > 0))
+            if (!(planet.Atmosphere.SurfacePressure > 0))
             {
                 return;
             }
 
             double[] amount = new double[_gasTable.Length];
             double totamount = 0;
-            double pressure = planet.SurfPressure / GlobalConstants.MILLIBARS_PER_BAR;
+            double pressure = planet.Atmosphere.SurfacePressure / GlobalConstants.MILLIBARS_PER_BAR;
             int n = 0;
 
             // Determine the relative abundance of each gas in the planet's atmosphere
@@ -400,18 +396,15 @@ namespace DLS.StarformNET
             // For each gas present, calculate its partial pressure
             if (n > 0)
             {
-                planet.GasCount = n;
-                planet.AtmosphericGases = new Gas[n];
+                planet.Atmosphere.Composition = new List<Gas>();
 
                 n = 0;
                 for (var i = 0; i < _gasTable.Length; i++)
                 {
                     if (amount[i] > 0.0)
                     {
-                        planet.AtmosphericGases[n] = new Gas(
-                            _gasTable[i], planet.SurfPressure * amount[i] / totamount);
-
-                        n++;
+                        planet.Atmosphere.Composition.Add(
+                            new Gas(_gasTable[i], planet.Atmosphere.SurfacePressure * amount[i] / totamount));
                     }
                 }
             }
@@ -456,7 +449,7 @@ namespace DLS.StarformNET
         // TODO This should be moved out of this class entirely
         private void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
         {
-            planet.breathability = Environment.Breathability(planet);
+            planet.Atmosphere.Breathability = Environment.Breathability(planet);
 
             // TODO move this calculation to somewhere else. Also, what units is this in?
             planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
