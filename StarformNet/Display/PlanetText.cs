@@ -279,12 +279,13 @@ namespace DLS.StarformNET.Display
             {
                 return "None";
             }
+            if (planet.Atmosphere.SurfacePressure < 0.0005)
+            {
+                return "Almost None";
+            }
+
             var str = "";
             var orderedGases = planet.Atmosphere.Composition.Where(g => ((g.surf_pressure / planet.Atmosphere.SurfacePressure) * 100) > minFraction).OrderByDescending(g => g.surf_pressure).ToArray();
-            if (orderedGases.Length == 0)
-            {
-                return "Trace gases only";
-            }
             for (var i = 0; i < orderedGases.Length; i++)
             {
                 var gas = orderedGases[i];
@@ -298,7 +299,19 @@ namespace DLS.StarformNET.Display
             }
             if (orderedGases.Length < planet.Atmosphere.Composition.Count)
             {
-                str += ", and trace gases";
+                var traceGasSum = 0.0;
+                foreach (var gas in planet.Atmosphere.Composition)
+                {
+                    var frac = (gas.surf_pressure / planet.Atmosphere.SurfacePressure) * 100;
+                    if (frac <= minFraction)
+                    {
+                        traceGasSum += frac;
+                    }
+                }
+                if (traceGasSum > 0.05)
+                {
+                    str += String.Format(", {0:0.0}% trace gases", traceGasSum);
+                }
             }
             return str;
         }
