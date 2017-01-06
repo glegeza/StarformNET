@@ -387,8 +387,9 @@ namespace DLS.StarformNET
         }
         
         /// <summary>
-        /// Calculates the inventory of volatiles in a planet's atmosphere.
-        /// This value is used to calculate the planet's surface pressure.
+        /// Calculates the inventory of volatiles in a planet's atmosphere
+        /// as a result of outgassing. This value is used to calculate 
+        /// the planet's surface pressure. Implements Fogg's eq. 17.
         /// </summary>
         /// <param name="mass">Planet mass in solar masses</param>
         /// <param name="escapeVelocity">Planet escape velocity in cm/sec</param>
@@ -399,7 +400,6 @@ namespace DLS.StarformNET
         /// a runaway greenhouse effect</param>
         /// <param name="hasAccretedGas">True if the planet has accreted any
         /// gas</param>
-        /// <returns></returns>
         public static double VolatileInventory(double mass, double escapeVelocity, double rmsVelocity, double stellarMass, int zone, bool hasGreenhouseEffect, bool hasAccretedGas)
         {
             // This implements Fogg's eq.17.  The 'inventory' returned is unitless.
@@ -411,7 +411,7 @@ namespace DLS.StarformNET
                 switch (zone)
                 {
                     case 1:
-                        proportionConst = 140000.0;    /* 100 . 140 JLB */
+                        proportionConst = 100000.0;    /* 100 . 140 JLB */
                         break;
                     case 2:
                         proportionConst = 75000.0;
@@ -424,16 +424,14 @@ namespace DLS.StarformNET
                         break;
                 }
                 double earth_units = mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES;
-                double temp1 = (proportionConst * earth_units) / stellarMass;
-                double temp2 = Utilities.About(temp1, 0.2);
-                temp2 = temp1;
+                double volInv = Utilities.About((proportionConst * earth_units) / stellarMass, 0.2);
                 if (hasGreenhouseEffect || hasAccretedGas)
                 {
-                    return (temp2);
+                    return (volInv);
                 }
                 else
                 {
-                    return (temp2 / 140.0); /* 100 . 140 JLB */
+                    return (volInv / 100.0); /* 100 . 140 JLB */
                 }
             }
             else
