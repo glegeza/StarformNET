@@ -23,6 +23,9 @@ namespace DLS.StarformNET
             AutoSize = true;
             AutoScaleMode = AutoScaleMode.Font;
             InitializeComponent();
+
+            _systemMap.PlanetClicked += _systemMap_Click;
+
             var spriteFile = Path.Combine(Directory.GetCurrentDirectory(), ArtFolder, PlanetsFile);
             _planetSprites = new PlanetSpriteSheet(Image.FromFile(spriteFile), new Point(77, 71), new Size(32, 32), 5,
                 5, 6);
@@ -38,9 +41,26 @@ namespace DLS.StarformNET
             GenerateSystem();
         }
 
+        private void _systemMap_Click(object sender, EventArgs e)
+        {
+            SelectPlanet(_systemMap.SelectedPlanetIndex);
+        }
+
         private void _planetSelector_Click(object sender, EventArgs e)
         {
-            _planetInfoGroup.SetPlanet(_system[_planetSelector.SelectedIndex]);
+            SelectPlanet(_planetSelector.SelectedIndex);
+        }
+
+        private void SelectPlanet(int s)
+        {
+            if (_planetSelector.SelectedIndex != s)
+            {
+                _planetSelector.SelectedIndex = s;
+            }
+            _planetInfoGroup.SetPlanet(_system[s]);
+            _systemMap.SelectPlanet(s);
+            _orbitMap.SelectPlanet(s);
+            Refresh();
         }
 
         private void GenerateSystem()
@@ -62,6 +82,18 @@ namespace DLS.StarformNET
             _orbitMap.SetSystem(star, _system);
             _planetInfoGroup.TabSpacing = 160;
             _planetInfoGroup.SetPlanet(_system[0]);
+            _orbitMap.SelectPlanet(0);
+            _systemMap.SelectPlanet(0);
+        }
+
+        private void _zoomInButton_Click(object sender, EventArgs e)
+        {
+            _orbitMap.ZoomIn();
+        }
+
+        private void _zoomOutButton_Click(object sender, EventArgs e)
+        {
+            _orbitMap.ZoomOut();
         }
     }
 }
