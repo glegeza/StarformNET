@@ -16,7 +16,6 @@ namespace DLS.StarformNET.Display
             public double e; // eccentricity
             public float angle;
             public float size;
-            public bool gasGiant;
             public Brush color;
 
             public OrbitParameters(Planet planet, float angle)
