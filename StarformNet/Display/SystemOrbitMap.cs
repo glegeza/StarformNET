@@ -122,15 +122,6 @@ namespace DLS.StarformNET.Display
                 var height = (int)(sB * 2);
 
                 var pen = i == _selectedIndex ? _selectedPen : _pen;
-                var brush = Brushes.Red;
-                if (!orbit.gasGiant)
-                {
-                    brush = i == _selectedIndex ? Brushes.Tomato : Brushes.White;
-                }
-                else
-                {
-                    brush = i == _selectedIndex ? Brushes.LightYellow : Brushes.Yellow;
-                }
 
                 e.Graphics.DrawEllipse(pen, x, y, width, height);
 
