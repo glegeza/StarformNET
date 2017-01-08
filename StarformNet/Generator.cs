@@ -9,9 +9,11 @@ namespace DLS.StarformNET
         private static double MIN_SUN_AGE = 1.0E9;
         private static double MAX_SUN_AGE = 6.0E9;
 
-        private double _dustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
+        public double DustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
+        public double CloudEccentricity = GlobalConstants.CLOUD_ECCENTRICITY;
+        public double GasDensityRatio = GlobalConstants.K;
         private long _flagSeed = 0;
-        private Accrete _accrete = new Accrete();
+        private Accrete _accrete;
         private ChemType[] _gasTable;
 
         public Generator(ChemType[] g)
@@ -21,7 +23,7 @@ namespace DLS.StarformNET
 
         public List<Planet> GenerateStellarSystem(ref Star sun, Planet seedSystem, string flagChar, int systemNo, string systemName, bool doGases, bool doMoons)
         {
-            _accrete = new Accrete();        
+            _accrete = new Accrete(CloudEccentricity, GasDensityRatio);
 
             // TODO why is this randomizing for high and low sun masses?
             if (sun.Mass < 0.2 || sun.Mass > 1.5)
@@ -53,7 +55,7 @@ namespace DLS.StarformNET
                 double outer_planet_limit = GetOuterLimit(sun);
                 seed = _accrete.DistPlanetaryMasses(sun.Mass, 
                     sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
-                    _dustDensityCoeff, seedSystem, doMoons);
+                    DustDensityCoeff, seedSystem, doMoons);
             }
 
             return GeneratePlanets(sun, seed, seedSystem == null, flagChar, systemNo, systemName, doGases, doMoons);

@@ -83,6 +83,7 @@ namespace DLS.StarformNET
         public static double ALPHA                        = (5.0);                         // Used in density calcs	
         public static double N                            = (3.0);                         // Used in density calcs	
         public static double J                            = (1.46E-19);                    // Used in day-length calcs (cm2/sec2 g) 
+        public static double CLOUD_ECCENTRICITY           = (0.25);
 
         // Now for a few molecular weights (used for RMS velocity calcs):
         // This table is from Dole's book "Habitable Planets for Man", p. 38

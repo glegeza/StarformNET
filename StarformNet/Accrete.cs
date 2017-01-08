@@ -6,7 +6,8 @@ namespace DLS.StarformNET
 
     public class Accrete
     {
-        public double CloudEccentricity = 0.25;
+        public double CloudEccentricity;
+        public double GasDustRatio;
 
         private bool _dustLeft;
         private double _rInner;
@@ -17,6 +18,12 @@ namespace DLS.StarformNET
         private DustRecord _dustHead;
         private Planet _planetHead;
         private Generation _histHead;
+
+        public Accrete(double e, double gdr)
+        {
+            CloudEccentricity = e;
+            GasDustRatio = gdr;
+        }
 
         public double stellar_dust_limit(double stell_mass_ratio)
         {
@@ -321,7 +328,7 @@ namespace DLS.StarformNET
                 }
                 else
                 {
-                    mass_density = GlobalConstants.K * temp_density / (1.0 + Math.Sqrt(crit_mass / last_mass) * (GlobalConstants.K - 1.0));
+                    mass_density = GasDustRatio * temp_density / (1.0 + Math.Sqrt(crit_mass / last_mass) * (GasDustRatio - 1.0));
                     gas_density = mass_density - temp_density;
                 }
 
