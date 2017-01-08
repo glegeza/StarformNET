@@ -1018,6 +1018,8 @@ namespace DLS.StarformNET
                 return Data.Breathability.None;
             }
 
+            var poisonous = false;
+            planet.Atmosphere.PoisonousGases.Clear();
             for (var index = 0; index < planet.Atmosphere.Composition.Count; index++)
             {
                 var gas = planet.Atmosphere.Composition[index];
@@ -1025,7 +1027,8 @@ namespace DLS.StarformNET
                 double ipp = InspiredPartialPressure(planet.Atmosphere.SurfacePressure, planet.Atmosphere.Composition[index].surf_pressure);
                 if (ipp > gas.GasType.max_ipp)
                 {
-                    return Data.Breathability.Poisonous;
+                    poisonous = true;
+                    planet.Atmosphere.PoisonousGases.Add(gas);
                 }
 
                 // TODO why not just have a min_ipp for every gas, even if it's going to be zero
@@ -1034,6 +1037,11 @@ namespace DLS.StarformNET
                 {
                     oxygen_ok = ((ipp >= GlobalConstants.MIN_O2_IPP) && (ipp <= GlobalConstants.MAX_O2_IPP));
                 }
+            }
+
+            if (poisonous)
+            {
+                return Data.Breathability.Poisonous;
             }
 
             if (oxygen_ok)

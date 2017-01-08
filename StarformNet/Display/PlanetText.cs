@@ -269,6 +269,29 @@ namespace DLS.StarformNET.Display
             return str;
         }
 
+        public static string GetPoisonString(Planet planet)
+        {
+            var str = "";
+            var orderedGases = planet.Atmosphere.PoisonousGases.OrderByDescending(g => g.surf_pressure).ToList();
+            for (var i = 0; i < orderedGases.Count; i++)
+            {
+                if (orderedGases[i].surf_pressure > 1)
+                {
+                    str += String.Format("{0:0.0000}mb {1}", orderedGases[i].surf_pressure, orderedGases[i].GasType.symbol);
+                }
+                else
+                {
+                    var ppm = UnitConversions.MillibarsToPPM(orderedGases[i].surf_pressure);
+                    str += String.Format("{0:0.0000}ppm {1}", ppm, orderedGases[i].GasType.symbol);
+                }
+                if (i < orderedGases.Count - 1)
+                {
+                    str += ", ";
+                }
+            }
+            return str;
+        }
+
         public static string GetAtmoString(Planet planet, double minFraction = 1.0)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)

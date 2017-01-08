@@ -49,6 +49,12 @@ namespace DLS.StarformNET.Display
                 PlanetText.GetAtmoString(planet)
             };
 
+            if (planet.Atmosphere.Breathability == Breathability.Poisonous)
+            {
+                labels.Add("Poison Gases:");
+                values.Add(PlanetText.GetPoisonString(planet));
+            }
+
             SetText(labels, values);
         }
     }
