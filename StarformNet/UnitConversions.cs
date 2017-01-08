@@ -69,8 +69,21 @@ namespace DLS.StarformNET
         /// <returns>Partial pressure in millibars</returns>
         public static double PPMToMillibars(double ppm, double atm=1.0)
         {
+            var pct = ppm / 1000000.0;
             var presPerPart1Atm = EARTH_SURF_PRES_IN_MILLIBARS / 1000000.0;
-            return ppm * presPerPart1Atm * atm;
+            return pct * EARTH_SURF_PRES_IN_MILLIBARS * atm;
+        }
+
+        /// <summary>
+        /// Converts partial pressure in millibars to PPM at a specific
+        /// atmospheric pressure.
+        /// </summary>
+        /// <param name="mb">Gas partial pressure in millibars</param>
+        /// <param name="atm">Atmospheric pressure in atm</param>
+        /// <returns>Pressure in PPM</returns>
+        public static double MillibarsToPPM(double mb, double atm=1.0)
+        {
+            return (mb / (EARTH_SURF_PRES_IN_MILLIBARS * atm)) * 1000000;
         }
     }
 }

@@ -192,16 +192,16 @@ namespace DLS.StarformNET
         /// <returns>Density in grams/cc</returns>
         public static double EmpiricalDensity(double mass, double orbRadius, double rEcosphere, bool isGasGiant)
         {
-            double temp = Math.Pow(mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES, (1.0 / 8.0));
-            temp *= Utilities.Pow1_4(rEcosphere / orbRadius);
+            double density = Math.Pow(mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES, (1.0 / 8.0));
+            density *= Utilities.Pow1_4(rEcosphere / orbRadius);
 
             if (isGasGiant)
             {
-                return (temp * 1.2);
+                return (density * 1.2);
             }
             else
             {
-                return (temp * 5.5);
+                return (density * 5.5);
             }
         }
 
