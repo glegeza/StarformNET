@@ -6,15 +6,10 @@ namespace DLS.StarformNET
 
     public class Generator
     {
-        //private ChemType[] _gasTable;
-        
-        //public Generator(ChemType[] g)
-        //{
-        //    _gasTable = g;
-        //}
-
         public static List<Planet> GenerateStellarSystem(ref Star sun, List<PlanetSeed> seedSystem, string systemName, SystemGenerationOptions genOptions)
         {
+            genOptions = genOptions ?? SystemGenerationOptions.DefaultOptions;
+
             // TODO why is this randomizing for high and low sun masses?
             if (sun.Mass < 0.2 || sun.Mass > 1.5)
             {
