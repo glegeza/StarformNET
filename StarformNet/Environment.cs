@@ -6,6 +6,32 @@ namespace DLS.StarformNET
     public static class Environment
     {
         /// <summary>
+        /// Returns the Roche limit of an object in KM
+        /// </summary>
+        /// <param name="bodyRadius">Radius of the body in km</param>
+        /// <param name="bodyDensity">Density of the body in g/cc</param>
+        /// <param name="satelliteDensity">Density of the orbiting satellite
+        /// in g/cc </param>
+        /// <returns>Roche limit for the satellite in KM</returns>
+        public static double RocheLimitKM(double bodyRadius, double bodyDensity, double satelliteDensity)
+        {
+            return (1.26 * bodyRadius * Math.Pow(bodyDensity / satelliteDensity, 1.0 / 3.0)) / 1000.0;
+        }
+
+        /// <summary>
+        /// Returns the Roche limit of an object in AU
+        /// </summary>
+        /// <param name="bodyRadius">Radius of the body in km</param>
+        /// <param name="bodyDensity">Density of the body in g/cc</param>
+        /// <param name="satelliteDensity">Density of the orbiting satellite
+        /// in g/cc </param>
+        /// <returns>Roche limit for the satellite in AU</returns>
+        public static double RocheLimitAU(double bodyRadius, double bodyDensity, double satelliteDensity)
+        {
+            return RocheLimitKM(bodyRadius, bodyDensity, satelliteDensity) / GlobalConstants.KM_PER_AU;
+        }
+
+        /// <summary>
         /// Returns the luminosity of a star using the Mass-Luminosity relationship.
         /// </summary>
         /// <param name="massRatio">Mass of the star</param>
