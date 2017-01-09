@@ -71,8 +71,7 @@ namespace DLS.StarformNET.UnitTests
                 var planet = new Planet();
                 var sun = GetTestStar();
                 planet.Star = sun;
-                var generator = new Generator(new ChemType[0]);
-                generator.CalculateGases(planet);
+                Generator.CalculateGases(planet, new ChemType[0]);
                 
                 Assert.AreEqual(0, planet.Atmosphere.Composition.Count);
             }
@@ -81,11 +80,9 @@ namespace DLS.StarformNET.UnitTests
             [TestMethod]
             public void TestEmptyChemTable()
             {
-                var generator = new Generator(new ChemType[0]);
                 var planet = GetTestPlanetAtmosphere();
                 var star = planet.Star;
-                var chemTable = ChemType.GetDefaultTable();
-                generator.CalculateGases(planet);
+                Generator.CalculateGases(planet, new ChemType[0]);
                 
                 Assert.AreEqual(0, planet.Atmosphere.Composition.Count);
             }
@@ -110,9 +107,7 @@ namespace DLS.StarformNET.UnitTests
 
                 var planet = GetTestPlanetAtmosphere();
                 var star = planet.Star;
-                var chemTable = ChemType.GetDefaultTable();
-                var generator = new Generator(chemTable);
-                generator.CalculateGases(planet);
+                Generator.CalculateGases(planet, ChemType.GetDefaultTable());
 
                 Assert.AreEqual(expected.Count, planet.Atmosphere.Composition.Count);
 
@@ -127,9 +122,8 @@ namespace DLS.StarformNET.UnitTests
             public void TestNoAtmosphereDefaultChemTable()
             {
                 var planet = GetTestPlanetNoAtmosphere();
-                var generator = new Generator(ChemType.GetDefaultTable());
                 var star = planet.Star;
-                generator.CalculateGases(planet);
+                Generator.CalculateGases(planet, ChemType.GetDefaultTable());
 
                 Assert.AreEqual(0, planet.Atmosphere.Composition.Count);
             }

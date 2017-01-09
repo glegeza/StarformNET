@@ -8,7 +8,7 @@ namespace DLS.StarformNET.Data
     {
         public int Position;
         public Star Star { get; set; }
-        public Planet NextPlanet { get; set; } // this should be considered deprecated
+        //public Planet NextPlanet { get; set; } // this should be considered deprecated
         public List<IPlanetTrait> Traits { get; set; }
         public Atmosphere Atmosphere = new Atmosphere();
 
@@ -50,12 +50,8 @@ namespace DLS.StarformNET.Data
         public double RMSVelocity { get; set; }             // units of cm/sec
         public double MolecularWeightRetained { get; set; } // smallest molecular weight retained
         public double VolatileGasInventory { get; set; } 
-        //public double SurfPressure { get; set; }            // units of millibars (mb)
         public double BoilingPointWater { get; set; }       // the boiling point of water (Kelvin)
         public double Albedo { get; set; }                  // albedo of the planet
-        //public int GasCount { get; set; }                   // Count of gases in the atmosphere:
-        //public Gas[] AtmosphericGases { get; set; }
-        //public Breathability breathability { get; set; }
 
         // Temperature data
         public double Illumination { get; set; }      // units?
@@ -71,5 +67,22 @@ namespace DLS.StarformNET.Data
         public double WaterCover { get; set; }        // fraction of surface covered
         public double CloudCover { get; set; }        // fraction of surface covered
         public double IceCover { get; set; }          // fraction of surface covered
+
+        public Planet()
+        {
+
+        }
+
+        public Planet(PlanetSeed seed, Star star, int num)
+        {
+            Star = star;
+            Position = num;
+            SemiMajorAxisAU = seed.SemiMajorAxisAU;
+            Eccentricity = seed.Eccentricity;
+            Mass = seed.Mass;
+            DustMass = seed.DustMass;
+            GasMass = seed.GasMass;
+            IsGasGiant = seed.IsGasGiant;
+        }
     }
 }

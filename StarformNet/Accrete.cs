@@ -1,8 +1,8 @@
 namespace DLS.StarformNET
 {
-
     using System;
     using Data;
+    using System.Collections.Generic;
 
     public class Accrete
     {
@@ -16,7 +16,7 @@ namespace DLS.StarformNET
         private double _dustDensity;
         private double _cloudEccentricity;
         private DustRecord _dustHead;
-        private Planet _planetHead;
+        private PlanetSeed _planetHead;
         private Generation _histHead;
 
         public Accrete(double e, double gdr)
@@ -25,9 +25,9 @@ namespace DLS.StarformNET
             GasDustRatio = gdr;
         }
 
-        public double stellar_dust_limit(double stell_mass_ratio)
+        public static double GetStellarDustLimit(double stellarMassRatio)
         {
-            return (200.0 * Math.Pow(stell_mass_ratio, (1.0 / 3.0)));
+            return (200.0 * Math.Pow(stellarMassRatio, (1.0 / 3.0)));
         }
 
         // TODO documentation
@@ -43,10 +43,10 @@ namespace DLS.StarformNET
         /// <param name="seedSystem"></param>
         /// <param name="doMoons"></param>
         /// <returns></returns>
-        public Planet DistPlanetaryMasses(double stellarMassRatio, 
+        public List<PlanetSeed> GetPlanetaryBodies(double stellarMassRatio, 
             double stellarLumRatio, double innerDust, double outerDust,
             double outerPlanetLimit, double dustDensityCoeff, 
-            Planet seedSystem, bool doMoons)
+            PlanetSeed seedSystem, bool doMoons)
         {
             SetInitialConditions(innerDust, outerDust);
 
@@ -55,7 +55,7 @@ namespace DLS.StarformNET
                 ? FarthestPlanet(stellarMassRatio) 
                 : outerPlanetLimit;
 
-            Planet seeds = seedSystem;
+            PlanetSeed seeds = seedSystem;
             while (_dustLeft)
             {
                 double a, e;
@@ -101,7 +101,15 @@ namespace DLS.StarformNET
 
                 //Trace.TraceInformation(".. failed");
             }
-            return (_planetHead);
+
+            var seedList = new List<PlanetSeed>();
+            var next = _planetHead;
+            while (next != null)
+            {
+                seedList.Add(next);
+                next = next.NextPlanet;
+            }
+            return seedList;
         }
 
         private void SetInitialConditions(double inner_limit_of_dust, double outer_limit_of_dust)
@@ -398,9 +406,9 @@ namespace DLS.StarformNET
 
         private void CoalescePlanetesimals(double a, double e, double mass, double crit_mass, double dust_mass, double gas_mass, double stell_luminosity_ratio, double body_inner_bound, double body_outer_bound, bool do_moons)
         {
-            Planet the_planet;
-            Planet next_planet;
-            Planet prev_planet;
+            PlanetSeed the_planet;
+            PlanetSeed next_planet;
+            PlanetSeed prev_planet;
             bool finished;
 
             finished = false;
@@ -454,9 +462,9 @@ namespace DLS.StarformNET
 
                         if (the_planet.FirstMoon != null)
                         {
-                            Planet m;
+                            //PlanetSeed m;
 
-                            for (m = the_planet.FirstMoon; m != null; m = m.NextPlanet)
+                            for (PlanetSeed m = the_planet.FirstMoon; m != null; m = m.NextPlanet)
                             {
                                 existing_mass += m.Mass;
                             }
@@ -466,23 +474,7 @@ namespace DLS.StarformNET
                         {
                             if (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES < 2.5 && mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .0001 && existing_mass < the_planet.Mass * .05)
                             {
-                                Planet the_moon = new Planet();
-
-                                the_moon.Type = PlanetType.Unknown;
-                                the_moon.Mass = mass;
-                                the_moon.DustMass = dust_mass;
-                                the_moon.GasMass = gas_mass;
-                                the_moon.NextPlanet = null;
-                                the_moon.FirstMoon = null;
-                                the_moon.IsGasGiant = false;
-                                the_moon.Albedo = 0;
-                                the_moon.SurfaceTemp = 0;
-                                the_moon.DaytimeTemp = 0;
-                                the_moon.NighttimeTemp = 0;
-                                the_moon.MaxTemp = 0;
-                                the_moon.MinTemp = 0;
-                                the_moon.GreenhouseRise = 0;
-                                the_moon.MinorMoonCount = 0;
+                                PlanetSeed the_moon = new PlanetSeed(0, 0, mass, dust_mass, gas_mass);
 
                                 if (the_moon.DustMass + the_moon.GasMass > the_planet.DustMass + the_planet.GasMass)
                                 {
@@ -583,23 +575,13 @@ namespace DLS.StarformNET
 
             if (!(finished)) // Planetesimals didn't collide. Make it a planet.
             {
-                the_planet = new Planet();
-
-                the_planet.Type = PlanetType.Unknown;
-                the_planet.SemiMajorAxisAU = a;
-                the_planet.Eccentricity = e;
-                the_planet.Mass = mass;
-                the_planet.DustMass = dust_mass;
-                the_planet.GasMass = gas_mass;
-                the_planet.FirstMoon = null;
-                the_planet.Albedo = 0;
-                the_planet.SurfaceTemp = 0;
-                the_planet.DaytimeTemp = 0;
-                the_planet.NighttimeTemp = 0;
-                the_planet.MaxTemp = 0;
-                the_planet.MinTemp = 0;
-                the_planet.GreenhouseRise = 0;
-                the_planet.MinorMoonCount = 0;
+                the_planet = new PlanetSeed(a, e, mass, dust_mass, gas_mass);
+                
+                //the_planet.SemiMajorAxisAU = a;
+                //the_planet.Eccentricity = e;
+                //the_planet.Mass = mass;
+                //the_planet.DustMass = dust_mass;
+                //the_planet.GasMass = gas_mass;
 
                 if (mass >= crit_mass)
                 {

@@ -65,12 +65,15 @@ namespace DLS.StarformNET
 
         private void GenerateSystem()
         {
-            var generator = new Generator(_gases);
-            generator.CloudEccentricity = 0.25f;
-            generator.DustDensityCoeff = (0.002);
-            generator.GasDensityRatio = 50.0;
+            var genOptions = new SystemGenerationOptions()
+            {
+                CloudEccentricity = 0.25f,
+                DustDensityCoeff = (0.002),
+                GasDensityRatio = 50.0,
+                GasTable = _gases
+            };
             var star = new Star();
-            _system = generator.GenerateStellarSystem(ref star, null, "p", 0, "whatever", true, true);
+            _system = Generator.GenerateStellarSystem(ref star, null, "whatever", genOptions);
             _systemMap.SetNewSystem(_system);
             _planetSelector.Items.Clear();
 

@@ -142,18 +142,6 @@ namespace DLS.StarformNET.Display
             return sb.ToString();
         }
 
-        public static string GetMoonCount(Planet planet)
-        {
-            var moons = 0;
-            var moon = planet.FirstMoon;
-            while (moon != null)
-            {
-                moons++;
-                moon = moon.NextPlanet;
-            }
-            return moons.ToString();
-        }
-
         public static string GetSurfaceGravityG(Planet planet)
         {
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)

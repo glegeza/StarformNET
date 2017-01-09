@@ -6,31 +6,20 @@ namespace DLS.StarformNET
 
     public class Generator
     {
-        private static double MIN_SUN_AGE = 1.0E9;
-        private static double MAX_SUN_AGE = 6.0E9;
+        //private ChemType[] _gasTable;
+        
+        //public Generator(ChemType[] g)
+        //{
+        //    _gasTable = g;
+        //}
 
-        public double DustDensityCoeff = GlobalConstants.DUST_DENSITY_COEFF;
-        public double CloudEccentricity = GlobalConstants.CLOUD_ECCENTRICITY;
-        public double GasDensityRatio = GlobalConstants.K;
-        private long _flagSeed = 0;
-        private Accrete _accrete;
-        private ChemType[] _gasTable;
-
-        public Generator(ChemType[] g)
+        public static List<Planet> GenerateStellarSystem(ref Star sun, List<PlanetSeed> seedSystem, string systemName, SystemGenerationOptions genOptions)
         {
-            _gasTable = g;
-        }
-
-        public List<Planet> GenerateStellarSystem(ref Star sun, Planet seedSystem, string flagChar, int systemNo, string systemName, bool doGases, bool doMoons)
-        {
-            _accrete = new Accrete(CloudEccentricity, GasDensityRatio);
-
             // TODO why is this randomizing for high and low sun masses?
             if (sun.Mass < 0.2 || sun.Mass > 1.5)
             {
                 sun.Mass = Utilities.RandomNumber(0.7, 1.4);
             }
-            double outer_dust_limit = _accrete.stellar_dust_limit(sun.Mass);
 
             if (sun.Luminosity == 0)
             {
@@ -39,69 +28,63 @@ namespace DLS.StarformNET
 
             sun.EcosphereRadius = Math.Sqrt(sun.Luminosity);
             sun.Life = 1.0E10 * (sun.Mass / sun.Luminosity);
-
-            Planet seed = null;
+            
+            var useRandomTilt = seedSystem == null;
             if (seedSystem != null)
             {
-                seed = seedSystem;
                 sun.Age = 5.0E9;
             }
             else
             {
                 sun.Age = Utilities.RandomNumber(
-                    MIN_SUN_AGE,
-                    sun.Life < MAX_SUN_AGE ? sun.Life : MAX_SUN_AGE);
+                    genOptions.MinSunAge,
+                    sun.Life < genOptions.MaxSunAge ? sun.Life : genOptions.MaxSunAge);
 
+                var accrete = new Accrete(genOptions.CloudEccentricity, genOptions.GasDensityRatio);
                 double outer_planet_limit = GetOuterLimit(sun);
-                seed = _accrete.DistPlanetaryMasses(sun.Mass, 
+                double outer_dust_limit = Accrete.GetStellarDustLimit(sun.Mass);
+                seedSystem = accrete.GetPlanetaryBodies(sun.Mass, 
                     sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
-                    DustDensityCoeff, seedSystem, doMoons);
+                    genOptions.DustDensityCoeff, null, true);
             }
 
-            return GeneratePlanets(sun, seed, seedSystem == null, flagChar, systemNo, systemName, doGases, doMoons);
+            return GeneratePlanets(sun, seedSystem, useRandomTilt, genOptions);
         }
 
-        private List<Planet> GeneratePlanets(Star sun, Planet seed, bool useRandomTilt, string flatChar, int systemNo, string systemName, bool doGases, bool doMoons)
+        private static List<Planet> GeneratePlanets(Star sun, List<PlanetSeed> seeds, bool useRandomTilt, SystemGenerationOptions genOptions)
         {
             var planets = new List<Planet>();
-            Planet planet;
-            int planet_no = 0;
-            for (planet = seed, planet_no = 1; planet != null; planet = planet.NextPlanet, planet_no++)
+            for (var i = 0; i < seeds.Count; i++)
             {
-                string planet_id = String.Format("{0} (-{1} -{2}{3}) {4}", systemName, _flagSeed, flatChar, systemNo, planet_no);
+                var planetNo = i + 1; // start counting planets at 1
+                var seed = seeds[i];
 
-                GeneratePlanet(planet, planet_no, ref sun, useRandomTilt, planet_id, doGases, doMoons, false);
+                string planet_id = planetNo.ToString();
+
+                var planet = GeneratePlanet(seed, planetNo, ref sun, useRandomTilt, planet_id, false, genOptions);
                 planets.Add(planet);
 
                 // Now we're ready to test for habitable planets,
                 // so we can count and log them and such
                 CheckPlanet(ref planet, planet_id, false);
 
-                Planet moon;
-                int moons = 0;
-                for (moon = planet.FirstMoon, moons = 1; moon != null;  moon = moon.NextPlanet, moons++)
-                {
-                    string moon_id = String.Format("{0}.{1}", planet_id, moons);
+                // TODO Get moon code working again
+                //Planet moon;
+                //int moons = 0;
+                //for (moon = planet.FirstMoon, moons = 1; moon != null; moon = moon.NextPlanet, moons++)
+                //{
+                //    string moon_id = String.Format("{0}.{1}", planet_id, moons);
 
-                    CheckPlanet(ref moon, moon_id, true);
-                }
+                //    CheckPlanet(ref moon, moon_id, true);
+                //}
             }
 
             return planets;
         }
 
-        private void GeneratePlanet(Planet planet, int planetNo, ref Star sun, bool useRandomTilt, string planetID, bool doGases, bool doMoons, bool isMoon)
+        private static Planet GeneratePlanet(PlanetSeed seed, int planetNo, ref Star sun, bool useRandomTilt, string planetID, bool isMoon, SystemGenerationOptions genOptions)
         {
-            // TODO deal with planet initialization
-            planet.SurfaceTemp = 0;
-            planet.DaytimeTemp = 0;
-            planet.NighttimeTemp = 0;
-            planet.MaxTemp = 0;
-            planet.MinTemp = 0;
-            planet.GreenhouseRise = 0;
-            planet.Position = planetNo;
-            planet.Star = sun;
-            planet.HasResonantPeriod = false;
+            var planet = new Planet(seed, sun, planetNo);
 
             planet.OrbitZone = Environment.OrbitalZone(sun.Luminosity, planet.SemiMajorAxisAU);
             planet.OrbitalPeriod = Environment.Period(planet.SemiMajorAxisAU, planet.Mass, sun.Mass);
@@ -124,9 +107,9 @@ namespace DLS.StarformNET
             planet.SurfaceGravity = Environment.Gravity(planet.SurfaceAcceleration);
 
             planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
-
-            // TODO remove call to MinMolecularWeight in condition
-            if (((planet.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) > 1.0) && ((planet.GasMass / planet.Mass) > 0.05) && (Environment.MinMolecularWeight(planet) <= 4.0))
+            
+            // Is the planet a gas giant?
+            if (((planet.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) > 1.0) && ((planet.GasMass / planet.Mass) > 0.05) && (planet.MolecularWeightRetained <= 4.0))
             {
                 if ((planet.GasMass / planet.Mass) < 0.20)
                 {
@@ -244,10 +227,7 @@ namespace DLS.StarformNET
                 // planet.cloud_cover, planet.ice_cover
                 Environment.IterateSurfaceTemp(ref planet);
                 
-                if (doGases)
-                {
-                    CalculateGases(planet);
-                }
+                CalculateGases(planet, genOptions.GasTable);
 
                 planet.IsTidallyLocked = Environment.IsTidallyLocked(planet);
 
@@ -308,48 +288,50 @@ namespace DLS.StarformNET
                 }
             }
 
-            if (doMoons && !isMoon)
-            {
-                if (planet.FirstMoon != null)
-                {
-                    int n;
-                    Planet ptr;
+            // TODO Get moon code working again
+            //if (doMoons && !isMoon)
+            //{
+            //    if (planet.FirstMoon != null)
+            //    {
+            //        int n;
+            //        Planet ptr;
 
-                    for (n = 0, ptr = planet.FirstMoon; ptr != null; ptr = ptr.NextPlanet)
-                    {
-                        if (ptr.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .000001)
-                        {
-                            ptr.SemiMajorAxisAU = planet.SemiMajorAxisAU;
-                            ptr.Eccentricity = planet.Eccentricity;
+            //        for (n = 0, ptr = planet.FirstMoon; ptr != null; ptr = ptr.NextPlanet)
+            //        {
+            //            if (ptr.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .000001)
+            //            {
+            //                ptr.SemiMajorAxisAU = planet.SemiMajorAxisAU;
+            //                ptr.Eccentricity = planet.Eccentricity;
 
-                            n++;
+            //                n++;
                             
-                            string moon_id = String.Format("{0}.{1}", planetID, n);
+            //                string moon_id = String.Format("{0}.{1}", planetID, n);
 
-                            GeneratePlanet(ptr, n, ref sun, useRandomTilt, moon_id, doGases, doMoons, true);    // Adjusts ptr.density
+            //                GeneratePlanet(ptr, n, ref sun, useRandomTilt, moon_id, doGases, doMoons, true);    // Adjusts ptr.density
 
-                            double roche_limit = 2.44 * planet.Radius * Math.Pow((planet.Density / ptr.Density), (1.0 / 3.0));
-                            double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.Mass / (3.0 * sun.Mass)), (1.0 / 3.0));
+            //                double roche_limit = 2.44 * planet.Radius * Math.Pow((planet.Density / ptr.Density), (1.0 / 3.0));
+            //                double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.Mass / (3.0 * sun.Mass)), (1.0 / 3.0));
 
-                            if ((roche_limit * 3.0) < hill_sphere)
-                            {
-                                ptr.MoonSemiMajorAxisAU = Utilities.RandomNumber(roche_limit * 1.5, hill_sphere / 2.0) / GlobalConstants.KM_PER_AU;
-                                ptr.MoonEccentricity = Utilities.RandomEccentricity();
-                            }
-                            else
-                            {
-                                ptr.MoonSemiMajorAxisAU = 0;
-                                ptr.MoonEccentricity = 0;
-                            }
-                        }
-                    }
-                }
-            }
+            //                if ((roche_limit * 3.0) < hill_sphere)
+            //                {
+            //                    ptr.MoonSemiMajorAxisAU = Utilities.RandomNumber(roche_limit * 1.5, hill_sphere / 2.0) / GlobalConstants.KM_PER_AU;
+            //                    ptr.MoonEccentricity = Utilities.RandomEccentricity();
+            //                }
+            //                else
+            //                {
+            //                    ptr.MoonSemiMajorAxisAU = 0;
+            //                    ptr.MoonEccentricity = 0;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
+            return planet;
         }
 
         // TODO this really should be in a separate class
-        public void CalculateGases(Planet planet)
+        public static void CalculateGases(Planet planet, ChemType[] gasTable)
         {
             var sun = planet.Star;
             planet.Atmosphere.Composition = new List<Gas>();
@@ -359,26 +341,26 @@ namespace DLS.StarformNET
                 return;
             }
 
-            double[] amount = new double[_gasTable.Length];
+            double[] amount = new double[gasTable.Length];
             double totamount = 0;
             double pressure = planet.Atmosphere.SurfacePressure / GlobalConstants.MILLIBARS_PER_BAR;
             int n = 0;
 
             // Determine the relative abundance of each gas in the planet's atmosphere
-            for (var i = 0; i < _gasTable.Length; i++)
+            for (var i = 0; i < gasTable.Length; i++)
             {
-                double yp = _gasTable[i].boil / (373.0 * ((Math.Log((pressure) + 0.001) / -5050.5) + (1.0 / 373.0)));
+                double yp = gasTable[i].boil / (373.0 * ((Math.Log((pressure) + 0.001) / -5050.5) + (1.0 / 373.0)));
 
                 // TODO move both of these conditions to separate methods
-                if ((yp >= 0 && yp < planet.NighttimeTemp) && (_gasTable[i].weight >= planet.MolecularWeightRetained))
+                if ((yp >= 0 && yp < planet.NighttimeTemp) && (gasTable[i].weight >= planet.MolecularWeightRetained))
                 {
                     double abund, react;
-                    CheckForSpecialRules(out abund, out react, pressure, planet, _gasTable[i]);
+                    CheckForSpecialRules(out abund, out react, pressure, planet, gasTable[i]);
 
-                    double vrms = Environment.RMSVelocity(_gasTable[i].weight, planet.ExosphereTemp);
+                    double vrms = Environment.RMSVelocity(gasTable[i].weight, planet.ExosphereTemp);
                     double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocity), sun.Age / 1e9);
 
-                    double fract = (1 - (planet.MolecularWeightRetained / _gasTable[i].weight));
+                    double fract = (1 - (planet.MolecularWeightRetained / gasTable[i].weight));
 
                     // Note that the amount calculated here is unitless and doesn't really mean
                     // anything except as a relative value
@@ -401,19 +383,19 @@ namespace DLS.StarformNET
                 planet.Atmosphere.Composition = new List<Gas>();
 
                 n = 0;
-                for (var i = 0; i < _gasTable.Length; i++)
+                for (var i = 0; i < gasTable.Length; i++)
                 {
                     if (amount[i] > 0.0)
                     {
                         planet.Atmosphere.Composition.Add(
-                            new Gas(_gasTable[i], planet.Atmosphere.SurfacePressure * amount[i] / totamount));
+                            new Gas(gasTable[i], planet.Atmosphere.SurfacePressure * amount[i] / totamount));
                     }
                 }
             }
             
         }
 
-        private void CheckForSpecialRules(out double abund, out double react, double pressure, Planet planet, ChemType gas)
+        private static void CheckForSpecialRules(out double abund, out double react, double pressure, Planet planet, ChemType gas)
         {
             var sun = planet.Star;
             var pres2 = 1.0;
@@ -449,7 +431,7 @@ namespace DLS.StarformNET
         }
 
         // TODO This should be moved out of this class entirely
-        private void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
+        private static void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
         {
             planet.Atmosphere.Breathability = Environment.Breathability(planet);
 
