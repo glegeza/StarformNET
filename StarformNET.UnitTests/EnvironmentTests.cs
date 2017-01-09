@@ -11,6 +11,84 @@ namespace DLS.StarformNET.UnitTests
     class EnvironmentTests
     {
         [TestClass]
+        public class HillSphereTests
+        {
+            // Expected hill sphere value from:
+            // http://orbitsimulator.com/formulas/hillsphere.html
+
+            public static double SunMass = 1;
+            public static double EarthMass = 0.000003003;
+            public static double MercuryMass = 0.0000001652;
+            public static double VenusMass = 0.000002447;
+            public static double JupiterMass = 0.0009543;
+
+            public static double EarthSemiMajorAxisKM = 149600000;
+            public static double EarthSemiMajorAxisAU = EarthSemiMajorAxisKM / GlobalConstants.KM_PER_AU;
+            public static double MercurySemiMajorAxisKM = 57909050;
+            public static double MercurySemiMajorAxisAU = MercurySemiMajorAxisKM / GlobalConstants.KM_PER_AU;
+            public static double VenusSemiMajorAxisKM = 108208000;
+            public static double VenusSemiMajorAxisAU = VenusSemiMajorAxisKM / GlobalConstants.KM_PER_AU;
+            public static double JupiterSemiMajorAxisKM = 778297882;
+            public static double JupiterSemiMajorAxisAU = JupiterSemiMajorAxisKM / GlobalConstants.KM_PER_AU;
+
+            [TestCategory("Hill Sphere")]
+            [TestMethod]
+            public void TestSunEarthHillSphere()
+            {
+                var earthSphereKM = 1496498;
+                var earthSphereAU = earthSphereKM / GlobalConstants.KM_PER_AU;
+
+                var hAU = StarformNET.Environment.SimplifiedHillSphereAU(SunMass, EarthMass, EarthSemiMajorAxisAU);
+                Assert.AreEqual(earthSphereAU, hAU, 0.001);
+
+                var hKM = StarformNET.Environment.SimplifiedHillSphereKM(SunMass, EarthMass, EarthSemiMajorAxisAU);
+                Assert.AreEqual(earthSphereKM, hKM, 0.99);
+            }
+
+            [TestCategory("Hill Sphere")]
+            [TestMethod]
+            public void TestSunMercuryHillSphere()
+            {
+                var mercurySphereKM = 220314;
+                var mercurySphereAU = mercurySphereKM / GlobalConstants.KM_PER_AU;
+
+                var hAU = StarformNET.Environment.SimplifiedHillSphereAU(SunMass, MercuryMass, MercurySemiMajorAxisAU);
+                Assert.AreEqual(mercurySphereAU, hAU, 0.001);
+
+                var hKM = StarformNET.Environment.SimplifiedHillSphereKM(SunMass, MercuryMass, MercurySemiMajorAxisAU);
+                Assert.AreEqual(mercurySphereKM, hKM, 0.99);
+            }
+
+            [TestCategory("Hill Sphere")]
+            [TestMethod]
+            public void TestSunVenusHillSphere()
+            {
+                var venusSphereKM = 1011028;
+                var venusSphereAU = venusSphereKM / GlobalConstants.KM_PER_AU;
+
+                var hAU = StarformNET.Environment.SimplifiedHillSphereAU(SunMass, VenusMass, VenusSemiMajorAxisAU);
+                Assert.AreEqual(venusSphereAU, hAU, 0.001);
+
+                var hKM = StarformNET.Environment.SimplifiedHillSphereKM(SunMass, VenusMass, VenusSemiMajorAxisAU);
+                Assert.AreEqual(venusSphereKM, hKM, 0.99);
+            }
+
+            [TestCategory("Hill Sphere")]
+            [TestMethod]
+            public void TestSunJupiterHillSphere()
+            {
+                var jupiterSphereKM = 53129256;
+                var jupiterSphereAU = jupiterSphereKM / GlobalConstants.KM_PER_AU;
+
+                var hAU = StarformNET.Environment.SimplifiedHillSphereAU(SunMass, JupiterMass, JupiterSemiMajorAxisAU);
+                Assert.AreEqual(jupiterSphereAU, hAU, 0.001);
+
+                var hKM = StarformNET.Environment.SimplifiedHillSphereKM(SunMass, JupiterMass, JupiterSemiMajorAxisAU);
+                Assert.AreEqual(jupiterSphereKM, hKM, 0.99);
+            }
+        }
+
+        [TestClass]
         public class RocheLimitTests
         {
             public static double SunDensity = 1.408;

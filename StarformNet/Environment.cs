@@ -3,8 +3,35 @@ namespace DLS.StarformNET
     using System;
     using Data;
 
+    // TODO Figure out a way to logically break this class up
     public static class Environment
     {
+        /// <summary>
+        /// Returns the hill sphere of object m orbiting object M with a semi-
+        /// major axis a. Ignores eccentricity.
+        /// </summary>
+        /// <param name="M">The mass of the larger body</param>
+        /// <param name="m">The mass of the smaller body</param>
+        /// <param name="a">Semi-major axis in AU</param>
+        /// <returns>Hill sphere in KM</returns>
+        public static double SimplifiedHillSphereKM(double M, double m, double a)
+        {
+            return SimplifiedHillSphereAU(M, m, a) * GlobalConstants.KM_PER_AU;
+        }
+
+        /// <summary>
+        /// Returns the hill sphere of object m orbiting object M with a semi-
+        /// major axis a. Ignores eccentricity.
+        /// </summary>
+        /// <param name="M">The mass of the larger body</param>
+        /// <param name="m">The mass of the smaller body</param>
+        /// <param name="a">Semi-major axis in AU</param>
+        /// <returns>Hill sphere in AU</returns>
+        public static double SimplifiedHillSphereAU(double M, double m, double a)
+        {
+            return a * Math.Pow(m / (3 * M), (1.0 / 3.0));
+        }
+
         /// <summary>
         /// Returns the Roche limit of an object in KM
         /// </summary>
@@ -839,13 +866,10 @@ namespace DLS.StarformNET
 
             return years;
         }
-
-        // TODO Pretty much no idea what's going on here. Will figure it out later.
+        
         /// <summary>
-        /// 
+        /// Calculates the minimum molecular weight retained by a planet
         /// </summary>
-        /// <param name="planet"></param>
-        /// <returns></returns>
         public static double MinMolecularWeight(Planet planet)
         {
             double mass = planet.Mass;
