@@ -194,6 +194,11 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.0} days", planet.OrbitalPeriod);
         }
 
+        public static string GetOrbitalEccentricity(Planet planet)
+        {
+            return String.Format("{0:0.00}", planet.Eccentricity);
+        }
+
         public static string GetOrbitalDistanceAU(Planet planet)
         {
             return String.Format("{0:0.00} AU", planet.SemiMajorAxisAU);
