@@ -6,42 +6,18 @@ namespace DLS.StarformNET
 
     public class Generator
     {
-        public static List<Planet> GenerateStellarSystem(ref Star sun, List<PlanetSeed> seedSystem, string systemName, SystemGenerationOptions genOptions)
+        public static List<Planet> GenerateStellarSystem(string systemName, SystemGenerationOptions genOptions = null, Star sun=null, List<PlanetSeed> seedSystem=null)
         {
             genOptions = genOptions ?? SystemGenerationOptions.DefaultOptions;
-
-            // TODO why is this randomizing for high and low sun masses?
-            if (sun.Mass < 0.2 || sun.Mass > 1.5)
-            {
-                sun.Mass = Utilities.RandomNumber(0.7, 1.4);
-            }
-
-            if (sun.Luminosity == 0)
-            {
-                sun.Luminosity = Environment.Luminosity(sun.Mass);
-            }
-
-            sun.EcosphereRadius = Math.Sqrt(sun.Luminosity);
-            sun.Life = 1.0E10 * (sun.Mass / sun.Luminosity);
-            
+            sun = sun ?? StarGenerator.GetDefaultStar();
             var useRandomTilt = seedSystem == null;
-            if (seedSystem != null)
-            {
-                sun.Age = 5.0E9;
-            }
-            else
-            {
-                sun.Age = Utilities.RandomNumber(
-                    genOptions.MinSunAge,
-                    sun.Life < genOptions.MaxSunAge ? sun.Life : genOptions.MaxSunAge);
 
-                var accrete = new Accrete(genOptions.CloudEccentricity, genOptions.GasDensityRatio);
-                double outer_planet_limit = GetOuterLimit(sun);
-                double outer_dust_limit = Accrete.GetStellarDustLimit(sun.Mass);
-                seedSystem = accrete.GetPlanetaryBodies(sun.Mass, 
-                    sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
-                    genOptions.DustDensityCoeff, null, true);
-            }
+            var accrete = new Accrete(genOptions.CloudEccentricity, genOptions.GasDensityRatio);
+            double outer_planet_limit = GetOuterLimit(sun);
+            double outer_dust_limit = Accrete.GetStellarDustLimit(sun.Mass);
+            seedSystem = seedSystem ?? accrete.GetPlanetaryBodies(sun.Mass, 
+                sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
+                genOptions.DustDensityCoeff, null, true);
 
             return GeneratePlanets(sun, seedSystem, useRandomTilt, genOptions);
         }

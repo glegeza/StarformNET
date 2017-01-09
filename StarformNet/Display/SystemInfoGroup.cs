@@ -6,8 +6,15 @@ namespace DLS.StarformNET.Display
 
     public class SystemInfoGroup : InfoGroup
     {
-        public void SetSystem(Star star, List<Planet> planets)
+        public void SetSystem(List<Planet> planets)
         {
+            if (planets == null || planets[0] == null)
+            {
+                return;
+            }
+
+            var star = planets[0].Star;
+
             var labels = new List<string>()
             {
                 "Star Age:",

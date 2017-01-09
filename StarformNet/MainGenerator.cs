@@ -72,8 +72,7 @@ namespace DLS.StarformNET
                 GasDensityRatio = 50.0,
                 GasTable = _gases
             };
-            var star = new Star();
-            _system = Generator.GenerateStellarSystem(ref star, null, "whatever", genOptions);
+            _system = Generator.GenerateStellarSystem("whatever", genOptions);
             _systemMap.SetNewSystem(_system);
             _planetSelector.Items.Clear();
 
@@ -84,8 +83,8 @@ namespace DLS.StarformNET
             _planetSelector.SelectedIndex = 0;
 
             var text = PlanetText.GetSystemText(_system);
-            _systemInfo.SetSystem(star, _system);
-            _orbitMap.SetSystem(star, _system);
+            _systemInfo.SetSystem(_system);
+            _orbitMap.SetSystem(_system);
             _planetInfoGroup.TabSpacing = 160;
             _planetInfoGroup.SetPlanet(_system[0]);
             _orbitMap.SelectPlanet(0);

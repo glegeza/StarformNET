@@ -89,7 +89,7 @@ namespace DLS.StarformNET.Display
             Refresh();
         }
 
-        public void SetSystem(Star star, List<Planet> system)
+        public void SetSystem(List<Planet> system)
         {
             var random = new Random();
             _orbits.Clear();
