@@ -8,7 +8,6 @@ namespace DLS.StarformNET.Data
     {
         public int Position;
         public Star Star { get; set; }
-        //public Planet NextPlanet { get; set; } // this should be considered deprecated
         public List<IPlanetTrait> Traits { get; set; }
         public Atmosphere Atmosphere = new Atmosphere();
 
