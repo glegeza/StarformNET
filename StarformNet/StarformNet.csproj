@@ -85,6 +85,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Environment.cs" />
+    <Compile Include="StarGenerator.cs" />
     <Compile Include="SystemGenerationOptions.cs" />
     <Compile Include="MainGenerator.cs">
       <SubType>Form</SubType>
