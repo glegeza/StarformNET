@@ -462,8 +462,6 @@ namespace DLS.StarformNET
 
                         if (the_planet.FirstMoon != null)
                         {
-                            //PlanetSeed m;
-
                             for (PlanetSeed m = the_planet.FirstMoon; m != null; m = m.NextPlanet)
                             {
                                 existing_mass += m.Mass;
@@ -576,12 +574,6 @@ namespace DLS.StarformNET
             if (!(finished)) // Planetesimals didn't collide. Make it a planet.
             {
                 the_planet = new PlanetSeed(a, e, mass, dust_mass, gas_mass);
-                
-                //the_planet.SemiMajorAxisAU = a;
-                //the_planet.Eccentricity = e;
-                //the_planet.Mass = mass;
-                //the_planet.DustMass = dust_mass;
-                //the_planet.GasMass = gas_mass;
 
                 if (mass >= crit_mass)
                 {
