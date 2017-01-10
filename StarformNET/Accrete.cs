@@ -528,7 +528,7 @@ namespace DLS.StarformNET
 
                     if (do_moons)
                     {
-                        DoMoons(the_planet, mass, crit_mass, dust_mass, gas_mass);
+                        finished = DoMoons(the_planet, mass, crit_mass, dust_mass, gas_mass);
                     }
 
                     if (!finished)
