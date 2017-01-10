@@ -8,10 +8,13 @@ namespace DLS.StarformNET.Display
 
     public class SystemMap : PictureBox
     {
+        public static int MOONS_PER_COLUMN = 4;
+
         public PlanetSpriteSheet SpriteSheet;
         public int PlanetPadding { get; set; }
 
         private List<Sprite> _planetSprites = new List<Sprite>();
+        private List<Planet> _planets;
         public int SelectedPlanetIndex = -1;
         private Pen _selectionPen = new Pen(Color.White, 1);
         private Pen _focusedSelectionPen = new Pen(Color.Red, 1);
@@ -20,6 +23,7 @@ namespace DLS.StarformNET.Display
 
         public void SetNewSystem(List<Planet> planets)
         {
+            _planets = planets;
             _planetSprites.Clear();
             foreach (var p in planets)
             {
@@ -105,9 +109,28 @@ namespace DLS.StarformNET.Display
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             base.OnPaintBackground(e);
-            foreach (var sprite in _planetSprites)
+            for (var i = 0; i < _planetSprites.Count; i++)
             {
-                sprite.DrawSprite(e);
+                _planetSprites[i].DrawSprite(e);
+                var rectPen = new Pen(Color.White);
+
+                var moonYOffset = _planetSprites[i].SourceRect.Height + 2;
+                var moonStartY = _planetSprites[i].DrawLocation.Y + moonYOffset;
+                var columns = (int)Math.Ceiling((float)_planets[i].Moons.Count / MOONS_PER_COLUMN);
+                var moonStartX = _planetSprites[i].DrawLocation.X + (int)((_planetSprites[i].SourceRect.Width / 2.0f) - (4 * columns) + 2);
+                var x = moonStartX;
+                var y = moonStartY;
+                for (var k = 0; k < _planets[i].Moons.Count; k++)
+                {
+                    if (k % MOONS_PER_COLUMN == 0)
+                    {
+                        x += 4;
+                        y = moonStartY;
+                    }
+                    e.Graphics.DrawRectangle(rectPen, x, y,
+                        2, 2);
+                    y += 4;
+                }
             }
 
             if (SelectedPlanetIndex < 0 || SelectedPlanetIndex >= _planetSprites.Count)
