@@ -484,20 +484,16 @@ namespace DLS.StarformNET
             return Math.Sqrt(newE);
         }
 
-        private void CoalescePlanetesimals(double a, double e, double mass, double crit_mass, double dust_mass, double gas_mass, double stell_luminosity_ratio, double body_inner_bound, double body_outer_bound, bool do_moons)
+        private void CoalescePlanetesimals(double a, double e, double mass, double critMass, double dustMass, double gasMass, double stellLuminosityRatio, double bodyInnerBound, double bodyOuterBound, bool doMoons)
         {
-            PlanetSeed the_planet;
-            PlanetSeed next_planet;
-            PlanetSeed prev_planet;
-            bool finished;
-
-            finished = false;
-            prev_planet = null;
-
             // First we try to find an existing planet with an over-lapping orbit.
-            for (the_planet = _planetHead; the_planet != null; the_planet = the_planet.NextPlanet)
+            PlanetSeed thePlanet = null;
+            PlanetSeed nextPlanet = null;
+            PlanetSeed prevPlanet = null;
+            var finished = false;
+            for (thePlanet = _planetHead; thePlanet != null; thePlanet = thePlanet.NextPlanet)
             {
-                double diff = the_planet.SemiMajorAxisAU - a;
+                double diff = thePlanet.SemiMajorAxisAU - a;
                 double dist1;
                 double dist2;
 
@@ -505,30 +501,31 @@ namespace DLS.StarformNET
                 {
                     dist1 = (a * (1.0 + e) * (1.0 + _reducedMass)) - a;
                     /* x aphelion	 */
-                    _reducedMass = Math.Pow((the_planet.Mass / (1.0 + the_planet.Mass)), (1.0 / 4.0));
-                    dist2 = the_planet.SemiMajorAxisAU
-                        - (the_planet.SemiMajorAxisAU * (1.0 - the_planet.Eccentricity) * (1.0 - _reducedMass));
+                    _reducedMass = Math.Pow((thePlanet.Mass / (1.0 + thePlanet.Mass)), (1.0 / 4.0));
+                    dist2 = thePlanet.SemiMajorAxisAU
+                        - (thePlanet.SemiMajorAxisAU * (1.0 - thePlanet.Eccentricity) * (1.0 - _reducedMass));
                 }
                 else
                 {
                     dist1 = a - (a * (1.0 - e) * (1.0 - _reducedMass));
                     /* x perihelion */
-                    _reducedMass = Math.Pow((the_planet.Mass / (1.0 + the_planet.Mass)), (1.0 / 4.0));
-                    dist2 = (the_planet.SemiMajorAxisAU * (1.0 + the_planet.Eccentricity) * (1.0 + _reducedMass))
-                        - the_planet.SemiMajorAxisAU;
+                    _reducedMass = Math.Pow((thePlanet.Mass / (1.0 + thePlanet.Mass)), (1.0 / 4.0));
+                    dist2 = (thePlanet.SemiMajorAxisAU * (1.0 + thePlanet.Eccentricity) * (1.0 + _reducedMass))
+                        - thePlanet.SemiMajorAxisAU;
                 }
 
+                // Did the planetesimal collide with this planet?
                 if (Math.Abs(diff) <= Math.Abs(dist1) || Math.Abs(diff) <= Math.Abs(dist2))
                 {
                     double new_dust = 0;
                     double new_gas = 0;
-                    double new_a = (the_planet.Mass + mass) / ((the_planet.Mass / the_planet.SemiMajorAxisAU) + (mass / a));
+                    double new_a = (thePlanet.Mass + mass) / ((thePlanet.Mass / thePlanet.SemiMajorAxisAU) + (mass / a));
                     
-                    e = GetNewEccentricity(the_planet, e, a, mass, new_a);
+                    e = GetNewEccentricity(thePlanet, e, a, mass, new_a);
 
-                    if (do_moons)
+                    if (doMoons)
                     {
-                        finished = DoMoons(the_planet, mass, crit_mass, dust_mass, gas_mass);
+                        finished = DoMoons(thePlanet, mass, critMass, dustMass, gasMass);
                     }
 
                     if (!finished)
@@ -541,37 +538,37 @@ namespace DLS.StarformNET
                         //    crit_mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
                         //    new_a, e);
 
-                        var temp = the_planet.Mass + mass;
-                        AccreteDust(ref temp, ref new_dust, ref new_gas,
-                                     new_a, e, stell_luminosity_ratio,
-                                     body_inner_bound, body_outer_bound);
+                        var newMass = thePlanet.Mass + mass;
+                        AccreteDust(ref newMass, ref new_dust, ref new_gas,
+                                     new_a, e, stellLuminosityRatio,
+                                     bodyInnerBound, bodyOuterBound);
 
-                        the_planet.SemiMajorAxisAU = new_a;
-                        the_planet.Eccentricity = e;
-                        the_planet.Mass = temp;
-                        the_planet.DustMass += dust_mass + new_dust;
-                        the_planet.GasMass += gas_mass + new_gas;
-                        if (temp >= crit_mass)
+                        thePlanet.SemiMajorAxisAU = new_a;
+                        thePlanet.Eccentricity = e;
+                        thePlanet.Mass = newMass;
+                        thePlanet.DustMass += dustMass + new_dust;
+                        thePlanet.GasMass += gasMass + new_gas;
+                        if (thePlanet.Mass >= critMass)
                         {
-                            the_planet.IsGasGiant = true;
+                            thePlanet.IsGasGiant = true;
                         }
 
-                        while (the_planet.NextPlanet != null && the_planet.NextPlanet.SemiMajorAxisAU < new_a)
+                        while (thePlanet.NextPlanet != null && thePlanet.NextPlanet.SemiMajorAxisAU < new_a)
                         {
-                            next_planet = the_planet.NextPlanet;
+                            nextPlanet = thePlanet.NextPlanet;
 
-                            if (the_planet == _planetHead)
+                            if (thePlanet == _planetHead)
                             {
-                                _planetHead = next_planet;
+                                _planetHead = nextPlanet;
                             }
                             else
                             {
-                                prev_planet.NextPlanet = next_planet;
+                                prevPlanet.NextPlanet = nextPlanet;
                             }
 
-                            the_planet.NextPlanet = next_planet.NextPlanet;
-                            next_planet.NextPlanet = the_planet;
-                            prev_planet = next_planet;
+                            thePlanet.NextPlanet = nextPlanet.NextPlanet;
+                            nextPlanet.NextPlanet = thePlanet;
+                            prevPlanet = nextPlanet;
                         }
                     }
 
@@ -580,48 +577,49 @@ namespace DLS.StarformNET
                 }
                 else
                 {
-                    prev_planet = the_planet;
+                    prevPlanet = thePlanet;
                 }
             }
 
-            if (!(finished)) // Planetesimals didn't collide. Make it a planet.
+            // Planetesimals didn't collide. Make it a planet.
+            if (!(finished))
             {
-                the_planet = new PlanetSeed(a, e, mass, dust_mass, gas_mass);
+                thePlanet = new PlanetSeed(a, e, mass, dustMass, gasMass);
 
-                if (mass >= crit_mass)
+                if (mass >= critMass)
                 {
-                    the_planet.IsGasGiant = true;
+                    thePlanet.IsGasGiant = true;
                 }
                 else
                 {
-                    the_planet.IsGasGiant = false;
+                    thePlanet.IsGasGiant = false;
                 }
 
                 if (_planetHead == null)
                 {
-                    _planetHead = the_planet;
-                    the_planet.NextPlanet = null;
+                    _planetHead = thePlanet;
+                    thePlanet.NextPlanet = null;
                 }
                 else if (a < _planetHead.SemiMajorAxisAU)
                 {
-                    the_planet.NextPlanet = _planetHead;
-                    _planetHead = the_planet;
+                    thePlanet.NextPlanet = _planetHead;
+                    _planetHead = thePlanet;
                 }
                 else if (_planetHead.NextPlanet == null)
                 {
-                    _planetHead.NextPlanet = the_planet;
-                    the_planet.NextPlanet = null;
+                    _planetHead.NextPlanet = thePlanet;
+                    thePlanet.NextPlanet = null;
                 }
                 else
                 {
-                    next_planet = _planetHead;
-                    while (next_planet != null && next_planet.SemiMajorAxisAU < a)
+                    nextPlanet = _planetHead;
+                    while (nextPlanet != null && nextPlanet.SemiMajorAxisAU < a)
                     {
-                        prev_planet = next_planet;
-                        next_planet = next_planet.NextPlanet;
+                        prevPlanet = nextPlanet;
+                        nextPlanet = nextPlanet.NextPlanet;
                     }
-                    the_planet.NextPlanet = next_planet;
-                    prev_planet.NextPlanet = the_planet;
+                    thePlanet.NextPlanet = nextPlanet;
+                    prevPlanet.NextPlanet = thePlanet;
                 }
             }
         }
