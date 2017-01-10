@@ -471,9 +471,17 @@ namespace DLS.StarformNET
             return finished;
         }
 
-        private double GetEccentricity()
+        private double GetNewEccentricity(PlanetSeed the_planet, double e, double a, double mass, double newA)
         {
-            throw new NotImplementedException();
+            var newE = the_planet.Mass * Math.Sqrt(the_planet.SemiMajorAxisAU) * Math.Sqrt(1.0 - Math.Pow(the_planet.Eccentricity, 2.0));
+            newE = newE + (mass * Math.Sqrt(a) * Math.Sqrt(Math.Sqrt(1.0 - Math.Pow(e, 2.0))));
+            newE = newE / ((the_planet.Mass + mass) * Math.Sqrt(newA));
+            newE = 1.0 - Math.Pow(newE, 2.0);
+            if (newE < 0.0 || newE >= 1.0)
+            {
+                newE = 0.0;
+            }
+            return Math.Sqrt(newE);
         }
 
         private void CoalescePlanetesimals(double a, double e, double mass, double crit_mass, double dust_mass, double gas_mass, double stell_luminosity_ratio, double body_inner_bound, double body_outer_bound, bool do_moons)
@@ -515,17 +523,8 @@ namespace DLS.StarformNET
                     double new_dust = 0;
                     double new_gas = 0;
                     double new_a = (the_planet.Mass + mass) / ((the_planet.Mass / the_planet.SemiMajorAxisAU) + (mass / a));
-
-                    // GL: Calculate eccentricity I THINK
-                    double tempE = the_planet.Mass * Math.Sqrt(the_planet.SemiMajorAxisAU) * Math.Sqrt(1.0 - Math.Pow(the_planet.Eccentricity, 2.0));
-                    tempE = tempE + (mass * Math.Sqrt(a) * Math.Sqrt(Math.Sqrt(1.0 - Math.Pow(e, 2.0))));
-                    tempE = tempE / ((the_planet.Mass + mass) * Math.Sqrt(new_a));
-                    tempE = 1.0 - Math.Pow(tempE, 2.0);
-                    if (tempE < 0.0 || tempE >= 1.0)
-                    {
-                        tempE = 0.0;
-                    }
-                    e = Math.Sqrt(tempE);
+                    
+                    e = GetNewEccentricity(the_planet, e, a, mass, new_a);
 
                     if (do_moons)
                     {
