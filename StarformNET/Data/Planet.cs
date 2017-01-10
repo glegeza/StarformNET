@@ -1,14 +1,15 @@
 namespace DLS.StarformNET.Data
 {
+    using System;
     using System.Collections.Generic;
 
     // TODO break this class up
 
-    public class Planet
+    [Serializable]
+    public class Planet : IEquatable<Planet>
     {
         public int Position;
         public Star Star { get; set; }
-        public List<IPlanetTrait> Traits { get; set; }
         public Atmosphere Atmosphere = new Atmosphere();
 
         // Orbit data
@@ -82,6 +83,46 @@ namespace DLS.StarformNET.Data
             DustMass = seed.DustMass;
             GasMass = seed.GasMass;
             IsGasGiant = seed.IsGasGiant;
+        }
+
+        public bool Equals(Planet other)
+        {
+            return Position == other.Position &&
+                Utilities.AlmostEqual(SemiMajorAxisAU, other.SemiMajorAxisAU) &&
+                Utilities.AlmostEqual(Eccentricity, other.Eccentricity) &&
+                Utilities.AlmostEqual(AxialTilt, other.AxialTilt) &&
+                OrbitZone == other.OrbitZone &&
+                Utilities.AlmostEqual(OrbitalPeriod, other.OrbitalPeriod) &&
+                Utilities.AlmostEqual(Day, other.Day) &&
+                Utilities.AlmostEqual(HillSphere, other.HillSphere) &&
+                Utilities.AlmostEqual(Mass, other.Mass) &&
+                Utilities.AlmostEqual(DustMass, other.DustMass) &&
+                Utilities.AlmostEqual(GasMass, other.GasMass) &&
+                Utilities.AlmostEqual(EscapeVelocity, other.EscapeVelocity) &&
+                Utilities.AlmostEqual(SurfaceAcceleration, other.SurfaceAcceleration) &&
+                Utilities.AlmostEqual(SurfaceGravity, other.SurfaceGravity) &&
+                Utilities.AlmostEqual(CoreRadius, other.CoreRadius) &&
+                Utilities.AlmostEqual(Radius, other.Radius) &&
+                Utilities.AlmostEqual(Density, other.Density) &&
+                Moons.Count == other.Moons.Count &&
+                Utilities.AlmostEqual(RMSVelocity, other.RMSVelocity) &&
+                Utilities.AlmostEqual(MolecularWeightRetained, other.MolecularWeightRetained) &&
+                Utilities.AlmostEqual(VolatileGasInventory, other.VolatileGasInventory) &&
+                Utilities.AlmostEqual(BoilingPointWater, other.BoilingPointWater) &&
+                Utilities.AlmostEqual(Albedo, other.Albedo) &&
+                Utilities.AlmostEqual(Illumination, other.Illumination) &&
+                Utilities.AlmostEqual(ExosphereTemp, other.ExosphereTemp) &&
+                Utilities.AlmostEqual(EstimatedTemp, other.EstimatedTemp) &&
+                Utilities.AlmostEqual(EstimatedTerrTemp, other.EstimatedTerrTemp) &&
+                Utilities.AlmostEqual(SurfaceTemp, other.SurfaceTemp) &&
+                Utilities.AlmostEqual(GreenhouseRise, other.GreenhouseRise) &&
+                Utilities.AlmostEqual(DaytimeTemp, other.DaytimeTemp) &&
+                Utilities.AlmostEqual(NighttimeTemp, other.NighttimeTemp) &&
+                Utilities.AlmostEqual(MaxTemp, other.MaxTemp) &&
+                Utilities.AlmostEqual(MinTemp, other.MinTemp) &&
+                Utilities.AlmostEqual(WaterCover, other.WaterCover) &&
+                Utilities.AlmostEqual(CloudCover, other.CloudCover) &&
+                Utilities.AlmostEqual(IceCover, other.IceCover);
         }
     }
 }
