@@ -37,17 +37,13 @@ namespace DLS.StarformNET
 
                 // Now we're ready to test for habitable planets,
                 // so we can count and log them and such
-                CheckPlanet(ref planet, planet_id, false);
-
-                // TODO Get moon code working again
-                //Planet moon;
-                //int moons = 0;
-                //for (moon = planet.FirstMoon, moons = 1; moon != null; moon = moon.NextPlanet, moons++)
-                //{
-                //    string moon_id = String.Format("{0}.{1}", planet_id, moons);
-
-                //    CheckPlanet(ref moon, moon_id, true);
-                //}
+                CheckPlanet(planet, planet_id, false);
+                
+                for (var m = 0; m < planet.Moons.Count; m++)
+                {
+                    string moon_id = String.Format("{0}.{1}", planet_id, m);
+                    CheckPlanet(planet.Moons[m], moon_id, true);
+                }
             }
 
             return planets;
@@ -260,44 +256,43 @@ namespace DLS.StarformNET
                 }
             }
 
-            // TODO Get moon code working again
-            //if (doMoons && !isMoon)
-            //{
-            //    if (planet.FirstMoon != null)
-            //    {
-            //        int n;
-            //        Planet ptr;
+            // Generate moons
+            planet.Moons = new List<Planet>();
+            if (!isMoon)
+            {
+                var curMoon = seed.FirstMoon;
+                var n = 0;
+                while (curMoon != null)
+                {
+                    if (curMoon.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .000001)
+                    {
+                        curMoon.SemiMajorAxisAU = planet.SemiMajorAxisAU;
+                        curMoon.Eccentricity = planet.Eccentricity;
 
-            //        for (n = 0, ptr = planet.FirstMoon; ptr != null; ptr = ptr.NextPlanet)
-            //        {
-            //            if (ptr.Mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .000001)
-            //            {
-            //                ptr.SemiMajorAxisAU = planet.SemiMajorAxisAU;
-            //                ptr.Eccentricity = planet.Eccentricity;
+                        n++;
 
-            //                n++;
-                            
-            //                string moon_id = String.Format("{0}.{1}", planetID, n);
+                        string moon_id = String.Format("{0}.{1}", planetID, n);
 
-            //                GeneratePlanet(ptr, n, ref sun, useRandomTilt, moon_id, doGases, doMoons, true);    // Adjusts ptr.density
+                        var generatedMoon = GeneratePlanet(curMoon, n, ref sun, useRandomTilt, moon_id, true, genOptions);
 
-            //                double roche_limit = 2.44 * planet.Radius * Math.Pow((planet.Density / ptr.Density), (1.0 / 3.0));
-            //                double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.Mass / (3.0 * sun.Mass)), (1.0 / 3.0));
+                        double roche_limit = 2.44 * planet.Radius * Math.Pow((planet.Density / generatedMoon.Density), (1.0 / 3.0));
+                        double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.Mass / (3.0 * sun.Mass)), (1.0 / 3.0));
 
-            //                if ((roche_limit * 3.0) < hill_sphere)
-            //                {
-            //                    ptr.MoonSemiMajorAxisAU = Utilities.RandomNumber(roche_limit * 1.5, hill_sphere / 2.0) / GlobalConstants.KM_PER_AU;
-            //                    ptr.MoonEccentricity = Utilities.RandomEccentricity();
-            //                }
-            //                else
-            //                {
-            //                    ptr.MoonSemiMajorAxisAU = 0;
-            //                    ptr.MoonEccentricity = 0;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+                        if ((roche_limit * 3.0) < hill_sphere)
+                        {
+                            generatedMoon.MoonSemiMajorAxisAU = Utilities.RandomNumber(roche_limit * 1.5, hill_sphere / 2.0) / GlobalConstants.KM_PER_AU;
+                            generatedMoon.MoonEccentricity = Utilities.RandomEccentricity();
+                        }
+                        else
+                        {
+                            generatedMoon.MoonSemiMajorAxisAU = 0;
+                            generatedMoon.MoonEccentricity = 0;
+                        }
+                        planet.Moons.Add(generatedMoon);
+                    }
+                    curMoon = curMoon.NextPlanet;
+                }
+            }
 
             return planet;
         }
@@ -403,7 +398,7 @@ namespace DLS.StarformNET
         }
 
         // TODO This should be moved out of this class entirely
-        private static void CheckPlanet(ref Planet planet, string planetID, bool is_moon)
+        private static void CheckPlanet(Planet planet, string planetID, bool is_moon)
         {
             planet.Atmosphere.Breathability = Environment.Breathability(planet);
 

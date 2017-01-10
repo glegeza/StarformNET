@@ -41,8 +41,7 @@ namespace DLS.StarformNET.Data
         public PlanetType Type { get; set; }
 
         // Moon data
-        public int MinorMoonCount { get; set; }
-        public Planet FirstMoon { get; set; }
+        public List<Planet> Moons { get; set; }
         public double MoonSemiMajorAxisAU { get; set; } // semi-major axis of lunar orbit (in AU)
         public double MoonEccentricity { get; set; }    // eccentricity of lunar orbit
 
