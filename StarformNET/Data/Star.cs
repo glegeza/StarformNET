@@ -1,8 +1,11 @@
 namespace DLS.StarformNET.Data
 {
+    using System;
+
     // TODO units?
     // UGLY Not comfortable with binary systems just having a second mass value
 
+    [Serializable]
     public class Star
     {
         public string Name { get; set; }

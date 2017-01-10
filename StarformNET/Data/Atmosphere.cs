@@ -2,7 +2,9 @@ namespace DLS.StarformNET.Data
 {
     
     using System.Collections.Generic;
+    using System;
 
+    [Serializable]
     public class Atmosphere
     {
         public double SurfacePressure { get; set; }

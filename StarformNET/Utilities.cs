@@ -6,6 +6,11 @@ namespace DLS.StarformNET
     {
         public static Random Random = new Random();
 
+        public static bool AlmostEqual(double v1, double v2, double diff=0.00001)
+        {
+            return Math.Abs(v1 - v2) <= Math.Abs(v1 * .00001);
+        }
+
         public static void InitRandomSeed(int seed)
         {
             Random = new Random(seed);
