@@ -6,15 +6,15 @@ namespace DLS.StarformNET.Console
 
     class Program
     {
-        private string SYSTEM_NAME = "test";
-        private string SYSTEM_FILE = "testsystem.bin";
+        private static string SYSTEM_NAME = "test";
+        private static string SYSTEM_FILE = "testsystem.bin";
 
         static void Main(string[] args)
         {
             Utilities.InitRandomSeed(0);
-            var system = Generator.GenerateStellarSystem("test");
+            var system = Generator.GenerateStellarSystem(SYSTEM_NAME);
             IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream("testsystem.bin", FileMode.Create, FileAccess.Write, FileShare.None);
+            Stream stream = new FileStream(SYSTEM_FILE, FileMode.Create, FileAccess.Write, FileShare.None);
             formatter.Serialize(stream, system);
             stream.Close();
         }
