@@ -18,6 +18,7 @@ namespace DLS.StarformNET.Data
         public int OrbitZone { get; set; }          // the 'zone' of the planet
         public double OrbitalPeriod { get; set; }   // length of the local year (days)
         public double Day { get; set; }             // length of the local day (hours)
+        public double HillSphere { get; set; }      // estimated hill sphere (km)
 
         // Size & mass data
         public double Mass { get; set; }                // mass (in solar masses)			 

@@ -141,6 +141,7 @@ namespace DLS.StarformNET
 
             planet.Day = Environment.DayLength(ref planet); // Modifies planet.resonant_period
             planet.EscapeVelocity = Environment.EscapeVelocity(planet.Mass, planet.Radius);
+            planet.HillSphere = Environment.SimplifiedHillSphereKM(sun.Mass, planet.Mass, planet.SemiMajorAxisAU);
 
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
