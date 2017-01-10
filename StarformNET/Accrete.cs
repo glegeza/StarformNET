@@ -278,6 +278,8 @@ namespace DLS.StarformNET
                     node1 = node1.NextBand;
                 }
             }
+
+            // GL: This seems to be combining adjacent dust bands?
             node1 = _dustHead;
             while (node1 != null)
             {
@@ -404,6 +406,76 @@ namespace DLS.StarformNET
             UpdateDustLanes(_rInner, _rOuter, seed_mass, crit_mass, body_inner_bound, body_outer_bound);
         }
 
+        private bool DoMoons(PlanetSeed planet, double mass, double critMass, double dustMass, double gasMass)
+        {
+            bool finished = false;
+            double existingMass = 0.0;
+
+            if (planet.FirstMoon != null)
+            {
+                for (PlanetSeed m = planet.FirstMoon; m != null; m = m.NextPlanet)
+                {
+                    existingMass += m.Mass;
+                }
+            }
+
+            if (mass < critMass)
+            {
+                if (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES < 2.5 && mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .0001 && existingMass < planet.Mass * .05)
+                {
+                    PlanetSeed moon = new PlanetSeed(0, 0, mass, dustMass, gasMass);
+
+                    if (moon.DustMass + moon.GasMass > planet.DustMass + planet.GasMass)
+                    {
+                        double tempDust = planet.DustMass;
+                        double tempGas = planet.GasMass;
+                        double tempMass = planet.Mass;
+
+                        planet.DustMass = moon.DustMass;
+                        planet.GasMass = moon.GasMass;
+                        planet.Mass = moon.Mass;
+
+                        moon.DustMass = tempDust;
+                        moon.GasMass = tempGas;
+                        moon.Mass = tempMass;
+                    }
+
+                    if (planet.FirstMoon == null)
+                    {
+                        planet.FirstMoon = moon;
+                    }
+                    else
+                    {
+                        moon.NextPlanet = planet.FirstMoon;
+                        planet.FirstMoon = moon;
+                    }
+
+                    finished = true;
+
+                    //Trace.TraceInformation("Moon captured... {0:0.00} AU ({1:0.00}EM) <- {2:0.00} EM", 
+                    //    the_planet.a, 
+                    //    the_planet.mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
+                    //    mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES);
+                }
+                //else
+                //{
+                //    Trace.TraceInformation("Moon escapes... {0:0.00} AU ({1:0.00} EM){2} {3:0.00}L {4}", 
+                //        the_planet.a,
+                //        the_planet.mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
+                //        existing_mass < (the_planet.mass * .05) ? "" : " (big moons)",
+                //        mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
+                //        (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) >= 2.5 ? ", too big" : (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) <= .0001 ? ", too small" : "");
+                //}
+            }
+
+            return finished;
+        }
+
+        private double GetEccentricity()
+        {
+            throw new NotImplementedException();
+        }
+
         private void CoalescePlanetesimals(double a, double e, double mass, double crit_mass, double dust_mass, double gas_mass, double stell_luminosity_ratio, double body_inner_bound, double body_outer_bound, bool do_moons)
         {
             PlanetSeed the_planet;
@@ -415,7 +487,6 @@ namespace DLS.StarformNET
             prev_planet = null;
 
             // First we try to find an existing planet with an over-lapping orbit.
-
             for (the_planet = _planetHead; the_planet != null; the_planet = the_planet.NextPlanet)
             {
                 double diff = the_planet.SemiMajorAxisAU - a;
@@ -445,77 +516,20 @@ namespace DLS.StarformNET
                     double new_gas = 0;
                     double new_a = (the_planet.Mass + mass) / ((the_planet.Mass / the_planet.SemiMajorAxisAU) + (mass / a));
 
-                    double temp = the_planet.Mass * Math.Sqrt(the_planet.SemiMajorAxisAU) * Math.Sqrt(1.0 - Math.Pow(the_planet.Eccentricity, 2.0));
-                    temp = temp + (mass * Math.Sqrt(a) * Math.Sqrt(Math.Sqrt(1.0 - Math.Pow(e, 2.0))));
-                    temp = temp / ((the_planet.Mass + mass) * Math.Sqrt(new_a));
-                    temp = 1.0 - Math.Pow(temp, 2.0);
-                    if (temp < 0.0 || temp >= 1.0)
+                    // GL: Calculate eccentricity I THINK
+                    double tempE = the_planet.Mass * Math.Sqrt(the_planet.SemiMajorAxisAU) * Math.Sqrt(1.0 - Math.Pow(the_planet.Eccentricity, 2.0));
+                    tempE = tempE + (mass * Math.Sqrt(a) * Math.Sqrt(Math.Sqrt(1.0 - Math.Pow(e, 2.0))));
+                    tempE = tempE / ((the_planet.Mass + mass) * Math.Sqrt(new_a));
+                    tempE = 1.0 - Math.Pow(tempE, 2.0);
+                    if (tempE < 0.0 || tempE >= 1.0)
                     {
-                        temp = 0.0;
+                        tempE = 0.0;
                     }
-                    e = Math.Sqrt(temp);
+                    e = Math.Sqrt(tempE);
 
-                    // TODO Consider breaking this off into another function?
                     if (do_moons)
                     {
-                        double existing_mass = 0.0;
-
-                        if (the_planet.FirstMoon != null)
-                        {
-                            for (PlanetSeed m = the_planet.FirstMoon; m != null; m = m.NextPlanet)
-                            {
-                                existing_mass += m.Mass;
-                            }
-                        }
-
-                        if (mass < crit_mass)
-                        {
-                            if (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES < 2.5 && mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES > .0001 && existing_mass < the_planet.Mass * .05)
-                            {
-                                PlanetSeed the_moon = new PlanetSeed(0, 0, mass, dust_mass, gas_mass);
-
-                                if (the_moon.DustMass + the_moon.GasMass > the_planet.DustMass + the_planet.GasMass)
-                                {
-                                    double temp_dust = the_planet.DustMass;
-                                    double temp_gas = the_planet.GasMass;
-                                    double temp_mass = the_planet.Mass;
-
-                                    the_planet.DustMass = the_moon.DustMass;
-                                    the_planet.GasMass = the_moon.GasMass;
-                                    the_planet.Mass = the_moon.Mass;
-
-                                    the_moon.DustMass = temp_dust;
-                                    the_moon.GasMass = temp_gas;
-                                    the_moon.Mass = temp_mass;
-                                }
-
-                                if (the_planet.FirstMoon == null)
-                                {
-                                    the_planet.FirstMoon = the_moon;
-                                }
-                                else
-                                {
-                                    the_moon.NextPlanet = the_planet.FirstMoon;
-                                    the_planet.FirstMoon = the_moon;
-                                }
-
-                                finished = true;
-
-                                //Trace.TraceInformation("Moon captured... {0:0.00} AU ({1:0.00}EM) <- {2:0.00} EM", 
-                                //    the_planet.a, 
-                                //    the_planet.mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
-                                //    mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES);
-                            }
-                            //else
-                            //{
-                            //    Trace.TraceInformation("Moon escapes... {0:0.00} AU ({1:0.00} EM){2} {3:0.00}L {4}", 
-                            //        the_planet.a,
-                            //        the_planet.mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
-                            //        existing_mass < (the_planet.mass * .05) ? "" : " (big moons)",
-                            //        mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
-                            //        (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) >= 2.5 ? ", too big" : (mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) <= .0001 ? ", too small" : "");
-                            //}
-                        }
+                        DoMoons(the_planet, mass, crit_mass, dust_mass, gas_mass);
                     }
 
                     if (!finished)
@@ -528,7 +542,7 @@ namespace DLS.StarformNET
                         //    crit_mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES,
                         //    new_a, e);
 
-                        temp = the_planet.Mass + mass;
+                        var temp = the_planet.Mass + mass;
                         AccreteDust(ref temp, ref new_dust, ref new_gas,
                                      new_a, e, stell_luminosity_ratio,
                                      body_inner_bound, body_outer_bound);
