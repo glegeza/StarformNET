@@ -26,6 +26,7 @@ namespace DLS.StarformNET.Display
                 "Water Cover",
                 "Ice Cover",
                 "Cloud Cover",
+                "Moons:",
                 "Surface Pressure",
                 "Atmosphere:"
             };
@@ -49,6 +50,7 @@ namespace DLS.StarformNET.Display
                 PlanetText.GetHydrosphere(planet),
                 PlanetText.GetIceCover(planet),
                 PlanetText.GetCloudCover(planet),
+                planet.Moons.Count.ToString(),
                 PlanetText.GetSurfacePressureStringAtm(planet),
                 PlanetText.GetAtmoString(planet)
             };
