@@ -91,11 +91,10 @@ namespace DLS.StarformNET.Display
 
         public void SetSystem(List<Planet> system)
         {
-            var random = new Random();
             _orbits.Clear();
             foreach (var planet in system)
             {
-                _orbits.Add(new OrbitParameters(planet, (float)(random.NextDouble() * 2 * Math.PI)));
+                _orbits.Add(new OrbitParameters(planet, (float)(Utilities.RandomNumber() * 2 * Math.PI)));
             }
             Refresh();
 

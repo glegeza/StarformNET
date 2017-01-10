@@ -4,7 +4,6 @@ namespace DLS.StarformNET.Display
     using System;
     using System.Collections.Generic;
     using Data;
-    using System.Windows.Forms;
 
     public class PlanetSpriteSheet
     {
@@ -30,7 +29,6 @@ namespace DLS.StarformNET.Display
         private int _planetTypes;
         private Image _image;
         private Point _upperLeft;
-        private Random _random;
 
         public PlanetSpriteSheet(Image image, Point upperLeft, Size spriteSize,
             int hPadding, int vPadding, int planetTypes)
@@ -41,12 +39,11 @@ namespace DLS.StarformNET.Display
             _image = image;
             _upperLeft = upperLeft;
             SpriteSize = spriteSize;
-            _random = new Random();
         }
 
         public Sprite GetSprite(PlanetType type)
         {
-            var planetNum = _random.Next(0, _planetTypes - 1);
+            var planetNum = Utilities.RandomInt(0, _planetTypes - 1);
             var planetRow = PlanetMapping[type];
             var x = _upperLeft.X + (planetNum * SpriteSize.Width) + (planetNum * _hPadding);
             var y = _upperLeft.Y + (planetRow * SpriteSize.Height) + (planetRow * _vPadding);

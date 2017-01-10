@@ -6,6 +6,11 @@ namespace DLS.StarformNET
     {
         public static Random Random = new Random();
 
+        public static void InitRandomSeed(int seed)
+        {
+            Random = new Random(seed);
+        }
+
         public static double GetSemiMinorAxis(double a, double e)
         {
             return a * Math.Sqrt(1 - Math.Pow(e, 2));
@@ -39,6 +44,16 @@ namespace DLS.StarformNET
         public static double Pow1_3(double a)
         {
             return Math.Pow(a, (1.0 / 3.0));
+        }
+
+        public static double RandomNumber()
+        {
+            return Random.NextDouble();
+        }
+
+        public static int RandomInt(int lowerBound, int upperBound)
+        {
+            return Random.Next(lowerBound, upperBound);
         }
 
         public static double RandomNumber(double inner, double outer)
