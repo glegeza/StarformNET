@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="EnvironmentTests.cs" />
     <Compile Include="GeneratorTests.cs" />
+    <Compile Include="PlanetTests.cs" />
     <Compile Include="UnitConversionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
