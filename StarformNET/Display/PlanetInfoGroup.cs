@@ -11,7 +11,8 @@ namespace DLS.StarformNET.Display
             {
                 "Traits:",
                 "Orbital Distance:",
-                "Orbital Eccentricity;",
+                "Orbital Eccentricity:",
+                "Estimated Hill Sphere:",
                 "Equatorial Radius:",
                 "Surface Gravity:",
                 "Escape Velocity:",
@@ -34,6 +35,7 @@ namespace DLS.StarformNET.Display
                 PlanetText.GetPlanetTypeText(planet),
                 PlanetText.GetOrbitalDistanceAU(planet),
                 PlanetText.GetOrbitalEccentricity(planet),
+                PlanetText.GetEstimatedHillSpherePlanetaryRadii(planet),
                 PlanetText.GetRadiusER(planet),
                 PlanetText.GetSurfaceGravityG(planet),
                 PlanetText.GetEscapeVelocity(planet),
