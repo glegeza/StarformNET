@@ -14,7 +14,7 @@ namespace DLS.StarformNET
 
             var accrete = new Accrete(genOptions.CloudEccentricity, genOptions.GasDensityRatio);
             double outer_planet_limit = GetOuterLimit(sun);
-            double outer_dust_limit = Accrete.GetStellarDustLimit(sun.Mass);
+            double outer_dust_limit = GetStellarDustLimit(sun.Mass);
             seedSystem = seedSystem ?? accrete.GetPlanetaryBodies(sun.Mass, 
                 sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
                 genOptions.DustDensityCoeff, null, true);
@@ -408,7 +408,12 @@ namespace DLS.StarformNET
             planet.IsHabitable = Environment.IsHabitable(planet);
             planet.IsEarthlike = Environment.IsEarthlike(planet);
         }
-                
+
+        private static double GetStellarDustLimit(double stellarMassRatio)
+        {
+            return (200.0 * Math.Pow(stellarMassRatio, (1.0 / 3.0)));
+        }
+
         private static double GetOuterLimit(Star star)
         {
             if (star.BinaryMass < .001)

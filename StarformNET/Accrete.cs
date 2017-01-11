@@ -25,11 +25,6 @@ namespace DLS.StarformNET
             GasDustRatio = gdr;
         }
 
-        public static double GetStellarDustLimit(double stellarMassRatio)
-        {
-            return (200.0 * Math.Pow(stellarMassRatio, (1.0 / 3.0)));
-        }
-
         // TODO documentation
         /// <summary>
         /// 
