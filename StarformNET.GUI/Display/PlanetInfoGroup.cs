@@ -36,7 +36,7 @@ namespace DLS.StarformNET.Display
                 PlanetText.GetPlanetTypeText(planet),
                 PlanetText.GetOrbitalDistanceAU(planet),
                 PlanetText.GetOrbitalEccentricity(planet),
-                PlanetText.GetEstimatedHillSpherePlanetaryRadii(planet),
+                PlanetText.GetEstimatedHillSphereKM(planet),
                 PlanetText.GetRadiusER(planet),
                 PlanetText.GetSurfaceGravityG(planet),
                 PlanetText.GetEscapeVelocity(planet),

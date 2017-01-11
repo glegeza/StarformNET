@@ -68,6 +68,7 @@
     <Compile Include="Display\SystemOrbitMap.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="GeneratedSystem.cs" />
     <Compile Include="MainGenerator.cs">
       <SubType>Form</SubType>
     </Compile>

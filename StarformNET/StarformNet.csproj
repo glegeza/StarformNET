@@ -65,6 +65,8 @@
     <Compile Include="Data\PlanetSeed.cs" />
     <Compile Include="Data\PlanetType.cs" />
     <Compile Include="Data\Star.cs" />
+    <Compile Include="Data\StellarGroup.cs" />
+    <Compile Include="Data\StellarSystem.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="StarGenerator.cs" />
     <Compile Include="SystemGenerationOptions.cs" />

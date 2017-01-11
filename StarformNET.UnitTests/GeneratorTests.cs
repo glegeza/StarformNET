@@ -31,7 +31,7 @@ namespace DLS.StarformNET.UnitTests
                 stream.Close();
 
                 Utilities.InitRandomSeed(0);
-                var newSystem = Generator.GenerateStellarSystem("test");
+                var newSystem = Generator.GenerateStellarSystem("test").Planets;
                 Assert.AreEqual(savedSystem.Count, newSystem.Count, "Incorrect number of planets");
                 for (var i = 0; i < savedSystem.Count; i++)
                 {
@@ -52,7 +52,7 @@ namespace DLS.StarformNET.UnitTests
                 stream.Close();
 
                 Utilities.InitRandomSeed(1);
-                var newSystem = Generator.GenerateStellarSystem("test");
+                var newSystem = Generator.GenerateStellarSystem("test").Planets;
                 var atleastOneDifferent = false;
                 for (var i = 0; i < savedSystem.Count; i++)
                 {

@@ -16,7 +16,10 @@ namespace DLS.StarformNET
 
         private ChemType[] _gases;
         private PlanetSpriteSheet _planetSprites;
-        private List<Planet> _system;
+        private StellarSystem _system;
+        private StellarGroup _group;
+        private int _systemsToGenerate = 100;
+        private int _seed = 0;
 
         public MainGenerator()
         {
@@ -32,8 +35,25 @@ namespace DLS.StarformNET
             _systemMap.SpriteSheet = _planetSprites;
             _systemMap.PlanetPadding = 10;
             _gases = ChemType.LoadFromFile(Path.Combine(Directory.GetCurrentDirectory(), "elements.dat"));
+            
+            _seedSelector.Value = 0;
+            _eccentricitySelector.Value = 0.25M;
+            _gasRatioSelector.Value = 50;
+            _dustDensitySelector.Value = 0.002M;
+            _countSelector.Value = 100;
 
-            GenerateSystem();
+            GenerateGroup();
+        }
+
+        private SystemGenerationOptions GetSelectedOptions()
+        {
+            return new SystemGenerationOptions()
+            {
+                CloudEccentricity = (double)_eccentricitySelector.Value,
+                DustDensityCoeff = (double)_dustDensitySelector.Value,
+                GasDensityRatio = (double)_gasRatioSelector.Value,
+                GasTable = _gases
+            };
         }
 
         private void _regenButton_Click(object sender, EventArgs e)
@@ -57,38 +77,45 @@ namespace DLS.StarformNET
             {
                 _planetSelector.SelectedIndex = s;
             }
-            _planetInfoGroup.SetPlanet(_system[s]);
+            _planetInfoGroup.SetPlanet(_system.Planets[s]);
             _systemMap.SelectPlanet(s);
             _orbitMap.SelectPlanet(s);
             Refresh();
         }
 
-        private void GenerateSystem()
+        private void SetSystem(StellarSystem system)
         {
-            var genOptions = new SystemGenerationOptions()
+            if (system == null)
             {
-                CloudEccentricity = 0.25f,
-                DustDensityCoeff = (0.002),
-                GasDensityRatio = 50.0,
-                GasTable = _gases
-            };
-            _system = Generator.GenerateStellarSystem("whatever", genOptions);
-            _systemMap.SetNewSystem(_system);
+                return;
+            }
+            _system = system;
+            _systemMap.SetNewSystem(_system.Planets);
             _planetSelector.Items.Clear();
 
-            foreach (Planet planet in _system)
+            foreach (Planet planet in _system.Planets)
             {
                 _planetSelector.Items.Add(String.Format("Planet {0}", planet.Position));
             }
             _planetSelector.SelectedIndex = 0;
 
-            var text = PlanetText.GetSystemText(_system);
-            _systemInfo.SetSystem(_system);
-            _orbitMap.SetSystem(_system);
+            var text = PlanetText.GetSystemText(_system.Planets);
+            _systemInfo.SetSystem(_system.Planets);
+            _orbitMap.SetSystem(_system.Planets);
             _planetInfoGroup.TabSpacing = 160;
-            _planetInfoGroup.SetPlanet(_system[0]);
+            _planetInfoGroup.SetPlanet(_system.Planets[0]);
             _orbitMap.SelectPlanet(0);
             _systemMap.SelectPlanet(0);
+        }
+
+        private void GenerateSystem()
+        {
+            Utilities.InitRandomSeed((int)_seedSelector.Value);
+            var curIdx = _systemListBox.SelectedIndex;
+            var newSystem = Generator.GenerateStellarSystem(_system.Name, GetSelectedOptions());
+            _group.Systems[curIdx] = newSystem;
+            _systemListBox.Items[curIdx] = newSystem;
+            SetSystem(newSystem);
         }
 
         private void _zoomInButton_Click(object sender, EventArgs e)
@@ -99,6 +126,29 @@ namespace DLS.StarformNET
         private void _zoomOutButton_Click(object sender, EventArgs e)
         {
             _orbitMap.ZoomOut();
+        }
+
+        private void _systemListBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            SetSystem(_systemListBox.SelectedItem as StellarSystem);
+        }
+
+        private void GenerateGroup()
+        {
+            _systemListBox.Items.Clear();
+            var options = GetSelectedOptions();
+            _group = Generator.GenerateStellarGroup((int)_seedSelector.Value, (int)_countSelector.Value, options);
+            foreach (var system in _group.Systems)
+            {
+                _systemListBox.Items.Add(system);
+            }
+
+            _systemListBox.SelectedIndex = 0;
+        }
+
+        private void _regenAllButton_Click(object sender, EventArgs e)
+        {
+            GenerateGroup();
         }
     }
 }

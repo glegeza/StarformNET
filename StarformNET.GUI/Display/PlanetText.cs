@@ -176,9 +176,9 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.NighttimeTemp));
         }
 
-        public static string GetEstimatedHillSpherePlanetaryRadii(Planet planet)
+        public static string GetEstimatedHillSphereKM(Planet planet)
         {
-            return String.Format("{0:0.00} Radii", planet.HillSphere / planet.Radius);
+            return String.Format("{0:n0} km", planet.HillSphere);
         }
 
         public static string GetLengthofDayHours(Planet planet)

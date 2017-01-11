@@ -3,10 +3,23 @@ namespace DLS.StarformNET
     using System;
     using Data;
     using System.Collections.Generic;
-
+    
     public class Generator
     {
-        public static List<Planet> GenerateStellarSystem(string systemName, SystemGenerationOptions genOptions = null, Star sun=null, List<PlanetSeed> seedSystem=null)
+        public static StellarGroup GenerateStellarGroup(int seed, int numSystems, SystemGenerationOptions genOptions = null)
+        {
+            Utilities.InitRandomSeed(seed);
+            genOptions = genOptions ?? SystemGenerationOptions.DefaultOptions;
+            var group = new StellarGroup() { Seed = seed, GenOptions = genOptions, Systems = new List<StellarSystem>() };
+            for (var i = 0; i < numSystems; i++)
+            {
+                var name = String.Format("System {0}", i);
+                group.Systems.Add(GenerateStellarSystem(name, genOptions));
+            }
+            return group;
+        }
+
+        public static StellarSystem GenerateStellarSystem(string systemName, SystemGenerationOptions genOptions = null, Star sun=null, List<PlanetSeed> seedSystem=null)
         {
             genOptions = genOptions ?? SystemGenerationOptions.DefaultOptions;
             sun = sun ?? StarGenerator.GetDefaultStar();
@@ -18,8 +31,15 @@ namespace DLS.StarformNET
             seedSystem = seedSystem ?? accrete.GetPlanetaryBodies(sun.Mass, 
                 sun.Luminosity, 0.0, outer_dust_limit, outer_planet_limit,
                 genOptions.DustDensityCoeff, null, true);
-
-            return GeneratePlanets(sun, seedSystem, useRandomTilt, genOptions);
+            
+            var planets = GeneratePlanets(sun, seedSystem, useRandomTilt, genOptions);
+            return new StellarSystem()
+            {
+                Options = genOptions,
+                Planets = planets,
+                Name = systemName,
+                Star = sun
+            };
         }
 
         private static List<Planet> GeneratePlanets(Star sun, List<PlanetSeed> seeds, bool useRandomTilt, SystemGenerationOptions genOptions)
