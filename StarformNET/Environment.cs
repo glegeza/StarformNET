@@ -1154,7 +1154,7 @@ namespace DLS.StarformNET
         {
             double pressmod = 1 / Math.Sqrt(1 + 20 * planet.Atmosphere.SurfacePressure / 1000.0);
             double ppmod = 1 / Math.Sqrt(10 + 5 * planet.Atmosphere.SurfacePressure / 1000.0);
-            double tiltmod = Math.Abs(Math.Cos(planet.AxialTilt * Math.PI / 180) * Math.Pow(1 + planet.Eccentricity, 2));
+            double tiltmod = Math.Abs(Math.Cos(planet.AxialTiltDegrees * Math.PI / 180) * Math.Pow(1 + planet.Eccentricity, 2));
             double daymod = 1 / (200 / planet.DayLengthHours + 1);
             double mh = Math.Pow(1 + daymod, pressmod);
             double ml = Math.Pow(1 - daymod, pressmod);

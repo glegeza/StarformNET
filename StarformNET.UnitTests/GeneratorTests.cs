@@ -88,7 +88,7 @@ namespace DLS.StarformNET.UnitTests
                 planet.Star.EcosphereRadius = System.Math.Sqrt(planet.Star.Luminosity);
                 planet.SemiMajorAxisAU = 0.723332;
                 planet.Eccentricity = 0.0067;
-                planet.AxialTilt = 2.8;
+                planet.AxialTiltDegrees = 2.8;
                 planet.OrbitZone = Environment.OrbitalZone(planet.Star.Luminosity, planet.SemiMajorAxisAU);
                 planet.DayLengthHours = 2802;
                 planet.OrbitalPeriodDays = 225;

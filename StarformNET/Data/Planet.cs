@@ -4,6 +4,7 @@ namespace DLS.StarformNET.Data
     using System.Collections.Generic;
 
     // TODO break this class up
+    // TODO orbit zone is supposedly no longer used anywhere. Check references and possibly remove.
 
     [Serializable]
     public class Planet : IEquatable<Planet>
@@ -12,62 +13,139 @@ namespace DLS.StarformNET.Data
         public Star Star { get; set; }
         public Atmosphere Atmosphere = new Atmosphere();
 
-        // Orbit data
-        public double SemiMajorAxisAU   { get; set; }   // semi-major axis of solar orbit (in AU)
-        public double Eccentricity      { get; set; }   // eccentricity of solar orbit		 
-        public double AxialTilt         { get; set; }   // units of degrees
-        public int    OrbitZone         { get; set; }   // the 'zone' of the planet
-        public double OrbitalPeriodDays { get; set; }   // length of the local year (days)
-        public double DayLengthHours    { get; set; }   // length of the local day (hours)
-        public double HillSphereKM      { get; set; }   // estimated hill sphere (km)
+        #region Orbit data
+        public double SemiMajorAxisAU
+        { get; set; }
 
-        // Size & mass data
-        public double MassSolarMasses           { get; set; } // mass (in solar masses)			 
-        public double DustMass                  { get; set; } // mass, ignoring gas				 
-        public double GasMass                   { get; set; } // mass, ignoring dust
-        public double EscapeVelocityCMSec       { get; set; } // units of cm/sec
-        public double SurfaceAccelerationCMSec2 { get; set; } // units of cm/sec2
-        public double SurfaceGravityG           { get; set; } // units of Earth gravities
-        public double CoreRadiusKM              { get; set; } // radius of the rocky core (in km)
-        public double RadiusKM                  { get; set; } // equatorial radius (in km)
-        public double DensityGCC                { get; set; } // density (in g/cc)
+        public double Eccentricity
+        { get; set; }
 
-        // Properties
-        public bool IsGasGiant          { get; set; }
-        public bool IsTidallyLocked     { get; set; }
-        public bool IsEarthlike         { get; set; }
-        public bool IsHabitable         { get; set; }
-        public bool HasResonantPeriod   { get; set; }
-        public bool HasGreenhouseEffect { get; set; }
-        public PlanetType Type          { get; set; }
+        public double AxialTiltDegrees
+        { get; set; }
 
-        // Moon data
-        public List<Planet> Moons         { get; set; }
-        public double MoonSemiMajorAxisAU { get; set; } // semi-major axis of lunar orbit (in AU)
-        public double MoonEccentricity    { get; set; } // eccentricity of lunar orbit
+        // the 'zone' of the planet
+        public int OrbitZone
+        { get; set; }
 
-        // Atmospheric data
-        public double RMSVelocityCMSec        { get; set; } // units of cm/sec
-        public double MolecularWeightRetained { get; set; } // smallest molecular weight retained
-        public double VolatileGasInventory    { get; set; } 
-        public double BoilingPointWaterKelvin { get; set; } // the boiling point of water (Kelvin)
-        public double Albedo                  { get; set; } // albedo of the planet
+        public double OrbitalPeriodDays
+        { get; set; }
 
-        // Temperature data
-        public double Illumination            { get; set; } // units?
-        public double ExosphereTempKelvin     { get; set; } // units of degrees Kelvin
-        public double EstimatedTempKelvin     { get; set; } // quick non-iterative estimate (K)
+        public double DayLengthHours
+        { get; set; }
+
+        public double HillSphereKM
+        { get; set; }
+        #endregion
+
+        #region Size & mass data
+        public double MassSolarMasses
+        { get; set; } 
+
+        public double DustMass
+        { get; set; }
+
+        public double GasMass
+        { get; set; }
+
+        public double EscapeVelocityCMSec
+        { get; set; }
+
+        public double SurfaceAccelerationCMSec2
+        { get; set; }
+
+        public double SurfaceGravityG
+        { get; set; }
+
+        public double CoreRadiusKM
+        { get; set; }
+
+        public double RadiusKM
+        { get; set; }
+
+        public double DensityGCC
+        { get; set; }
+        #endregion
+
+        #region Planet properties
+        public PlanetType Type
+        { get; set; }
+
+        public bool IsGasGiant
+        { get; set; }
+
+        public bool IsTidallyLocked
+        { get; set; }
+
+        public bool IsEarthlike
+        { get; set; }
+
+        public bool IsHabitable
+        { get; set; }
+
+        public bool HasResonantPeriod
+        { get; set; }
+
+        public bool HasGreenhouseEffect
+        { get; set; }
+        #endregion
+
+        #region Moon data
+        public List<Planet> Moons
+        { get; set; }
+
+        public double MoonSemiMajorAxisAU
+        { get; set; }
+
+        public double MoonEccentricity
+        { get; set; }
+        #endregion
+
+        #region Atmospheric data
+        public double RMSVelocityCMSec
+        { get; set; }
+
+        public double MolecularWeightRetained
+        { get; set; } // smallest molecular weight retained
+
+        public double VolatileGasInventory
+        { get; set; } 
+
+        public double BoilingPointWaterKelvin
+        { get; set; }
+
+        public double Albedo
+        { get; set; }
+        #endregion
+
+        #region Temperature data
+        public double Illumination { get; set; } // units?
+
+        public double ExosphereTempKelvin { get; set; }
+
+        public double EstimatedTempKelvin { get; set; } // quick non-iterative estimate (K)
+
         public double EstimatedTerrTempKelvin { get; set; } // for terrestrial moons and the like
-        public double SurfaceTempKelvin       { get; set; } // surface temperature in Kelvin
-        public double GreenhouseRiseKelvin    { get; set; } // Temperature rise due to greenhouse
-        public double DaytimeTempKelvin       { get; set; } // Day-time temperature
-        public double NighttimeTempKelvin     { get; set; } // Night-time temperature
-        public double MaxTempKelvin           { get; set; } // Summer/Day
-        public double MinTempKelvin           { get; set; } // Winter/Night
 
-        public double WaterCoverFraction { get; set; } // fraction of surface covered
-        public double CloudCoverFraction { get; set; } // fraction of surface covered
-        public double IceCoverFraction   { get; set; } // fraction of surface covered
+        public double SurfaceTempKelvin { get; set; }
+
+        public double GreenhouseRiseKelvin { get; set; }
+
+        public double DaytimeTempKelvin { get; set; }
+
+        public double NighttimeTempKelvin { get; set; }
+
+        public double MaxTempKelvin { get; set; }
+
+        public double MinTempKelvin { get; set; }
+        #endregion
+
+        #region Surface coverage
+        public double WaterCoverFraction { get; set; }
+
+        public double CloudCoverFraction { get; set; }
+
+        public double IceCoverFraction { get; set; }
+        #endregion
 
         public Planet()
         {
@@ -91,7 +169,7 @@ namespace DLS.StarformNET.Data
             return Position == other.Position &&
                 Utilities.AlmostEqual(SemiMajorAxisAU, other.SemiMajorAxisAU) &&
                 Utilities.AlmostEqual(Eccentricity, other.Eccentricity) &&
-                Utilities.AlmostEqual(AxialTilt, other.AxialTilt) &&
+                Utilities.AlmostEqual(AxialTiltDegrees, other.AxialTiltDegrees) &&
                 OrbitZone == other.OrbitZone &&
                 Utilities.AlmostEqual(OrbitalPeriodDays, other.OrbitalPeriodDays) &&
                 Utilities.AlmostEqual(DayLengthHours, other.DayLengthHours) &&

@@ -77,7 +77,7 @@ namespace DLS.StarformNET
             planet.OrbitalPeriodDays = Environment.Period(planet.SemiMajorAxisAU, planet.MassSolarMasses, sun.Mass);
             if (useRandomTilt)
             {
-                planet.AxialTilt = Environment.Inclination(planet.SemiMajorAxisAU);
+                planet.AxialTiltDegrees = Environment.Inclination(planet.SemiMajorAxisAU);
             }
             planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / sun.EcosphereRadius);
             planet.RMSVelocityCMSec = Environment.RMSVelocity(GlobalConstants.MOL_NITROGEN, planet.ExosphereTempKelvin);
