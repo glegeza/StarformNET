@@ -24,7 +24,7 @@ namespace DLS.StarformNET.Display
                 e = planet.Eccentricity;
                 b = Utilities.GetSemiMinorAxis(a, e);
                 this.angle = angle;
-                size = (float)(planet.Radius / GlobalConstants.KM_EARTH_RADIUS);
+                size = (float)(planet.RadiusKM / GlobalConstants.KM_EARTH_RADIUS);
                 color = Brushes.White;
                 switch (planet.Type)
                 {

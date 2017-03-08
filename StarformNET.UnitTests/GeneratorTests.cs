@@ -90,24 +90,24 @@ namespace DLS.StarformNET.UnitTests
                 planet.Eccentricity = 0.0067;
                 planet.AxialTilt = 2.8;
                 planet.OrbitZone = Environment.OrbitalZone(planet.Star.Luminosity, planet.SemiMajorAxisAU);
-                planet.Day = 2802;
-                planet.OrbitalPeriod = 225;
+                planet.DayLengthHours = 2802;
+                planet.OrbitalPeriodDays = 225;
 
-                planet.Mass = 0.000002447;
+                planet.MassSolarMasses = 0.000002447;
                 planet.GasMass = 2.41E-10;
-                planet.DustMass = planet.Mass - planet.GasMass;
-                planet.Radius = 6051.8;
-                planet.Density = Environment.EmpiricalDensity(planet.Mass, planet.SemiMajorAxisAU, planet.Star.EcosphereRadius, true);
-                planet.ExosphereTemp = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / planet.Star.EcosphereRadius);
-                planet.SurfaceAcceleration = Environment.Acceleration(planet.Mass, planet.Radius);
-                planet.EscapeVelocity = Environment.EscapeVelocity(planet.Mass, planet.Radius);
+                planet.DustMass = planet.MassSolarMasses - planet.GasMass;
+                planet.RadiusKM = 6051.8;
+                planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSolarMasses, planet.SemiMajorAxisAU, planet.Star.EcosphereRadius, true);
+                planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / planet.Star.EcosphereRadius);
+                planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSolarMasses, planet.RadiusKM);
+                planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSolarMasses, planet.RadiusKM);
 
                 planet.IsGasGiant = false;
                 planet.Atmosphere.SurfacePressure = 92000;
-                planet.DaytimeTemp = 737;
-                planet.NighttimeTemp = 737;
-                planet.SurfaceTemp = 737;
-                planet.SurfaceGravity = 0.9;
+                planet.DaytimeTempKelvin = 737;
+                planet.NighttimeTempKelvin = 737;
+                planet.SurfaceTempKelvin = 737;
+                planet.SurfaceGravityG = 0.9;
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
 
                 return planet;

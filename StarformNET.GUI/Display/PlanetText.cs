@@ -72,7 +72,7 @@ namespace DLS.StarformNET.Display
 
         public static string GetDensity(Planet planet)
         {
-            return String.Format("{0:0.00} g/cm3", planet.Density);
+            return String.Format("{0:0.00} g/cm3", planet.DensityGCC);
         }
 
         public static string GetBoilingPoint(Planet planet)
@@ -81,17 +81,17 @@ namespace DLS.StarformNET.Display
             {
                 return "-";
             }
-            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.BoilingPointWater));
+            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.BoilingPointWaterKelvin));
         }
 
         public static string GetGreenhouseRise(Planet planet)
         {
-            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.GreenhouseRise));
+            return String.Format("{0:0.00} F", UnitConversions.KelvinToFahrenheit(planet.GreenhouseRiseKelvin));
         }
 
         public static string GetEscapeVelocity(Planet planet)
         {
-            return String.Format("{0:0.00} km/sec", UnitConversions.CMToKM(planet.EscapeVelocity));
+            return String.Format("{0:0.00} km/sec", UnitConversions.CMToKM(planet.EscapeVelocityCMSec));
         }
 
         public static string GetPlanetTypeText(Planet planet)
@@ -148,55 +148,55 @@ namespace DLS.StarformNET.Display
             {
                 return "Oh yeah";
             }
-            return String.Format("{0:0.00} G", planet.SurfaceGravity);
+            return String.Format("{0:0.00} G", planet.SurfaceGravityG);
         }
 
         public static string GetHydrosphere(Planet planet)
         {
-            return String.Format("{0:0.0}%", planet.WaterCover * 100);
+            return String.Format("{0:0.0}%", planet.WaterCoverFraction * 100);
         }
 
         public static string GetIceCover(Planet planet)
         {
-            return String.Format("{0:0.0}%", planet.IceCover * 100);
+            return String.Format("{0:0.0}%", planet.IceCoverFraction * 100);
         }
 
         public static string GetCloudCover(Planet planet)
         {
-            return String.Format("{0:0.0}%", planet.CloudCover * 100);
+            return String.Format("{0:0.0}%", planet.CloudCoverFraction * 100);
         }
 
         public static string GetDayTemp(Planet planet)
         {
-            return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.DaytimeTemp));
+            return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.DaytimeTempKelvin));
         }
 
         public static string GetNightTemp(Planet planet)
         {
-            return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.NighttimeTemp));
+            return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.NighttimeTempKelvin));
         }
 
         public static string GetEstimatedHillSphereKM(Planet planet)
         {
-            return String.Format("{0:n0} km", planet.HillSphere);
+            return String.Format("{0:n0} km", planet.HillSphereKM);
         }
 
         public static string GetLengthofDayHours(Planet planet)
         {
-            if (planet.Day > 24 * 7)
+            if (planet.DayLengthHours > 24 * 7)
             {
-                return string.Format("{0:0.0} days ({1:0.0} hours)", planet.Day / 24, planet.Day);
+                return string.Format("{0:0.0} days ({1:0.0} hours)", planet.DayLengthHours / 24, planet.DayLengthHours);
             }
-            return String.Format("{0:0.0} hours", planet.Day);
+            return String.Format("{0:0.0} hours", planet.DayLengthHours);
         }
 
         public static string GetOrbitalPeriodDay(Planet planet)
         {
-            if (planet.OrbitalPeriod > 365 * 1.5)
+            if (planet.OrbitalPeriodDays > 365 * 1.5)
             {
-                return String.Format("{0:0.00} ({0:0.0} days)", planet.OrbitalPeriod / 365, planet.OrbitalPeriod);
+                return String.Format("{0:0.00} ({0:0.0} days)", planet.OrbitalPeriodDays / 365, planet.OrbitalPeriodDays);
             }
-            return String.Format("{0:0.0} days", planet.OrbitalPeriod);
+            return String.Format("{0:0.0} days", planet.OrbitalPeriodDays);
         }
 
         public static string GetOrbitalEccentricity(Planet planet)
@@ -216,17 +216,17 @@ namespace DLS.StarformNET.Display
 
         public static string GetRadiusKM(Planet planet)
         {
-            return String.Format("{0:0} km", planet.Radius);
+            return String.Format("{0:0} km", planet.RadiusKM);
         }
 
         public static string GetRadiusER(Planet planet)
         {
-            return String.Format("{0:0.00} ER", planet.Radius / GlobalConstants.KM_EARTH_RADIUS);
+            return String.Format("{0:0.00} ER", planet.RadiusKM / GlobalConstants.KM_EARTH_RADIUS);
         }
 
         public static string GetMassStringEM(Planet planet)
         {
-            return String.Format("{0:0.00} EM", UnitConversions.SolarMassesToEarthMasses(planet.Mass));
+            return String.Format("{0:0.00} EM", UnitConversions.SolarMassesToEarthMasses(planet.MassSolarMasses));
         }
 
         public static string GetSurfacePressureStringAtm(Planet planet)
