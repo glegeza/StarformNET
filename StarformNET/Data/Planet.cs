@@ -179,10 +179,6 @@ namespace DLS.StarformNET.Data
         /// </summary>
         public double ExosphereTempKelvin { get; set; }
 
-        public double EstimatedTempKelvin { get; set; } // quick non-iterative estimate (K)
-
-        public double EstimatedTerrTempKelvin { get; set; } // for terrestrial moons and the like
-
         /// <summary>
         /// Temperature at the body's surface given in Kelvin.
         /// </summary>
@@ -283,8 +279,6 @@ namespace DLS.StarformNET.Data
                 Utilities.AlmostEqual(Albedo, other.Albedo) &&
                 Utilities.AlmostEqual(Illumination, other.Illumination) &&
                 Utilities.AlmostEqual(ExosphereTempKelvin, other.ExosphereTempKelvin) &&
-                Utilities.AlmostEqual(EstimatedTempKelvin, other.EstimatedTempKelvin) &&
-                Utilities.AlmostEqual(EstimatedTerrTempKelvin, other.EstimatedTerrTempKelvin) &&
                 Utilities.AlmostEqual(SurfaceTempKelvin, other.SurfaceTempKelvin) &&
                 Utilities.AlmostEqual(GreenhouseRiseKelvin, other.GreenhouseRiseKelvin) &&
                 Utilities.AlmostEqual(DaytimeTempKelvin, other.DaytimeTempKelvin) &&

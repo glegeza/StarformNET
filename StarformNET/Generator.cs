@@ -176,22 +176,9 @@ namespace DLS.StarformNET
                 planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
                 planet.SurfaceGravityG = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
-                planet.EstimatedTempKelvin = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
-                planet.EstimatedTerrTempKelvin = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
-
-                {
-                    double temp = planet.EstimatedTerrTempKelvin;
-
-                    // Indicates habitable (??) Jovian planet
-                    if ((temp >= GlobalConstants.FREEZING_POINT_OF_WATER) && (temp <= GlobalConstants.EARTH_AVERAGE_KELVIN + 10.0) && (sun.Age > 2.0E9))
-                    { }
-                }
             }
             else
             {
-                planet.EstimatedTempKelvin = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
-                planet.EstimatedTerrTempKelvin = Environment.EstTemp(sun.EcosphereRadius, planet.SemiMajorAxisAU, GlobalConstants.EARTH_ALBEDO);
-
                 planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
 
