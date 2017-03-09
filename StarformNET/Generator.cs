@@ -79,7 +79,7 @@ namespace DLS.StarformNET
             {
                 planet.AxialTiltDegrees = Environment.Inclination(planet.SemiMajorAxisAU);
             }
-            planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / sun.EcosphereRadius);
+            planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / sun.EcosphereRadiusAU);
             planet.RMSVelocityCMSec = Environment.RMSVelocity(GlobalConstants.MOL_NITROGEN, planet.ExosphereTempKelvin);
             planet.CoreRadiusKM = Environment.KothariRadius(planet.DustMassSM, false, planet.OrbitZone);
 
@@ -87,7 +87,7 @@ namespace DLS.StarformNET
             // Then if mass > Earth, it's at least 5% gas and retains He, it's
             // some flavor of gas giant.
 
-            planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSM, planet.SemiMajorAxisAU, sun.EcosphereRadius, true);
+            planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSM, planet.SemiMajorAxisAU, sun.EcosphereRadiusAU, true);
             planet.RadiusKM = Environment.VolumeRadius(planet.MassSM, planet.DensityGCC);
 
             planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
@@ -131,9 +131,9 @@ namespace DLS.StarformNET
                     double h2_life = Environment.GasLife(GlobalConstants.MOL_HYDROGEN, planet);
                     double he_life = Environment.GasLife(GlobalConstants.HELIUM, planet);
 
-                    if (h2_life < sun.Age)
+                    if (h2_life < sun.AgeYears)
                     {
-                        h2_loss = ((1.0 - (1.0 / Math.Exp(sun.Age / h2_life))) * h2_mass);
+                        h2_loss = ((1.0 - (1.0 / Math.Exp(sun.AgeYears / h2_life))) * h2_mass);
 
                         planet.GasMassSM -= h2_loss;
                         planet.MassSM -= h2_loss;
@@ -142,9 +142,9 @@ namespace DLS.StarformNET
                         planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                     }
 
-                    if (he_life < sun.Age)
+                    if (he_life < sun.AgeYears)
                     {
-                        he_loss = ((1.0 - (1.0 / Math.Exp(sun.Age / he_life))) * he_mass);
+                        he_loss = ((1.0 - (1.0 / Math.Exp(sun.AgeYears / he_life))) * he_mass);
 
                         planet.GasMassSM -= he_loss;
                         planet.MassSM -= he_loss;
@@ -182,7 +182,7 @@ namespace DLS.StarformNET
                 planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                 planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
 
-                planet.HasGreenhouseEffect = Environment.Greenhouse(sun.EcosphereRadius, planet.SemiMajorAxisAU);
+                planet.HasGreenhouseEffect = Environment.Greenhouse(sun.EcosphereRadiusAU, planet.SemiMajorAxisAU);
                 planet.VolatileGasInventory = Environment.VolatileInventory(
                     planet.MassSM, planet.EscapeVelocityCMSec, planet.RMSVelocityCMSec, sun.Mass,
                     planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMassSM / planet.MassSM) > 0.000001);
@@ -332,7 +332,7 @@ namespace DLS.StarformNET
                     CheckForSpecialRules(out abund, out react, pressure, planet, gasTable[i]);
 
                     double vrms = Environment.RMSVelocity(gasTable[i].weight, planet.ExosphereTempKelvin);
-                    double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocityCMSec), sun.Age / 1e9);
+                    double pvrms = Math.Pow(1 / (1 + vrms / planet.EscapeVelocityCMSec), sun.AgeYears / 1e9);
 
                     double fract = (1 - (planet.MolecularWeightRetained / gasTable[i].weight));
 
@@ -377,30 +377,30 @@ namespace DLS.StarformNET
 
             if (gas.symbol == "Ar")
             {
-                react = .15 * sun.Age / 4e9;
+                react = .15 * sun.AgeYears / 4e9;
             }
             else if (gas.symbol == "He")
             {
                 abund = abund * (0.001 + (planet.GasMassSM / planet.MassSM));
                 pres2 = (0.75 + pressure);
-                react = Math.Pow(1 / (1 + gas.reactivity), sun.Age / 2e9 * pres2);
+                react = Math.Pow(1 / (1 + gas.reactivity), sun.AgeYears / 2e9 * pres2);
             }
-            else if ((gas.symbol == "O" || gas.symbol == "O2") && sun.Age > 2e9 && planet.SurfaceTempKelvin > 270 && planet.SurfaceTempKelvin < 400)
+            else if ((gas.symbol == "O" || gas.symbol == "O2") && sun.AgeYears > 2e9 && planet.SurfaceTempKelvin > 270 && planet.SurfaceTempKelvin < 400)
             {
                 // pres2 = (0.65 + pressure/2); // Breathable - M: .55-1.4
                 pres2 = (0.89 + pressure / 4);  // Breathable - M: .6 -1.8
-                react = Math.Pow(1 / (1 + gas.reactivity), Math.Pow(sun.Age / 2e9, 0.25) * pres2);
+                react = Math.Pow(1 / (1 + gas.reactivity), Math.Pow(sun.AgeYears / 2e9, 0.25) * pres2);
             }
-            else if (gas.symbol == "CO2" && sun.Age > 2e9 && planet.SurfaceTempKelvin > 270 && planet.SurfaceTempKelvin < 400)
+            else if (gas.symbol == "CO2" && sun.AgeYears > 2e9 && planet.SurfaceTempKelvin > 270 && planet.SurfaceTempKelvin < 400)
             {
                 pres2 = (0.75 + pressure);
-                react = Math.Pow(1 / (1 + gas.reactivity), Math.Pow(sun.Age / 2e9, 0.5) * pres2);
+                react = Math.Pow(1 / (1 + gas.reactivity), Math.Pow(sun.AgeYears / 2e9, 0.5) * pres2);
                 react *= 1.5;
             }
             else
             {
                 pres2 = (0.75 + pressure);
-                react = Math.Pow(1 / (1 + gas.reactivity), sun.Age / 2e9 * pres2);
+                react = Math.Pow(1 / (1 + gas.reactivity), sun.AgeYears / 2e9 * pres2);
             }
         }
 
@@ -434,7 +434,7 @@ namespace DLS.StarformNET
             double m1 = star.Mass;
             double m2 = star.BinaryMass;
             double mu = m2 / (m1 + m2);
-            double e = star.SemiMajorAxis;
+            double e = star.SemiMajorAxisAU;
             double e2 = Utilities.Pow2(e);
             double a = star.Eccentricity;
 

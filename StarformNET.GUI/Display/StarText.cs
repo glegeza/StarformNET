@@ -28,7 +28,7 @@ namespace DLS.StarformNET.Display
         /// </summary>
         public static string GetAgeStringRel(Star star, bool showUnits=true)
         {
-            var age = String.Format("{0:0.00}", star.Age / GlobalConstants.SUN_AGE_IN_YEARS);
+            var age = String.Format("{0:0.00}", star.AgeYears / GlobalConstants.SUN_AGE_IN_YEARS);
             var units = showUnits ? " Solar Ages" : "";
             return age + units;
         }
@@ -38,7 +38,7 @@ namespace DLS.StarformNET.Display
         /// using scientific notation.
         public static string GetAgeStringYearsSciN(Star star, bool showUnits=true)
         {
-            var age = String.Format("{0:E2}", star.Age);
+            var age = String.Format("{0:E2}", star.AgeYears);
             var units = showUnits ? " Years" : "";
             return age + units;
         }

@@ -77,7 +77,7 @@ namespace DLS.StarformNET.UnitTests
                 {
                     Luminosity = 1.0,
                     Mass = 1.0,
-                    Age = 4600000000
+                    AgeYears = 4600000000
                 };
             }
 
@@ -85,7 +85,7 @@ namespace DLS.StarformNET.UnitTests
             {
                 var planet = new Planet();
                 planet.Star = GetTestStar();
-                planet.Star.EcosphereRadius = System.Math.Sqrt(planet.Star.Luminosity);
+                planet.Star.EcosphereRadiusAU = System.Math.Sqrt(planet.Star.Luminosity);
                 planet.SemiMajorAxisAU = 0.723332;
                 planet.Eccentricity = 0.0067;
                 planet.AxialTiltDegrees = 2.8;
@@ -97,8 +97,8 @@ namespace DLS.StarformNET.UnitTests
                 planet.GasMassSM = 2.41E-10;
                 planet.DustMassSM = planet.MassSM - planet.GasMassSM;
                 planet.RadiusKM = 6051.8;
-                planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSM, planet.SemiMajorAxisAU, planet.Star.EcosphereRadius, true);
-                planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / planet.Star.EcosphereRadius);
+                planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSM, planet.SemiMajorAxisAU, planet.Star.EcosphereRadiusAU, true);
+                planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / planet.Star.EcosphereRadiusAU);
                 planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                 planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSM, planet.RadiusKM);
 

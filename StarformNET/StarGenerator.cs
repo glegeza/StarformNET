@@ -22,10 +22,10 @@ namespace DLS.StarformNET
                 sun.Luminosity = Environment.Luminosity(sun.Mass);
             }
 
-            sun.EcosphereRadius = Math.Sqrt(sun.Luminosity);
+            sun.EcosphereRadiusAU = Math.Sqrt(sun.Luminosity);
             sun.Life = 1.0E10 * (sun.Mass / sun.Luminosity);
 
-            sun.Age = Utilities.RandomNumber(
+            sun.AgeYears = Utilities.RandomNumber(
                 MinSunAge,
                 sun.Life < MaxSunAge ? sun.Life : MaxSunAge);
 

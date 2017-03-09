@@ -331,7 +331,7 @@ namespace DLS.StarformNET
                                          Math.Pow(planet.Star.Mass, 2.0) *
                                          (1.0 / Math.Pow(planet.SemiMajorAxisAU, 6.0));
             double angularVelocity = baseAngularVelocity + (changeInAngularVelocity *
-                                                    planet.Star.Age);
+                                                    planet.Star.AgeYears);
 
             // Now we change from rad/sec to hours/rotation
             bool stopped = false;
@@ -886,7 +886,7 @@ namespace DLS.StarformNET
 
             if (planet.Star != null)
             {
-                target = planet.Star.Age;
+                target = planet.Star.AgeYears;
             }
 
             if (life > target)
@@ -950,7 +950,7 @@ namespace DLS.StarformNET
             {
                 planet.Albedo = GlobalConstants.EARTH_ALBEDO;
 
-                effective_temp = EffTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
+                effective_temp = EffTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
                 greenhouse_temp = GreenRise(Opacity(planet.MolecularWeightRetained,
                                                          planet.Atmosphere.SurfacePressure),
                                                  effective_temp,
@@ -1006,7 +1006,7 @@ namespace DLS.StarformNET
 
             planet.Albedo = PlanetAlbedo(planet.WaterCoverFraction, planet.CloudCoverFraction, planet.IceCoverFraction, planet.Atmosphere.SurfacePressure);
 
-            effective_temp = EffTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
+            effective_temp = EffTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
             greenhouse_temp = GreenRise(
                 Opacity(planet.MolecularWeightRetained, planet.Atmosphere.SurfacePressure),
                 effective_temp, planet.Atmosphere.SurfacePressure);
@@ -1112,7 +1112,7 @@ namespace DLS.StarformNET
         /// <param name="planet"></param>
         public static void IterateSurfaceTemp(ref Planet planet)
         {
-            double initial_temp = EstTemp(planet.Star.EcosphereRadius, planet.SemiMajorAxisAU, planet.Albedo);
+            double initial_temp = EstTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
 
             double h2_life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
             double h2o_life = GasLife(GlobalConstants.WATER_VAPOR, planet);
