@@ -1,7 +1,6 @@
 namespace DLS.StarformNET
 {
     using Data;
-    using System;
 
     public static class StarGenerator
     {
@@ -22,7 +21,7 @@ namespace DLS.StarformNET
                 sun.Luminosity = Environment.Luminosity(sun.Mass);
             }
 
-            sun.EcosphereRadiusAU = Math.Sqrt(sun.Luminosity);
+            sun.EcosphereRadiusAU = Environment.StarEcosphereRadiusAU(sun.Luminosity);
             sun.Life = 1.0E10 * (sun.Mass / sun.Luminosity);
 
             sun.AgeYears = Utilities.RandomNumber(

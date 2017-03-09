@@ -11,6 +11,20 @@ namespace DLS.StarformNET.UnitTests
     class EnvironmentTests
     {
         [TestClass]
+        public class EcosphereTests
+        {
+            [TestCategory("Ecosphere")]
+            [TestMethod]
+            public void TestSunEcosphere()
+            {
+                var expectedValue = 1.0;
+                var sunLuminosity = 1.0;
+
+                Assert.AreEqual(expectedValue, StarformNET.Environment.StarEcosphereRadiusAU(sunLuminosity), 0.0001);
+            }
+        }
+
+        [TestClass]
         public class HillSphereTests
         {
             // Expected hill sphere value from:

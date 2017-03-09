@@ -7,6 +7,19 @@ namespace DLS.StarformNET
     public static class Environment
     {
         /// <summary>
+        /// Returns the radius (center?) of a star's ecosphere in au.
+        /// </summary>
+        /// <param name="luminosity">Luminosity of the star in solar luminosity
+        /// units.</param>
+        /// <returns>Star's ecosphere radius in au.</returns>
+        public static double StarEcosphereRadiusAU(double luminosity)
+        {
+            // No idea the source of this. It centers the Solar System's ecosphere at
+            // 1 au.
+            return Math.Sqrt(luminosity);
+        }
+
+        /// <summary>
         /// Returns the hill sphere of object m orbiting object M with a semi-
         /// major axis a. Ignores eccentricity.
         /// </summary>
