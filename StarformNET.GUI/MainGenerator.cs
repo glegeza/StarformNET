@@ -7,7 +7,6 @@ namespace DLS.StarformNET
     using System.IO;
     using Display;
     using Data;
-    using System.Collections.Generic;
 
     public partial class MainGenerator : Form
     {
@@ -18,8 +17,6 @@ namespace DLS.StarformNET
         private PlanetSpriteSheet _planetSprites;
         private StellarSystem _system;
         private StellarGroup _group;
-        private int _systemsToGenerate = 100;
-        private int _seed = 0;
 
         public MainGenerator()
         {
