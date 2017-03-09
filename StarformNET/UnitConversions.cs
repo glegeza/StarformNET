@@ -1,5 +1,8 @@
-namespace DLS.StarformNET
+﻿namespace DLS.StarformNET
 {
+    // TODO should maybe consider doing some sanity checking for negative distances and mass?
+    // maybe? I dunno. Nah.
+
     /// <summary>
     /// Simple helper methods for converting between different unit types.
     /// </summary>
@@ -9,6 +12,12 @@ namespace DLS.StarformNET
         public static double CM_PER_KM = 1.0E5;
         public static double EARTH_SURF_PRES_IN_MILLIBARS = 1013.25;
         public static double SUN_MASS_IN_EARTH_MASSES = 332775.64;
+        public static double SOLAR_MASS_IN_GRAMS = 1.989E33;
+        public static double SOLAR_MASS_IN_KILOGRAMS = 1.989E30;
+        public static double EARTH_MASS_IN_GRAMS = 5.977E27;
+        public static double EARTH_DENSITY_IN_GCC = 5.52;
+        public static double EARTH_RADIUS_IN_CM = 6.3714E8;
+        public static double EARTH_RADIUS_IN_KM = 6371.393;
 
         /// <summary>
         /// Converts temperature from Kelvin to Fahrenheit degrees.
@@ -41,13 +50,73 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
-        /// Converts from solar masses to earth masses
+        /// Converts from units of Earth radius (R⊕) to centimeters.
         /// </summary>
-        /// <param name="sm">Mass in Solar masses</param>
-        /// <returns>Mass in Earth masses</returns>
+        /// <param name="r">Distance in Earth radius units.</param>
+        /// <returns>Distance in centimeters</returns>
+        public static double EarthRadiusToCentimeters(double r)
+        {
+            return r * EARTH_RADIUS_IN_CM;
+        }
+
+        /// <summary>
+        /// Converts from units of Earth radius (R⊕) to kilometers.
+        /// </summary>
+        /// <param name="r">Distance in Earth radius units.</param>
+        /// <returns>Distance in kilometers</returns>
+        public static double EarthRadiusToKilometers(double r)
+        {
+            return r * EARTH_RADIUS_IN_KM;
+        }
+
+        /// <summary>
+        /// Converts from centimeters to Earth radius units (R⊕).
+        /// </summary>
+        /// <param name="cm">Distance in centimeters</param>
+        /// <returns>Distance in Earth radius (1.0 = Radius of Earth)</returns>
+        public static double CentimetersToEarthRadius(double cm)
+        {
+            return cm / EARTH_RADIUS_IN_CM;
+        }
+
+        /// <summary>
+        /// Converts from kilometers to Earth radius units (R⊕).
+        /// </summary>
+        /// <param name="km"></param>
+        /// <returns>Distance in Earth radius (1.0 = radius of Earth)</returns>
+        public static double KilometersToEarthRadius(double km)
+        {
+            return km / EARTH_RADIUS_IN_KM;
+        }
+
+        /// <summary>
+        /// Converts from solar masses to units of Earth mass (M⊕).
+        /// </summary>
+        /// <param name="sm">Mass in solar masses</param>
+        /// <returns>Mass in Earth masses (1.0 = mass of Earth)</returns>
         public static double SolarMassesToEarthMasses(double sm)
         {
             return sm * SUN_MASS_IN_EARTH_MASSES;
+        }
+
+        /// <summary>
+        /// Converts from units of solar mass (M☉) to kilograms.
+        /// </summary>
+        /// <param name="sm">Mass in solar masses</param>
+        /// <returns>Mass in kilograms</returns>
+        public static double SolarMassesToKilograms(double sm)
+        {
+            return sm * SOLAR_MASS_IN_KILOGRAMS;
+        }
+
+        /// <summary>
+        /// Converts from units of solar mass (M☉) to grams.
+        /// </summary>
+        /// <param name="sm">Mass in solar masses</param>
+        /// <returns>Mass in grams</returns>
+        public static double SolarMassesToGrams(double sm)
+        {
+            return sm * SOLAR_MASS_IN_GRAMS;
         }
 
         /// <summary>

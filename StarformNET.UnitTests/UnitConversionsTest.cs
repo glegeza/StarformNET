@@ -10,6 +10,222 @@ namespace DLS.StarformNET.UnitTests
         public static double DELTA = 0.01;
 
         [TestClass]
+        public class EarthRadiusToCentimetersTests
+        {
+            public static double EARTH_RADIUS_IN_CM = 6.3714E8;
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertOneEarthRadius()
+            {
+                var expectedValue = EARTH_RADIUS_IN_CM;
+
+                Assert.AreEqual(expectedValue, UnitConversions.EarthRadiusToCentimeters(1), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertFractionalEarthRadii()
+            {
+                var input1 = 0.4;
+                var expectedValue1 = EARTH_RADIUS_IN_CM * 0.4;
+
+                var input2 = 0.7;
+                var expectedValue2 = EARTH_RADIUS_IN_CM * 0.7;
+
+                Assert.AreEqual(expectedValue1, UnitConversions.EarthRadiusToCentimeters(input1), DELTA);
+                Assert.AreEqual(expectedValue2, UnitConversions.EarthRadiusToCentimeters(input2), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertZeroEarthRadius()
+            {
+                Assert.AreEqual(0, UnitConversions.EarthRadiusToCentimeters(0), DELTA);
+            }
+        }
+
+        [TestClass]
+        public class EarthRadiusToKilometersTests
+        {
+            public static double EARTH_RADIUS_IN_KM = 6371.393;
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertOneEarthRadius()
+            {
+                var expectedValue = EARTH_RADIUS_IN_KM;
+
+                Assert.AreEqual(expectedValue, UnitConversions.EarthRadiusToKilometers(1), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertFractionalEarthRadii()
+            {
+                var input1 = 0.4;
+                var expectedValue1 = EARTH_RADIUS_IN_KM * 0.4;
+
+                var input2 = 0.7;
+                var expectedValue2 = EARTH_RADIUS_IN_KM * 0.7;
+
+                Assert.AreEqual(expectedValue1, UnitConversions.EarthRadiusToKilometers(input1), DELTA);
+                Assert.AreEqual(expectedValue2, UnitConversions.EarthRadiusToKilometers(input2), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertZeroEarthRadius()
+            {
+                Assert.AreEqual(0, UnitConversions.EarthRadiusToKilometers(0), DELTA);
+            }
+        }
+
+        [TestClass]
+        public class CentimetersToEarthRadiusTests
+        {
+            public static double EARTH_RADIUS_IN_CM = 6.3714E8;
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertOneEarthRadius()
+            {
+                var expectedValue = 1.0;
+
+                Assert.AreEqual(expectedValue, UnitConversions.CentimetersToEarthRadius(EARTH_RADIUS_IN_CM), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertLessThanOneEarthRadius()
+            {
+                var input1 = EARTH_RADIUS_IN_CM / 12;
+                var expectedValue1 = 1.0 / 12;
+
+                var input2 = EARTH_RADIUS_IN_CM / 4;
+                var expectedValue2 = 1.0 / 4;
+
+                Assert.AreEqual(expectedValue1, UnitConversions.CentimetersToEarthRadius(input1), DELTA);
+                Assert.AreEqual(expectedValue2, UnitConversions.CentimetersToEarthRadius(input2), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertZeroCentimeters()
+            {
+                Assert.AreEqual(0, UnitConversions.CentimetersToEarthRadius(0), DELTA);
+            }
+        }
+
+        [TestClass]
+        public class KilometersToEarthRadiusTests
+        {
+            public static double EARTH_RADIUS_IN_KM = 6371.393;
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertOneEarthRadius()
+            {
+                var expectedValue = 1.0;
+
+                Assert.AreEqual(expectedValue, UnitConversions.KilometersToEarthRadius(EARTH_RADIUS_IN_KM), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertLessThanOneEarthRadius()
+            {
+                var input1 = EARTH_RADIUS_IN_KM / 12;
+                var expectedValue1 = 1.0 / 12;
+
+                var input2 = EARTH_RADIUS_IN_KM / 4;
+                var expectedValue2 = 1.0 / 4;
+
+                Assert.AreEqual(expectedValue1, UnitConversions.KilometersToEarthRadius(input1), DELTA);
+                Assert.AreEqual(expectedValue2, UnitConversions.KilometersToEarthRadius(input2), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertZeroCentimeters()
+            {
+                Assert.AreEqual(0, UnitConversions.KilometersToEarthRadius(0), DELTA);
+            }
+        }
+
+        [TestClass]
+        public class SolarMassesToKilogramsTests
+        {
+            public static double SOLAR_MASS_IN_KG = 1.989E30;
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertOneSolarMass()
+            {
+                var expectedValue = SOLAR_MASS_IN_KG;
+
+                Assert.AreEqual(expectedValue, UnitConversions.SolarMassesToKilograms(1), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertLessThanOneSolarMass()
+            {
+                var input1 = 0.4;
+                var expectedValue1 = 0.4 * SOLAR_MASS_IN_KG;
+
+                var input2 = 0.7;
+                var expectedValue2 = 0.7 * SOLAR_MASS_IN_KG;
+
+                Assert.AreEqual(expectedValue1, UnitConversions.SolarMassesToKilograms(input1), DELTA);
+                Assert.AreEqual(expectedValue2, UnitConversions.SolarMassesToKilograms(input2), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertZeroSolarMasses()
+            {
+                Assert.AreEqual(0, UnitConversions.KilometersToEarthRadius(0), DELTA);
+            }
+        }
+
+        [TestClass]
+        public class SolarMassesToGramsTests
+        {
+            public static double SOLAR_MASS_IN_G = 1.989E33;
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertOneSolarMass()
+            {
+                var expectedValue = SOLAR_MASS_IN_G;
+
+                Assert.AreEqual(expectedValue, UnitConversions.SolarMassesToGrams(1), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertLessThanOneSolarMass()
+            {
+                var input1 = 0.4;
+                var expectedValue1 = 0.4 * SOLAR_MASS_IN_G;
+
+                var input2 = 0.7;
+                var expectedValue2 = 0.7 * SOLAR_MASS_IN_G;
+
+                Assert.AreEqual(expectedValue1, UnitConversions.SolarMassesToGrams(input1), DELTA);
+                Assert.AreEqual(expectedValue2, UnitConversions.SolarMassesToGrams(input2), DELTA);
+            }
+
+            [TestCategory("UnitConversions")]
+            [TestMethod]
+            public void ConvertZeroSolarMasses()
+            {
+                Assert.AreEqual(0, UnitConversions.KilometersToEarthRadius(0), DELTA);
+            }
+        }
+
+        [TestClass]
         public class KelvinToFahrenheitTests
         {
 
