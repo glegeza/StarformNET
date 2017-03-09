@@ -2,7 +2,6 @@
 {
     using System;
 
-    // TODO units?
     // UGLY Not comfortable with binary systems just having a second mass value
 
     [Serializable]
