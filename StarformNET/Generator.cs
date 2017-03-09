@@ -407,11 +407,8 @@ namespace DLS.StarformNET
         // TODO This should be moved out of this class entirely
         private static void CheckPlanet(Planet planet, string planetID, bool is_moon)
         {
+            planet.Illumination = Environment.MinimumIllumination(planet.SemiMajorAxisAU, planet.Star.Luminosity);
             planet.Atmosphere.Breathability = Environment.Breathability(planet);
-
-            // TODO move this calculation to somewhere else. Also, what units is this in?
-            planet.Illumination = Utilities.Pow2(1.0 / planet.SemiMajorAxisAU) * (planet.Star).Luminosity;
-
             planet.IsHabitable = Environment.IsHabitable(planet);
             planet.IsEarthlike = Environment.IsEarthlike(planet);
         }

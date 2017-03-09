@@ -7,6 +7,21 @@ namespace DLS.StarformNET
     public static class Environment
     {
         /// <summary>
+        /// Returns the illumination of a body at its farthest point from a
+        /// star.
+        /// </summary>
+        /// <param name="a">Semi-major axis of the body in au</param>
+        /// <param name="l">Luminance of the star in solar luminance units</param>
+        /// <returns>Illumination where 1.0 is equal to the light received by
+        /// the Earth from the Sun.</returns>
+        public static double MinimumIllumination(double a, double l)
+        {
+            // No idea about the source of this other than the obvious fact that
+            // light follows the inverse square law.
+            return Utilities.Pow2(1.0 / a) * l;
+        }
+
+        /// <summary>
         /// Returns the radius (center?) of a star's ecosphere in au.
         /// </summary>
         /// <param name="luminosity">Luminosity of the star in solar luminosity

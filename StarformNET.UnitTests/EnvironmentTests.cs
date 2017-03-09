@@ -25,6 +25,21 @@ namespace DLS.StarformNET.UnitTests
         }
 
         [TestClass]
+        public class IlluminationTests
+        {
+            [TestCategory("Illumination")]
+            [TestMethod]
+            public void TestSunIllumination()
+            {
+                var expectedValue = 1.0;
+                var sunLuminosity = 1.0;
+                var earthSemiMajorAxis = 1.0;
+
+                Assert.AreEqual(expectedValue, StarformNET.Environment.MinimumIllumination(earthSemiMajorAxis, sunLuminosity));
+            }
+        }
+
+        [TestClass]
         public class HillSphereTests
         {
             // Expected hill sphere value from:
