@@ -226,7 +226,7 @@ namespace DLS.StarformNET.Display
 
         public static string GetMassStringEM(Planet planet)
         {
-            return String.Format("{0:0.00} EM", UnitConversions.SolarMassesToEarthMasses(planet.MassSolarMasses));
+            return String.Format("{0:0.00} EM", UnitConversions.SolarMassesToEarthMasses(planet.MassSM));
         }
 
         public static string GetSurfacePressureStringAtm(Planet planet)

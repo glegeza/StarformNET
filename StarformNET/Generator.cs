@@ -74,35 +74,35 @@ namespace DLS.StarformNET
             var planet = new Planet(seed, sun, planetNo);
 
             planet.OrbitZone = Environment.OrbitalZone(sun.Luminosity, planet.SemiMajorAxisAU);
-            planet.OrbitalPeriodDays = Environment.Period(planet.SemiMajorAxisAU, planet.MassSolarMasses, sun.Mass);
+            planet.OrbitalPeriodDays = Environment.Period(planet.SemiMajorAxisAU, planet.MassSM, sun.Mass);
             if (useRandomTilt)
             {
                 planet.AxialTiltDegrees = Environment.Inclination(planet.SemiMajorAxisAU);
             }
             planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / sun.EcosphereRadius);
             planet.RMSVelocityCMSec = Environment.RMSVelocity(GlobalConstants.MOL_NITROGEN, planet.ExosphereTempKelvin);
-            planet.CoreRadiusKM = Environment.KothariRadius(planet.DustMass, false, planet.OrbitZone);
+            planet.CoreRadiusKM = Environment.KothariRadius(planet.DustMassSM, false, planet.OrbitZone);
 
             // Calculate the radius as a gas giant, to verify it will retain gas.
             // Then if mass > Earth, it's at least 5% gas and retains He, it's
             // some flavor of gas giant.
 
-            planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSolarMasses, planet.SemiMajorAxisAU, sun.EcosphereRadius, true);
-            planet.RadiusKM = Environment.VolumeRadius(planet.MassSolarMasses, planet.DensityGCC);
+            planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSM, planet.SemiMajorAxisAU, sun.EcosphereRadius, true);
+            planet.RadiusKM = Environment.VolumeRadius(planet.MassSM, planet.DensityGCC);
 
-            planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSolarMasses, planet.RadiusKM);
+            planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
             planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
 
             planet.MolecularWeightRetained = Environment.MinMolecularWeight(planet);
             
             // Is the planet a gas giant?
-            if (((planet.MassSolarMasses * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) > 1.0) && ((planet.GasMass / planet.MassSolarMasses) > 0.05) && (planet.MolecularWeightRetained <= 4.0))
+            if (((planet.MassSM * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) > 1.0) && ((planet.GasMassSM / planet.MassSM) > 0.05) && (planet.MolecularWeightRetained <= 4.0))
             {
-                if ((planet.GasMass / planet.MassSolarMasses) < 0.20)
+                if ((planet.GasMassSM / planet.MassSM) < 0.20)
                 {
                     planet.Type = PlanetType.SubSubGasGiant;
                 }
-                else if ((planet.MassSolarMasses * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) < 20.0)
+                else if ((planet.MassSM * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) < 20.0)
                 {
                     planet.Type = PlanetType.SubGasGiant;
                 }
@@ -113,16 +113,16 @@ namespace DLS.StarformNET
             }
             else // If not, it's rocky.
             {
-                planet.RadiusKM = Environment.KothariRadius(planet.MassSolarMasses, false, planet.OrbitZone);
-                planet.DensityGCC = Environment.VolumeDensity(planet.MassSolarMasses, planet.RadiusKM);
+                planet.RadiusKM = Environment.KothariRadius(planet.MassSM, false, planet.OrbitZone);
+                planet.DensityGCC = Environment.VolumeDensity(planet.MassSM, planet.RadiusKM);
 
-                planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSolarMasses, planet.RadiusKM);
+                planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                 planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
 
-                if ((planet.GasMass / planet.MassSolarMasses) > 0.000001)
+                if ((planet.GasMassSM / planet.MassSM) > 0.000001)
                 {
-                    double h2_mass = planet.GasMass * 0.85;
-                    double he_mass = (planet.GasMass - h2_mass) * 0.999;
+                    double h2_mass = planet.GasMassSM * 0.85;
+                    double he_mass = (planet.GasMassSM - h2_mass) * 0.999;
 
                     double h2_loss = 0.0;
                     double he_loss = 0.0;
@@ -135,10 +135,10 @@ namespace DLS.StarformNET
                     {
                         h2_loss = ((1.0 - (1.0 / Math.Exp(sun.Age / h2_life))) * h2_mass);
 
-                        planet.GasMass -= h2_loss;
-                        planet.MassSolarMasses -= h2_loss;
+                        planet.GasMassSM -= h2_loss;
+                        planet.MassSM -= h2_loss;
 
-                        planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSolarMasses, planet.RadiusKM);
+                        planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                         planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                     }
 
@@ -146,18 +146,18 @@ namespace DLS.StarformNET
                     {
                         he_loss = ((1.0 - (1.0 / Math.Exp(sun.Age / he_life))) * he_mass);
 
-                        planet.GasMass -= he_loss;
-                        planet.MassSolarMasses -= he_loss;
+                        planet.GasMassSM -= he_loss;
+                        planet.MassSM -= he_loss;
 
-                        planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSolarMasses, planet.RadiusKM);
+                        planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                         planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                     }
                 }
             }
 
             planet.DayLengthHours = Environment.DayLength(ref planet); // Modifies planet.resonant_period
-            planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSolarMasses, planet.RadiusKM);
-            planet.HillSphereKM = Environment.SimplifiedHillSphereKM(sun.Mass, planet.MassSolarMasses, planet.SemiMajorAxisAU);
+            planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSM, planet.RadiusKM);
+            planet.HillSphereKM = Environment.SimplifiedHillSphereKM(sun.Mass, planet.MassSM, planet.SemiMajorAxisAU);
 
             if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
             {
@@ -197,8 +197,8 @@ namespace DLS.StarformNET
 
                 planet.HasGreenhouseEffect = Environment.Greenhouse(sun.EcosphereRadius, planet.SemiMajorAxisAU);
                 planet.VolatileGasInventory = Environment.VolatileInventory(
-                    planet.MassSolarMasses, planet.EscapeVelocityCMSec, planet.RMSVelocityCMSec, sun.Mass,
-                    planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.MassSolarMasses) > 0.000001);
+                    planet.MassSM, planet.EscapeVelocityCMSec, planet.RMSVelocityCMSec, sun.Mass,
+                    planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMassSM / planet.MassSM) > 0.000001);
                 planet.Atmosphere.SurfacePressure = Environment.Pressure(
                     planet.VolatileGasInventory, planet.RadiusKM, planet.SurfaceGravityG);
 
@@ -222,7 +222,7 @@ namespace DLS.StarformNET
                 // Assign planet type
                 if (planet.Atmosphere.SurfacePressure < 1.0)
                 {
-                    if (!isMoon && ((planet.MassSolarMasses * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) < GlobalConstants.ASTEROID_MASS_LIMIT))
+                    if (!isMoon && ((planet.MassSM * GlobalConstants.SUN_MASS_IN_EARTH_MASSES) < GlobalConstants.ASTEROID_MASS_LIMIT))
                     {
                         planet.Type = PlanetType.Asteroids;
                     }
@@ -256,7 +256,7 @@ namespace DLS.StarformNET
                     {
                         planet.Type = PlanetType.Venusian;
                     }
-                    else if ((planet.GasMass / planet.MassSolarMasses) > 0.0001) // Accreted gas, but no greenhouse or liquid water make it an ice world
+                    else if ((planet.GasMassSM / planet.MassSM) > 0.0001) // Accreted gas, but no greenhouse or liquid water make it an ice world
                     {
                         planet.Type = PlanetType.Ice;
                         planet.IceCoverFraction = 1.0;
@@ -296,7 +296,7 @@ namespace DLS.StarformNET
                         var generatedMoon = GeneratePlanet(curMoon, n, ref sun, useRandomTilt, moon_id, true, genOptions);
 
                         double roche_limit = 2.44 * planet.RadiusKM * Math.Pow((planet.DensityGCC / generatedMoon.DensityGCC), (1.0 / 3.0));
-                        double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.MassSolarMasses / (3.0 * sun.Mass)), (1.0 / 3.0));
+                        double hill_sphere = planet.SemiMajorAxisAU * GlobalConstants.KM_PER_AU * Math.Pow((planet.MassSM / (3.0 * sun.Mass)), (1.0 / 3.0));
 
                         if ((roche_limit * 3.0) < hill_sphere)
                         {
@@ -394,7 +394,7 @@ namespace DLS.StarformNET
             }
             else if (gas.symbol == "He")
             {
-                abund = abund * (0.001 + (planet.GasMass / planet.MassSolarMasses));
+                abund = abund * (0.001 + (planet.GasMassSM / planet.MassSM));
                 pres2 = (0.75 + pressure);
                 react = Math.Pow(1 / (1 + gas.reactivity), sun.Age / 2e9 * pres2);
             }

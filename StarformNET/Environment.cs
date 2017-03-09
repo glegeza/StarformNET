@@ -304,7 +304,7 @@ namespace DLS.StarformNET
             // approximation for our new planet (his eq.13) and take that into account.
             // This is used to find 'change_in_angular_velocity' below.
 
-            double planetaryMassInGrams = planet.MassSolarMasses * GlobalConstants.SOLAR_MASS_IN_GRAMS;
+            double planetaryMassInGrams = planet.MassSM * GlobalConstants.SOLAR_MASS_IN_GRAMS;
             double equatorialRadiusInCM = planet.RadiusKM * GlobalConstants.CM_PER_KM;
             double yearInHours = planet.OrbitalPeriodDays * 24.0;
             bool isGasGiant = (planet.Type == PlanetType.GasGiant ||
@@ -872,7 +872,7 @@ namespace DLS.StarformNET
         /// </summary>
         public static double MinMolecularWeight(Planet planet)
         {
-            double mass = planet.MassSolarMasses;
+            double mass = planet.MassSM;
             double radius = planet.RadiusKM;
             double temp = planet.ExosphereTempKelvin;
             double target = 5.0E9;
@@ -964,9 +964,9 @@ namespace DLS.StarformNET
             {
                 planet.HasGreenhouseEffect = false;
 
-                planet.VolatileGasInventory = VolatileInventory(planet.MassSolarMasses,
+                planet.VolatileGasInventory = VolatileInventory(planet.MassSM,
                     planet.EscapeVelocityCMSec, planet.RMSVelocityCMSec, planet.Star.Mass,
-                    planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMass / planet.MassSolarMasses) > 0.000001);
+                    planet.OrbitZone, planet.HasGreenhouseEffect, (planet.GasMassSM / planet.MassSM) > 0.000001);
                 planet.Atmosphere.SurfacePressure = Pressure(planet.VolatileGasInventory, planet.RadiusKM, planet.SurfaceGravityG);
 
                 planet.BoilingPointWaterKelvin = BoilingPoint(planet.Atmosphere.SurfacePressure);

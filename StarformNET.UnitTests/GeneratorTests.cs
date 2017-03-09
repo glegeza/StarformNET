@@ -93,14 +93,14 @@ namespace DLS.StarformNET.UnitTests
                 planet.DayLengthHours = 2802;
                 planet.OrbitalPeriodDays = 225;
 
-                planet.MassSolarMasses = 0.000002447;
-                planet.GasMass = 2.41E-10;
-                planet.DustMass = planet.MassSolarMasses - planet.GasMass;
+                planet.MassSM = 0.000002447;
+                planet.GasMassSM = 2.41E-10;
+                planet.DustMassSM = planet.MassSM - planet.GasMassSM;
                 planet.RadiusKM = 6051.8;
-                planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSolarMasses, planet.SemiMajorAxisAU, planet.Star.EcosphereRadius, true);
+                planet.DensityGCC = Environment.EmpiricalDensity(planet.MassSM, planet.SemiMajorAxisAU, planet.Star.EcosphereRadius, true);
                 planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / planet.Star.EcosphereRadius);
-                planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSolarMasses, planet.RadiusKM);
-                planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSolarMasses, planet.RadiusKM);
+                planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
+                planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSM, planet.RadiusKM);
 
                 planet.IsGasGiant = false;
                 planet.Atmosphere.SurfacePressure = 92000;

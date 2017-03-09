@@ -14,137 +14,229 @@ namespace DLS.StarformNET.Data
         public Atmosphere Atmosphere = new Atmosphere();
 
         #region Orbit data
-        public double SemiMajorAxisAU
-        { get; set; }
 
-        public double Eccentricity
-        { get; set; }
+        /// <summary>
+        /// Semi-major axis of the body's orbit in astronomical units (au).
+        /// </summary>
+        public double SemiMajorAxisAU { get; set; }
 
-        public double AxialTiltDegrees
-        { get; set; }
+        /// <summary>
+        /// Eccentricity of the body's orbit.
+        /// </summary>
+        public double Eccentricity { get; set; }
 
-        // the 'zone' of the planet
-        public int OrbitZone
-        { get; set; }
+        /// <summary>
+        /// Axial tilt of the planet expressed in degrees.
+        /// </summary>
+        public double AxialTiltDegrees { get; set; }
 
-        public double OrbitalPeriodDays
-        { get; set; }
+        /// <summary>
+        /// Orbital zone the planet is located in. Value is 1, 2, or 3. Used in
+        /// radius and volatile inventory calculations.
+        /// </summary>
+        public int OrbitZone { get; set; }
 
-        public double DayLengthHours
-        { get; set; }
+        /// <summary>
+        /// The length of the planet's year in days.
+        /// </summary>
+        public double OrbitalPeriodDays { get; set; }
 
-        public double HillSphereKM
-        { get; set; }
+        /// <summary>
+        /// The length of the planet's day in hours.
+        /// </summary>
+        public double DayLengthHours { get; set; }
+
+        /// <summary>
+        /// The Hill sphere of the planet expressed in km.
+        /// </summary>
+        public double HillSphereKM { get; set; }
+
         #endregion
 
         #region Size & mass data
-        public double MassSolarMasses
-        { get; set; } 
 
-        public double DustMass
-        { get; set; }
+        /// <summary>
+        /// The mass of the planet in units of Solar mass.
+        /// </summary>
+        public double MassSM { get; set; } 
 
-        public double GasMass
-        { get; set; }
+        /// <summary>
+        /// The mass of dust retained by the planet (ie, the mass of the planet
+        /// sans atmosphere). Given in units of Solar mass.
+        /// </summary>
+        public double DustMassSM { get; set; }
 
-        public double EscapeVelocityCMSec
-        { get; set; }
+        /// <summary>
+        /// The mass of gas retained by the planet (ie, the mass of its
+        /// atmosphere). Given in units of Solar mass.
+        /// </summary>
+        public double GasMassSM { get; set; }
 
-        public double SurfaceAccelerationCMSec2
-        { get; set; }
+        /// <summary>
+        /// The velocity required to escape from the body given in cm/sec.
+        /// </summary>
+        public double EscapeVelocityCMSec { get; set; }
 
-        public double SurfaceGravityG
-        { get; set; }
+        /// <summary>
+        /// The gravitational acceleration felt at the surface of the planet. Given in cm/sec^2
+        /// </summary>
+        public double SurfaceAccelerationCMSec2 { get; set; }
 
-        public double CoreRadiusKM
-        { get; set; }
+        /// <summary>
+        /// The gravitational acceleration felt at the surface of the planet. Given as a fraction of Earth gravity (Gs).
+        /// </summary>
+        public double SurfaceGravityG { get; set; }
 
-        public double RadiusKM
-        { get; set; }
+        /// <summary>
+        /// The radius of the planet's core in km.
+        /// </summary>
+        public double CoreRadiusKM { get; set; }
 
-        public double DensityGCC
-        { get; set; }
+        /// <summary>
+        /// The radius of the planet's surface in km.
+        /// </summary>
+        public double RadiusKM { get; set; }
+
+        /// <summary>
+        /// The density of the planet given in g/cc. 
+        /// </summary>
+        public double DensityGCC { get; set; }
+
         #endregion
 
         #region Planet properties
-        public PlanetType Type
-        { get; set; }
 
-        public bool IsGasGiant
-        { get; set; }
+        public PlanetType Type { get; set; }
 
-        public bool IsTidallyLocked
-        { get; set; }
+        public bool IsGasGiant { get; set; }
 
-        public bool IsEarthlike
-        { get; set; }
+        public bool IsTidallyLocked { get; set; }
 
-        public bool IsHabitable
-        { get; set; }
+        public bool IsEarthlike { get; set; }
 
-        public bool HasResonantPeriod
-        { get; set; }
+        public bool IsHabitable { get; set; }
 
-        public bool HasGreenhouseEffect
-        { get; set; }
+        public bool HasResonantPeriod { get; set; }
+
+        public bool HasGreenhouseEffect { get; set; }
+
         #endregion
 
         #region Moon data
-        public List<Planet> Moons
-        { get; set; }
 
-        public double MoonSemiMajorAxisAU
-        { get; set; }
+        public List<Planet> Moons { get; set; }
 
-        public double MoonEccentricity
-        { get; set; }
+        public double MoonSemiMajorAxisAU { get; set; }
+
+        public double MoonEccentricity { get; set; }
+
         #endregion
 
         #region Atmospheric data
-        public double RMSVelocityCMSec
-        { get; set; }
+        /// <summary>
+        /// The root-mean-square velocity of N2 at the planet's exosphere given
+        /// in cm/sec. Used to determine where or not a planet is capable of
+        /// retaining an atmosphere.
+        /// </summary>
+        public double RMSVelocityCMSec { get; set; }
 
-        public double MolecularWeightRetained
-        { get; set; } // smallest molecular weight retained
+        /// <summary>
+        /// The smallest molecular weight the planet is capable of retaining.
+        /// I believe this is in g/mol.
+        /// </summary>
+        public double MolecularWeightRetained { get; set; }
 
-        public double VolatileGasInventory
-        { get; set; } 
+        /// <summary>
+        /// Unitless value for the inventory of volatile gases that result from
+        /// outgassing. Used in the calculation of surface pressure. See Fogg
+        /// eq. 16. 
+        /// </summary>
+        public double VolatileGasInventory { get; set; } 
 
-        public double BoilingPointWaterKelvin
-        { get; set; }
+        /// <summary>
+        /// Boiling point of water on the planet given in Kelvin.
+        /// </summary>
+        public double BoilingPointWaterKelvin { get; set; }
 
-        public double Albedo
-        { get; set; }
+        /// <summary>
+        /// Planetary albedo. Unitless value between 0 (no reflection) and 1 
+        /// (completely reflective).
+        /// </summary>
+        public double Albedo { get; set; }
+
         #endregion
 
         #region Temperature data
-        public double Illumination { get; set; } // units?
+        /// <summary>
+        /// Illumination received by the body at at the farthest point of its
+        /// orbit. 1.0 is the amount of illumination received by an object 1 au
+        /// from the Sun.
+        /// </summary>
+        public double Illumination { get; set; }
 
+        /// <summary>
+        /// Temperature at the body's exosphere given in Kelvin.
+        /// </summary>
         public double ExosphereTempKelvin { get; set; }
 
         public double EstimatedTempKelvin { get; set; } // quick non-iterative estimate (K)
 
         public double EstimatedTerrTempKelvin { get; set; } // for terrestrial moons and the like
 
+        /// <summary>
+        /// Temperature at the body's surface given in Kelvin.
+        /// </summary>
         public double SurfaceTempKelvin { get; set; }
 
+        /// <summary>
+        /// Amount (in Kelvin) that the planet's surface temperature is being
+        /// increased by a runaway greenhouse effect.
+        /// </summary>
         public double GreenhouseRiseKelvin { get; set; }
 
+        /// <summary>
+        /// Average daytime temperature in Kelvin.
+        /// </summary>
         public double DaytimeTempKelvin { get; set; }
 
+        /// <summary>
+        /// Average nighttime temperature in Kelvin.
+        /// </summary>
         public double NighttimeTempKelvin { get; set; }
 
+        /// <summary>
+        /// Maximum (summer/day) temperature in Kelvin.
+        /// </summary>
         public double MaxTempKelvin { get; set; }
 
+        /// <summary>
+        /// Minimum (winter/night) temperature in Kelvin.
+        /// </summary>
         public double MinTempKelvin { get; set; }
+
         #endregion
 
         #region Surface coverage
+
+        /// <summary>
+        /// Amount of the body's surface that is covered in water. Given as a
+        /// value between 0 (no water) and 1 (completely covered).
+        /// </summary>
         public double WaterCoverFraction { get; set; }
 
+        /// <summary>
+        /// Amount of the body's surface that is obscured by cloud cover. Given
+        /// as a value between 0 (no cloud coverage) and 1 (surface not visible
+        /// at all).
+        /// </summary>
         public double CloudCoverFraction { get; set; }
 
+        /// <summary>
+        /// Amount of the body's surface that is covered in ice. Given as a 
+        /// value between 0 (no ice) and 1 (completely covered).
+        /// </summary>
         public double IceCoverFraction { get; set; }
+
         #endregion
 
         public Planet()
@@ -158,9 +250,9 @@ namespace DLS.StarformNET.Data
             Position = num;
             SemiMajorAxisAU = seed.SemiMajorAxisAU;
             Eccentricity = seed.Eccentricity;
-            MassSolarMasses = seed.Mass;
-            DustMass = seed.DustMass;
-            GasMass = seed.GasMass;
+            MassSM = seed.Mass;
+            DustMassSM = seed.DustMass;
+            GasMassSM = seed.GasMass;
             IsGasGiant = seed.IsGasGiant;
         }
 
@@ -174,9 +266,9 @@ namespace DLS.StarformNET.Data
                 Utilities.AlmostEqual(OrbitalPeriodDays, other.OrbitalPeriodDays) &&
                 Utilities.AlmostEqual(DayLengthHours, other.DayLengthHours) &&
                 Utilities.AlmostEqual(HillSphereKM, other.HillSphereKM) &&
-                Utilities.AlmostEqual(MassSolarMasses, other.MassSolarMasses) &&
-                Utilities.AlmostEqual(DustMass, other.DustMass) &&
-                Utilities.AlmostEqual(GasMass, other.GasMass) &&
+                Utilities.AlmostEqual(MassSM, other.MassSM) &&
+                Utilities.AlmostEqual(DustMassSM, other.DustMassSM) &&
+                Utilities.AlmostEqual(GasMassSM, other.GasMassSM) &&
                 Utilities.AlmostEqual(EscapeVelocityCMSec, other.EscapeVelocityCMSec) &&
                 Utilities.AlmostEqual(SurfaceAccelerationCMSec2, other.SurfaceAccelerationCMSec2) &&
                 Utilities.AlmostEqual(SurfaceGravityG, other.SurfaceGravityG) &&
