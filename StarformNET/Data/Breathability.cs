@@ -6,5 +6,6 @@ namespace DLS.StarformNET.Data
         Breathable,
         Unbreathable,
         Poisonous
+
     }
 }

@@ -2,6 +2,7 @@ namespace DLS.StarformNET
 {
     using System;
 
+    // TODO destroy this motherfucker
     public static class GlobalConstants
     {
         public static double RADIANS_PER_ROTATION         = (2.0 * Math.PI);

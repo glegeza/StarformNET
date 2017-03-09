@@ -1074,8 +1074,6 @@ namespace DLS.StarformNET
         /// <summary>
         /// Returns the breathability state of the planet's atmosphere.
         /// </summary>
-        /// <param name="planet"></param>
-        /// <param name="gases"></param>
         /// <returns></returns>
         public static Breathability Breathability(Planet planet)
         {

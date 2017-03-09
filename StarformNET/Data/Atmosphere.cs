@@ -1,6 +1,5 @@
 namespace DLS.StarformNET.Data
 {
-    
     using System.Collections.Generic;
     using System;
 

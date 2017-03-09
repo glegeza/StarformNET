@@ -8,16 +8,14 @@
     /// </summary>
     public static class UnitConversions
     {
-        public static double MB_IN_MMHG = 1.3332239;
-        public static double CM_PER_KM = 1.0E5;
-        public static double EARTH_SURF_PRES_IN_MILLIBARS = 1013.25;
-        public static double SUN_MASS_IN_EARTH_MASSES = 332775.64;
-        public static double SOLAR_MASS_IN_GRAMS = 1.989E33;
-        public static double SOLAR_MASS_IN_KILOGRAMS = 1.989E30;
-        public static double EARTH_MASS_IN_GRAMS = 5.977E27;
-        public static double EARTH_DENSITY_IN_GCC = 5.52;
-        public static double EARTH_RADIUS_IN_CM = 6.3714E8;
-        public static double EARTH_RADIUS_IN_KM = 6371.393;
+        private static double MB_IN_MMHG = 1.3332239;
+        private static double CM_PER_KM = 1.0E5;
+        private static double EARTH_SURF_PRES_IN_MILLIBARS = 1013.25;
+        private static double SUN_MASS_IN_EARTH_MASSES = 332775.64;
+        private static double SOLAR_MASS_IN_GRAMS = 1.989E33;
+        private static double SOLAR_MASS_IN_KILOGRAMS = 1.989E30;
+        private static double EARTH_RADIUS_IN_CM = 6.3714E8;
+        private static double EARTH_RADIUS_IN_KM = 6371.393;
 
         /// <summary>
         /// Converts temperature from Kelvin to Fahrenheit degrees.
@@ -33,7 +31,7 @@
         /// Converts pressure from mmHg to millibars
         /// </summary>
         /// <param name="presmmHg">Pressure in mmHg</param>
-        /// <returns><Pressure in millibars/returns>
+        /// <returns>Pressure in millibars</returns>
         public static double MMHGToMillibars(double presmmHg)
         {
             return presmmHg * MB_IN_MMHG;
