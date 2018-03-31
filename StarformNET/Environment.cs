@@ -965,7 +965,7 @@ namespace DLS.StarformNET
             var r = radiusKM * GlobalConstants.CM_PER_KM;
             var t = (Utilities.Pow3(v) / (2.0 * Utilities.Pow2(g) * r)) * Math.Exp((3.0 * g * r) / Utilities.Pow2(v));
             var years = t / (GlobalConstants.SECONDS_PER_HOUR * 24.0 * GlobalConstants.DAYS_IN_A_YEAR);
-            
+
             if (years > 2.0E10)
             {
                 years = double.MaxValue;
@@ -1017,7 +1017,7 @@ namespace DLS.StarformNET
 
             loops = 0;
 
-            while (((guess2 - guess1) > 0.1) && (loops++ < 25))
+            while (guess2 - guess1 > 0.1 && loops++ < 25)
             {
                 var guess3 = (guess1 + guess2) / 2.0;
                 life = GasLife(guess3, exosphereTemp, surfGrav, radius);

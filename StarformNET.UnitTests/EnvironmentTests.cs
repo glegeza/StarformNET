@@ -11,14 +11,77 @@ namespace DLS.StarformNET.UnitTests
     class EnvironmentTests
     {
         [TestClass]
+        public class GasLifeTest
+        {
+            // Note these expected values aren't based on anything. They are
+            // just the output from the function expected given certain input
+            // values. They are intended for regression testing, not to prove
+            // 'correctness' of the function.
+
+            private static readonly double[] Weights =
+            {
+                GlobalConstants.ATOMIC_HYDROGEN,
+                GlobalConstants.MOL_HYDROGEN,
+                GlobalConstants.ATOMIC_NITROGEN,
+                GlobalConstants.MOL_NITROGEN,
+                GlobalConstants.MOL_OXYGEN,
+                GlobalConstants.WATER_VAPOR
+            };
+
+            [TestCategory("GasLife")]
+            [TestMethod]
+            public void TestGasesEarth()
+            {
+                double[] expected =
+                {
+                    0.000886904496537799,
+                    0.0469963194268096,
+                    double.MaxValue,
+                    double.MaxValue,
+                    double.MaxValue,
+                    double.MaxValue
+                };
+                CheckGasValues(1500, 1.0, 6371, expected, Weights);
+            }
+
+            [TestCategory("GasLife")]
+            [TestMethod]
+            public void TestGasesHighExoTemp()
+            {
+                double[] expected =
+                {
+                    0.000442164077775748,
+                    0.000215237230333243,
+                    0.000539283973908679,
+                    0.0167717184670422,
+                    0.0493293473613224,
+                    0.00132928020274972
+                };
+                CheckGasValues(4500, 0.5, 2440, expected, Weights);
+            }
+
+            private static void CheckGasValues(double exo, double surfG, double radius, 
+                double[] expected, double[] weights)
+            {
+                for (var i = 0; i < expected.Length; i++)
+                {
+                    var e = expected[i];
+                    var w = weights[i];
+                    Assert.AreEqual(e, StarformNET.Environment.GasLife(
+                        w, exo, surfG, radius), 0.000001);
+                }
+            }
+        }
+
+        [TestClass]
         public class EcosphereTests
         {
             [TestCategory("Ecosphere")]
             [TestMethod]
             public void TestSunEcosphere()
             {
-                var expectedValue = 1.0;
-                var sunLuminosity = 1.0;
+                const double expectedValue = 1.0;
+                const double sunLuminosity = 1.0;
 
                 Assert.AreEqual(expectedValue, StarformNET.Environment.StarEcosphereRadiusAU(sunLuminosity), 0.0001);
             }
