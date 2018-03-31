@@ -400,11 +400,13 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
-        /// Returns the length of a planet's day in hours
+        /// Returns the length of a planet's day in hours.
         /// </summary>
-        /// <param name="planet"></param>
-        /// <returns>Length of the day in hours</returns>
-        public static double DayLength(ref Planet planet)
+        /// <param name="angularVelocity">The planet's angular velocity in radians/sec</param>
+        /// <param name="orbitalPeriodDays">The planet's orbital period in days</param>
+        /// <param name="ecc">The eccentricity of the planet's orbit</param>
+        /// <returns>Length of day in hours</returns>
+        public static double DayLength(double angularVelocity, double orbitalPeriodDays, double ecc)
         {
             // Fogg's information for this routine came from Dole "Habitable Planets
             // for Man", Blaisdell Publishing Company, NY, 1964.  From this, he came
@@ -416,11 +418,6 @@ namespace DLS.StarformNET
             // approximation for our new planet (his eq.13) and take that into account.
             // This is used to find 'change_in_angular_velocity' below.
 
-            var angularVelocity = GetAngularVelocity(planet);
-
-            planet.HasResonantPeriod = false;
-
-            // Now we change from rad/sec to hours/rotation
             var stopped = false;
             var dayInHours = GlobalConstants.RADIANS_PER_ROTATION / (GlobalConstants.SECONDS_PER_HOUR * angularVelocity);
             if (angularVelocity <= 0.0)
@@ -429,22 +426,40 @@ namespace DLS.StarformNET
                 dayInHours = double.MaxValue;
             }
 
-            var yearInHours = planet.OrbitalPeriodDays * 24.0;
+            var yearInHours = orbitalPeriodDays * 24.0;
             if (dayInHours >= yearInHours || stopped)
             {
-                if (planet.Eccentricity > 0.1)
+                if (ecc > 0.1)
                 {
-                    var spinResonanceFactor = (1.0 - planet.Eccentricity) / (1.0 + planet.Eccentricity);
-                    planet.HasResonantPeriod = true;
+                    var spinResonanceFactor = (1.0 - ecc) / (1.0 + ecc);
                     return spinResonanceFactor * yearInHours;
                 }
-                
+
                 return yearInHours;
             }
 
             return dayInHours;
         }
 
+        /// <summary>
+        /// Checks if a planet's rotation is in resonance with its orbit
+        /// </summary>
+        /// <param name="angularVelocity">The planet's angular velocity in
+        /// radians/sec</param>
+        /// <param name="dayInHours">The length of the planet's day in
+        /// hours</param>
+        /// <param name="orbitalPeriodDays">The orbital period of the planet
+        /// in days</param>
+        /// <param name="ecc">The eccentricity of the planet's orbit</param>
+        /// <returns>True if the planet is in a resonant orbit</returns>
+        public static bool HasResonantPeriod(double angularVelocity,
+            double dayInHours, double orbitalPeriodDays, double ecc)
+        {
+            var yearInHours = orbitalPeriodDays * 24.0;
+            return (angularVelocity <= 0.0 || dayInHours >= yearInHours)
+                   && ecc > 0.1;
+        }
+        
         /// <summary>
         /// Returns inclination in units of degrees
         /// </summary>

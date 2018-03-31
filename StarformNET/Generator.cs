@@ -155,7 +155,11 @@ namespace DLS.StarformNET
                 }
             }
 
-            planet.DayLengthHours = Environment.DayLength(ref planet); // Modifies planet.resonant_period
+            planet.AngularVelocityRadSec = Environment.GetAngularVelocity(planet);
+            planet.DayLengthHours = Environment.DayLength(planet.AngularVelocityRadSec, planet.OrbitalPeriodDays,
+                planet.Eccentricity);
+            planet.HasResonantPeriod = Environment.HasResonantPeriod(planet.AngularVelocityRadSec,
+                planet.DayLengthHours, planet.OrbitalPeriodDays, planet.Eccentricity);
             planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSM, planet.RadiusKM);
             planet.HillSphereKM = Environment.SimplifiedHillSphereKM(sun.Mass, planet.MassSM, planet.SemiMajorAxisAU);
 

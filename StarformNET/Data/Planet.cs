@@ -42,6 +42,11 @@ namespace DLS.StarformNET.Data
         public double OrbitalPeriodDays { get; set; }
 
         /// <summary>
+        /// Angular velocity about the planet's axis in radians/sec.
+        /// </summary>
+        public double AngularVelocityRadSec { get; set; }
+
+        /// <summary>
         /// The length of the planet's day in hours.
         /// </summary>
         public double DayLengthHours { get; set; }
