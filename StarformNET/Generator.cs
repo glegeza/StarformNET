@@ -155,7 +155,7 @@ namespace DLS.StarformNET
                 }
             }
 
-            planet.AngularVelocityRadSec = Environment.GetAngularVelocity(planet);
+            planet.AngularVelocityRadSec = Environment.AngularVelocity(planet);
             planet.DayLengthHours = Environment.DayLength(planet.AngularVelocityRadSec, planet.OrbitalPeriodDays,
                 planet.Eccentricity);
             planet.HasResonantPeriod = Environment.HasResonantPeriod(planet.AngularVelocityRadSec,

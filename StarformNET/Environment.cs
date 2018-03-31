@@ -375,7 +375,7 @@ namespace DLS.StarformNET
         /// masses</param>
         /// <param name="starAgeYears">Age of the parent star in years</param>
         /// <returns>Angular velocity in radians/sec</returns>
-        public static double GetAngularVelocity(double massSM, double radiusKM,
+        public static double AngularVelocity(double massSM, double radiusKM,
             double densityGCC, double semiMajorAxisAU, bool isGasGiant,
             double starMassSM, double starAgeYears)
         {
@@ -392,9 +392,9 @@ namespace DLS.StarformNET
         /// <param name="planet">The planet to calculate angular velocity
         /// for</param>
         /// <returns>Angular velocity in radians/sec</returns>
-        public static double GetAngularVelocity(Planet planet)
+        public static double AngularVelocity(Planet planet)
         {
-            return GetAngularVelocity(planet.MassSM,
+            return AngularVelocity(planet.MassSM,
                 planet.RadiusKM, planet.DensityGCC, planet.SemiMajorAxisAU,
                 planet.IsGasGiant, planet.Star.Mass, planet.Star.AgeYears);
         }
