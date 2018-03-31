@@ -461,13 +461,14 @@ namespace DLS.StarformNET
         }
         
         /// <summary>
-        /// Returns inclination in units of degrees
+        /// Returns a randomized inclination in units of degrees
         /// </summary>
-        /// <param name="orb_radius">Radius in units of AU</param>
-        public static double Inclination(double orb_radius)
+        /// <param name="semiMajorAxisAU">Orbital radius in units of AU</param>
+        public static double Inclination(double semiMajorAxisAU)
         {
-            int temp = (int)(Math.Pow(orb_radius, 0.2) * Utilities.About(GlobalConstants.EARTH_AXIAL_TILT, 0.4));
-            return (temp % 360);
+            var inclination = (int)(Math.Pow(semiMajorAxisAU, 0.2) * 
+                                    Utilities.About(GlobalConstants.EARTH_AXIAL_TILT, 0.4));
+            return inclination % 360;
         }
 
         /// <summary>
@@ -481,8 +482,8 @@ namespace DLS.StarformNET
             // This function implements the escape velocity calculation. Note that
             // it appears that Fogg's eq.15 is incorrect.	
 
-            double massInGrams = mass * GlobalConstants.SOLAR_MASS_IN_GRAMS;
-            double radiusinCM = radius * GlobalConstants.CM_PER_KM;
+            var massInGrams = mass * GlobalConstants.SOLAR_MASS_IN_GRAMS;
+            var radiusinCM = radius * GlobalConstants.CM_PER_KM;
             return (Math.Sqrt(2.0 * GlobalConstants.GRAV_CONSTANT * massInGrams / radiusinCM));
         }
         
@@ -513,7 +514,7 @@ namespace DLS.StarformNET
         /// <returns></returns>
         public static double MoleculeLimit(double mass, double equatorialRadius, double exosphericTemp)
         {
-            double escapeVelocity = EscapeVelocity(mass, equatorialRadius);
+            var escapeVelocity = EscapeVelocity(mass, equatorialRadius);
 
             return ((3.0 * GlobalConstants.MOLAR_GAS_CONST * exosphericTemp) /
                     (Utilities.Pow2((escapeVelocity / GlobalConstants.GAS_RETENTION_THRESHOLD) / GlobalConstants.CM_PER_METER)));
@@ -539,7 +540,7 @@ namespace DLS.StarformNET
         /// <returns>Gravity in units of Earth gravities</returns>
         public static double Gravity(double acceleration)
         {
-            return (acceleration / GlobalConstants.EARTH_ACCELERATION);
+            return acceleration / GlobalConstants.EARTH_ACCELERATION;
         }
         
         /// <summary>
@@ -560,7 +561,7 @@ namespace DLS.StarformNET
         {
             // This implements Fogg's eq.17.  The 'inventory' returned is unitless.
 
-            double velocityRatio = escapeVelocity / rmsVelocity;
+            var velocityRatio = escapeVelocity / rmsVelocity;
             if (velocityRatio >= GlobalConstants.GAS_RETENTION_THRESHOLD)
             {
                 double proportionConst;
@@ -579,21 +580,16 @@ namespace DLS.StarformNET
                         proportionConst = 0.0;
                         break;
                 }
-                double earth_units = mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES;
-                double volInv = Utilities.About((proportionConst * earth_units) / stellarMass, 0.2);
+                var earthUnits = mass * GlobalConstants.SUN_MASS_IN_EARTH_MASSES;
+                var volInv = Utilities.About((proportionConst * earthUnits) / stellarMass, 0.2);
                 if (hasGreenhouseEffect || hasAccretedGas)
                 {
-                    return (volInv);
+                    return volInv;
                 }
-                else
-                {
-                    return (volInv / 100.0); /* 100 . 140 JLB */
-                }
+                return volInv / 100.0; /* 100 . 140 JLB */
             }
-            else
-            {
-                return (0.0);
-            }
+
+            return 0.0;
         }
 
         /// <summary>
@@ -621,7 +617,7 @@ namespace DLS.StarformNET
         /// <returns>Boiling point of water in Kelvin.</returns>
         public static double BoilingPoint(double surfacePressure)
         {
-            double surfacePressureInBars = surfacePressure / GlobalConstants.MILLIBARS_PER_BAR;
+            var surfacePressureInBars = surfacePressure / GlobalConstants.MILLIBARS_PER_BAR;
             return (1.0 / ((Math.Log(surfacePressureInBars) / -5050.5) + (1.0 / 373.0)));
         }
 
@@ -635,16 +631,9 @@ namespace DLS.StarformNET
         /// <returns>Fraction of the planet covered in water</returns>
         public static double HydroFraction(double volatileGasInventory, double planetRadius)
         {
-            double temp = (0.71 * volatileGasInventory / 1000.0)
+            var temp = (0.71 * volatileGasInventory / 1000.0)
                      * Utilities.Pow2(GlobalConstants.KM_EARTH_RADIUS / planetRadius);
-            if (temp >= 1.0)
-            {
-                return (1.0);
-            }
-            else
-            {
-                return (temp);
-            }
+            return temp >= 1.0 ? 1.0 : temp;
         }
 
         /// <summary>
@@ -663,24 +652,15 @@ namespace DLS.StarformNET
 
             if (smallestMWRetained > GlobalConstants.WATER_VAPOR)
             {
-                return (0.0);
+                return 0.0;
             }
-            else
-            {
-                double surf_area = 4.0 * Math.PI * Utilities.Pow2(equatorialRadius);
-                double hydro_mass = hydroFraction * surf_area * GlobalConstants.EARTH_WATER_MASS_PER_AREA;
-                double water_vapor_in_kg = (0.00000001 * hydro_mass) *
-                                    Math.Exp(GlobalConstants.Q2_36 * (surfaceTemp - GlobalConstants.EARTH_AVERAGE_KELVIN));
-                double fraction = GlobalConstants.CLOUD_COVERAGE_FACTOR * water_vapor_in_kg / surf_area;
-                if (fraction >= 1.0)
-                {
-                    return (1.0);
-                }
-                else
-                {
-                    return (fraction);
-                }
-            }
+            
+            var surfArea = 4.0 * Math.PI * Utilities.Pow2(equatorialRadius);
+            var hydroMass = hydroFraction * surfArea * GlobalConstants.EARTH_WATER_MASS_PER_AREA;
+            var waterVaporKg = (0.00000001 * hydroMass) *
+                                Math.Exp(GlobalConstants.Q2_36 * (surfaceTemp - GlobalConstants.EARTH_AVERAGE_KELVIN));
+            var fraction = GlobalConstants.CLOUD_COVERAGE_FACTOR * waterVaporKg / surfArea;
+            return fraction >= 1.0 ? 1.0 : fraction;
         }
 
         /// <summary>
@@ -699,19 +679,13 @@ namespace DLS.StarformNET
             {
                 surfTemp = 328.0;
             }
-            double temp = Math.Pow(((328.0 - surfTemp) / 90.0), 5.0);
+            var temp = Math.Pow(((328.0 - surfTemp) / 90.0), 5.0);
             if (temp > (1.5 * hydroFraction))
             {
                 temp = (1.5 * hydroFraction);
             }
-            if (temp >= 1.0)
-            {
-                return (1.0);
-            }
-            else
-            {
-                return (temp);
-            }
+
+            return temp >= 1.0 ? 1.0 : temp;
         }
 
         // TODO look up Fogg's eq.19. and write a summary
@@ -725,9 +699,9 @@ namespace DLS.StarformNET
         public static double EffTemp(double ecosphereRadius, double orbitalRadius, double albedo)
         {
             // This is Fogg's eq.19.
-            return (Math.Sqrt(ecosphereRadius / orbitalRadius)
+            return Math.Sqrt(ecosphereRadius / orbitalRadius)
                   * Utilities.Pow1_4((1.0 - albedo) / (1.0 - GlobalConstants.EARTH_ALBEDO))
-                  * GlobalConstants.EARTH_EFFECTIVE_TEMP);
+                  * GlobalConstants.EARTH_EFFECTIVE_TEMP;
         }
 
         // TODO figure out how this function differs from EffTemp, write summary
@@ -740,9 +714,9 @@ namespace DLS.StarformNET
         /// <returns></returns>
         public static double EstTemp(double ecosphereRadius, double orbitalRadius, double albedo)
         {
-            return (Math.Sqrt(ecosphereRadius / orbitalRadius)
+            return Math.Sqrt(ecosphereRadius / orbitalRadius)
                   * Utilities.Pow1_4((1.0 - albedo) / (1.0 - GlobalConstants.EARTH_ALBEDO))
-                  * GlobalConstants.EARTH_AVERAGE_KELVIN);
+                  * GlobalConstants.EARTH_AVERAGE_KELVIN;
         }
         
         /// <summary>
@@ -767,20 +741,11 @@ namespace DLS.StarformNET
             //	was chosen so that the boundary is about the same as the old method	
             //	Neither zone, nor r_greenhouse are used in this version				JLB
 
-            // TODO Reevaluate this method since it apparently only considers water vapor as
-            // as a greenhouse gas. 
-            //                                                                      GL
+            // TODO Reevaluate this method since it apparently only considers water vapor as a greenhouse gas. 
+            // GL
 
-            double temp = EffTemp(ecosphereRadius, orbitalRadius, GlobalConstants.GREENHOUSE_TRIGGER_ALBEDO);
-
-            if (temp > GlobalConstants.FREEZING_POINT_OF_WATER)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var temp = EffTemp(ecosphereRadius, orbitalRadius, GlobalConstants.GREENHOUSE_TRIGGER_ALBEDO);
+            return temp > GlobalConstants.FREEZING_POINT_OF_WATER;
         }
 
         /// <summary>
@@ -797,9 +762,9 @@ namespace DLS.StarformNET
             //	units of Kelvin, as is the rise in temperature produced by the
             //	greenhouse effect, which is returned.
 
-            double convection_factor = GlobalConstants.EARTH_CONVECTION_FACTOR * Math.Pow(surfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS, 0.25);
-            double rise = (Utilities.Pow1_4(1.0 + 0.75 * opticalDepth) - 1.0) *
-                               effectiveTemp * convection_factor;
+            var convectionFactor = GlobalConstants.EARTH_CONVECTION_FACTOR * Math.Pow(surfPressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS, 0.25);
+            var rise = (Utilities.Pow1_4(1.0 + 0.75 * opticalDepth) - 1.0) *
+                               effectiveTemp * convectionFactor;
 
             if (rise < 0.0) rise = 0.0;
 
@@ -882,7 +847,7 @@ namespace DLS.StarformNET
                 ice_part = iceFraction * GlobalConstants.ICE_ALBEDO;       /* about(...,0.1); */
             }
 
-            return (cloud_part + rock_part + water_part + ice_part);
+            return cloud_part + rock_part + water_part + ice_part;
         }
 
         /// <summary>
@@ -894,56 +859,54 @@ namespace DLS.StarformNET
         /// <returns></returns>
         public static double Opacity(double molecularWeight, double surfPressure)
         {
-            double optical_depth;
-
-            optical_depth = 0.0;
+            var opticalDepth = 0.0;
             if ((molecularWeight >= 0.0) && (molecularWeight < 10.0))
             {
-                optical_depth = optical_depth + 3.0;
+                opticalDepth = opticalDepth + 3.0;
             }
 
             if ((molecularWeight >= 10.0) && (molecularWeight < 20.0))
             {
-                optical_depth = optical_depth + 2.34;
+                opticalDepth = opticalDepth + 2.34;
             }
 
             if ((molecularWeight >= 20.0) && (molecularWeight < 30.0))
             {
-                optical_depth = optical_depth + 1.0;
+                opticalDepth = opticalDepth + 1.0;
             }
 
             if ((molecularWeight >= 30.0) && (molecularWeight < 45.0))
             {
-                optical_depth = optical_depth + 0.15;
+                opticalDepth = opticalDepth + 0.15;
             }
 
             if ((molecularWeight >= 45.0) && (molecularWeight < 100.0))
             {
-                optical_depth = optical_depth + 0.05;
+                opticalDepth = opticalDepth + 0.05;
             }
 
             if (surfPressure >= (70.0 * GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS))
             {
-                optical_depth = optical_depth * 8.333;
+                opticalDepth = opticalDepth * 8.333;
             }
             else if (surfPressure >= (50.0 * GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS))
             {
-                optical_depth = optical_depth * 6.666;
+                opticalDepth = opticalDepth * 6.666;
             }
             else if (surfPressure >= (30.0 * GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS))
             {
-                optical_depth = optical_depth * 3.333;
+                opticalDepth = opticalDepth * 3.333;
             }
             else if (surfPressure >= (10.0 * GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS))
             {
-                optical_depth = optical_depth * 2.0;
+                opticalDepth = opticalDepth * 2.0;
             }
             else if (surfPressure >= (5.0 * GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS))
             {
-                optical_depth = optical_depth * 1.5;
+                opticalDepth = opticalDepth * 1.5;
             }
 
-            return (optical_depth);
+            return opticalDepth;
         }
 
         /// <summary>
@@ -1049,22 +1012,22 @@ namespace DLS.StarformNET
         /// <param name="last_albedo"></param>
         public static void CalculateSurfaceTemperature(ref Planet planet, bool first, double last_water, double last_clouds, double last_ice, double last_temp, double last_albedo)
         {
-            double effective_temp;
-            double water_raw;
-            double clouds_raw;
-            double greenhouse_temp;
-            bool boil_off = false;
+            double effectiveTemp;
+            double waterRaw;
+            double cloudsRaw;
+            double greenhouseTemp;
+            bool boilOff = false;
 
             if (first)
             {
                 planet.Albedo = GlobalConstants.EARTH_ALBEDO;
 
-                effective_temp = EffTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
-                greenhouse_temp = GreenRise(Opacity(planet.MolecularWeightRetained,
+                effectiveTemp = EffTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
+                greenhouseTemp = GreenRise(Opacity(planet.MolecularWeightRetained,
                                                          planet.Atmosphere.SurfacePressure),
-                                                 effective_temp,
+                                                 effectiveTemp,
                                                  planet.Atmosphere.SurfacePressure);
-                planet.SurfaceTempKelvin = effective_temp + greenhouse_temp;
+                planet.SurfaceTempKelvin = effectiveTemp + greenhouseTemp;
 
                 SetTempRange(ref planet);
             }
@@ -1081,8 +1044,8 @@ namespace DLS.StarformNET
                 planet.BoilingPointWaterKelvin = BoilingPoint(planet.Atmosphere.SurfacePressure);
             }
 
-            water_raw = planet.WaterCoverFraction = HydroFraction(planet.VolatileGasInventory, planet.RadiusKM);
-            clouds_raw = planet.CloudCoverFraction = CloudFraction(planet.SurfaceTempKelvin,
+            waterRaw = planet.WaterCoverFraction = HydroFraction(planet.VolatileGasInventory, planet.RadiusKM);
+            cloudsRaw = planet.CloudCoverFraction = CloudFraction(planet.SurfaceTempKelvin,
                                                      planet.MolecularWeightRetained,
                                                      planet.RadiusKM,
                                                      planet.WaterCoverFraction);
@@ -1096,7 +1059,7 @@ namespace DLS.StarformNET
             if ((planet.DaytimeTempKelvin >= planet.BoilingPointWaterKelvin) && (!first) && !(IsTidallyLocked(planet) || planet.HasResonantPeriod))
             {
                 planet.WaterCoverFraction = 0.0;
-                boil_off = true;
+                boilOff = true;
 
                 if (planet.MolecularWeightRetained > GlobalConstants.WATER_VAPOR)
                 {
@@ -1115,15 +1078,15 @@ namespace DLS.StarformNET
 
             planet.Albedo = PlanetAlbedo(planet.WaterCoverFraction, planet.CloudCoverFraction, planet.IceCoverFraction, planet.Atmosphere.SurfacePressure);
 
-            effective_temp = EffTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
-            greenhouse_temp = GreenRise(
+            effectiveTemp = EffTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
+            greenhouseTemp = GreenRise(
                 Opacity(planet.MolecularWeightRetained, planet.Atmosphere.SurfacePressure),
-                effective_temp, planet.Atmosphere.SurfacePressure);
-            planet.SurfaceTempKelvin = effective_temp + greenhouse_temp;
+                effectiveTemp, planet.Atmosphere.SurfacePressure);
+            planet.SurfaceTempKelvin = effectiveTemp + greenhouseTemp;
 
             if (!first)
             {
-                if (!boil_off)
+                if (!boilOff)
                 {
                     planet.WaterCoverFraction = (planet.WaterCoverFraction + (last_water * 2)) / 3;
                 }
@@ -1146,8 +1109,8 @@ namespace DLS.StarformNET
         public static double InspiredPartialPressure(double surf_pressure, double gas_pressure)
         {
             //  This formula is on Dole's p. 14
-            double pH2O = (GlobalConstants.H20_ASSUMED_PRESSURE);
-            double fraction = gas_pressure / surf_pressure;
+            var pH2O = (GlobalConstants.H20_ASSUMED_PRESSURE);
+            var fraction = gas_pressure / surf_pressure;
 
             return (surf_pressure - pH2O) * fraction;
         }
@@ -1168,7 +1131,7 @@ namespace DLS.StarformNET
                 throw new ArgumentNullException();
             }
 
-            bool oxygen_ok = false;
+            var oxygenOk = false;
 
             if (planet.Atmosphere.Composition.Count == 0)
             {
@@ -1181,18 +1144,17 @@ namespace DLS.StarformNET
             {
                 var gas = planet.Atmosphere.Composition[index];
 
-                double ipp = InspiredPartialPressure(planet.Atmosphere.SurfacePressure, planet.Atmosphere.Composition[index].surf_pressure);
+                var ipp = InspiredPartialPressure(planet.Atmosphere.SurfacePressure, planet.Atmosphere.Composition[index].surf_pressure);
                 if (ipp > gas.GasType.max_ipp)
                 {
                     poisonous = true;
                     planet.Atmosphere.PoisonousGases.Add(gas);
                 }
 
-                // TODO why not just have a min_ipp for every gas, even if it's going to be zero
-                // for everything that's not oxygen?
+                // TODO why not just have a min_ipp for every gas, even if it's going to be zero for everything that's not oxygen?
                 if (gas.GasType.num == GlobalConstants.AN_O)
                 {
-                    oxygen_ok = ((ipp >= GlobalConstants.MIN_O2_IPP) && (ipp <= GlobalConstants.MAX_O2_IPP));
+                    oxygenOk = ((ipp >= GlobalConstants.MIN_O2_IPP) && (ipp <= GlobalConstants.MAX_O2_IPP));
                 }
             }
 
@@ -1200,15 +1162,7 @@ namespace DLS.StarformNET
             {
                 return Data.Breathability.Poisonous;
             }
-
-            if (oxygen_ok)
-            {
-                return Data.Breathability.Breathable;
-            }
-            else
-            {
-                return Data.Breathability.Unbreathable;
-            }
+            return oxygenOk ? Data.Breathability.Breathable : Data.Breathability.Unbreathable;
         }
 
         // TODO write summary
@@ -1259,18 +1213,18 @@ namespace DLS.StarformNET
 
         private static void SetTempRange(ref Planet planet)
         {
-            double pressmod = 1 / Math.Sqrt(1 + 20 * planet.Atmosphere.SurfacePressure / 1000.0);
-            double ppmod = 1 / Math.Sqrt(10 + 5 * planet.Atmosphere.SurfacePressure / 1000.0);
-            double tiltmod = Math.Abs(Math.Cos(planet.AxialTiltDegrees * Math.PI / 180) * Math.Pow(1 + planet.Eccentricity, 2));
-            double daymod = 1 / (200 / planet.DayLengthHours + 1);
-            double mh = Math.Pow(1 + daymod, pressmod);
-            double ml = Math.Pow(1 - daymod, pressmod);
-            double hi = mh * planet.SurfaceTempKelvin;
-            double lo = ml * planet.SurfaceTempKelvin;
-            double sh = hi + Math.Pow((100 + hi) * tiltmod, Math.Sqrt(ppmod));
-            double wl = lo - Math.Pow((150 + lo) * tiltmod, Math.Sqrt(ppmod));
-            double max = planet.SurfaceTempKelvin + Math.Sqrt(planet.SurfaceTempKelvin) * 10;
-            double min = planet.SurfaceTempKelvin / Math.Sqrt(planet.DayLengthHours + 24);
+            var pressmod = 1 / Math.Sqrt(1 + 20 * planet.Atmosphere.SurfacePressure / 1000.0);
+            var ppmod = 1 / Math.Sqrt(10 + 5 * planet.Atmosphere.SurfacePressure / 1000.0);
+            var tiltmod = Math.Abs(Math.Cos(planet.AxialTiltDegrees * Math.PI / 180) * Math.Pow(1 + planet.Eccentricity, 2));
+            var daymod = 1 / (200 / planet.DayLengthHours + 1);
+            var mh = Math.Pow(1 + daymod, pressmod);
+            var ml = Math.Pow(1 - daymod, pressmod);
+            var hi = mh * planet.SurfaceTempKelvin;
+            var lo = ml * planet.SurfaceTempKelvin;
+            var sh = hi + Math.Pow((100 + hi) * tiltmod, Math.Sqrt(ppmod));
+            var wl = lo - Math.Pow((150 + lo) * tiltmod, Math.Sqrt(ppmod));
+            var max = planet.SurfaceTempKelvin + Math.Sqrt(planet.SurfaceTempKelvin) * 10;
+            var min = planet.SurfaceTempKelvin / Math.Sqrt(planet.DayLengthHours + 24);
 
             if (lo < min) lo = min;
             if (wl < 0) wl = 0;
