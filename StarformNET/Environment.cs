@@ -112,7 +112,7 @@ namespace DLS.StarformNET
         /// </summary>
         public static bool IsTidallyLocked(Planet planet)
         {
-            return (int)planet.DayLengthHours == (int)(planet.OrbitalPeriodDays * 24);
+            return (int) planet.DayLengthHours == (int) (planet.OrbitalPeriodDays * 24);
         }
 
         /// <summary>
@@ -121,8 +121,8 @@ namespace DLS.StarformNET
         public static bool IsHabitable(Planet planet)
         {
             return planet.Atmosphere.Breathability == Data.Breathability.Breathable &&
-                !planet.HasResonantPeriod &&
-                !IsTidallyLocked(planet);
+                   !planet.HasResonantPeriod &&
+                   !IsTidallyLocked(planet);
         }
 
         /// <summary>
@@ -130,7 +130,8 @@ namespace DLS.StarformNET
         /// </summary>
         public static bool IsEarthlike(Planet planet)
         {
-            double relTemp = (planet.SurfaceTempKelvin - GlobalConstants.FREEZING_POINT_OF_WATER) - GlobalConstants.EARTH_AVERAGE_CELSIUS;
+            double relTemp = (planet.SurfaceTempKelvin - GlobalConstants.FREEZING_POINT_OF_WATER) -
+                             GlobalConstants.EARTH_AVERAGE_CELSIUS;
             double seas = planet.WaterCoverFraction * 100.0;
             double clouds = planet.CloudCoverFraction * 100.0;
             double pressure = planet.Atmosphere.SurfacePressure / GlobalConstants.EARTH_SURF_PRES_IN_MILLIBARS;
@@ -171,7 +172,7 @@ namespace DLS.StarformNET
                 return (3);
             }
         }
-        
+
         /// <summary>
         /// Calculates the radius of a planet.
         /// </summary>
@@ -249,16 +250,17 @@ namespace DLS.StarformNET
             temp1 = atomic_weight * atomic_num;
 
             temp = (2.0 * GlobalConstants.BETA_20 * Math.Pow(GlobalConstants.SOLAR_MASS_IN_GRAMS, (1.0 / 3.0)))
-                 / (GlobalConstants.A1_20 * Math.Pow(temp1, (1.0 / 3.0)));
+                   / (GlobalConstants.A1_20 * Math.Pow(temp1, (1.0 / 3.0)));
 
-            temp2 = GlobalConstants.A2_20 * Math.Pow(atomic_weight, (4.0 / 3.0)) * Math.Pow(GlobalConstants.SOLAR_MASS_IN_GRAMS, (2.0 / 3.0));
+            temp2 = GlobalConstants.A2_20 * Math.Pow(atomic_weight, (4.0 / 3.0)) *
+                    Math.Pow(GlobalConstants.SOLAR_MASS_IN_GRAMS, (2.0 / 3.0));
             temp2 = temp2 * Math.Pow(mass, (2.0 / 3.0));
             temp2 = temp2 / (GlobalConstants.A1_20 * Utilities.Pow2(atomic_num));
             temp2 = 1.0 + temp2;
             temp = temp / temp2;
             temp = (temp * Math.Pow(mass, (1.0 / 3.0))) / GlobalConstants.CM_PER_KM;
 
-            temp /= GlobalConstants.JIMS_FUDGE;         /* Make Earth = actual earth */
+            temp /= GlobalConstants.JIMS_FUDGE; /* Make Earth = actual earth */
 
             return (temp);
         }
@@ -316,6 +318,51 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
+        /// Provides an approximation of angular velocity for non-tidally decelerated
+        /// planets.
+        /// </summary>
+        /// <param name="massSM">Mass of the body in solar masses</param>
+        /// <param name="radiusKM">Radius of the body in km</param>
+        /// <param name="isGasGiant">Is the body a gas giant?</param>
+        /// <returns>Angular velocity in rad/sec</returns>
+        public static double BaseAngularVelocity(double massSM, double radiusKM, bool isGasGiant)
+        {
+            // Fogg eq. 12
+
+            var planetaryMassInGrams = massSM * GlobalConstants.SOLAR_MASS_IN_GRAMS;
+            var equatorialRadiusInCM = radiusKM * GlobalConstants.CM_PER_KM;
+            var k2 = isGasGiant ? 0.24 : 0.33;
+            
+            return Math.Sqrt(GlobalConstants.J * (planetaryMassInGrams) /
+                             ((k2 / 2.0) * Utilities.Pow2(equatorialRadiusInCM)));
+        }
+
+        /// <summary>
+        /// Provides an approximation of braking due to tidal forces as a ratio to the
+        /// effect on Earth.
+        /// </summary>
+        /// <param name="densityGCC">Density of the body in grams/cm3</param>
+        /// <param name="massSM">Mass of the body in solar masses</param>
+        /// <param name="radiusKM">Radius of the body in KM</param>
+        /// <param name="semiMajorAxisAU">Semi-major axis of the body's orbit in AU</param>
+        /// <param name="starMassSM">Mass of the parent star in solar masses</param>
+        /// <returns></returns>
+        public static double ChangeInAngularVelocity(double densityGCC, double massSM, double radiusKM, double semiMajorAxisAU, double starMassSM)
+        {
+            // Fogg eq. 13 
+
+            var planetaryMassInGrams = massSM * GlobalConstants.SOLAR_MASS_IN_GRAMS;
+            var equatorialRadiusInCM = radiusKM * GlobalConstants.CM_PER_KM;
+
+            return GlobalConstants.CHANGE_IN_EARTH_ANG_VEL * 
+                   (densityGCC / GlobalConstants.EARTH_DENSITY) *
+                   (equatorialRadiusInCM / GlobalConstants.EARTH_RADIUS) *
+                   (GlobalConstants.EARTH_MASS_IN_GRAMS / planetaryMassInGrams) *
+                   Math.Pow(starMassSM, 2.0) *
+                   (1.0 / Math.Pow(semiMajorAxisAU, 6.0));
+        }
+
+        /// <summary>
         /// Returns the length of a planet's day in hours
         /// </summary>
         /// <param name="planet"></param>
@@ -332,54 +379,37 @@ namespace DLS.StarformNET
             // approximation for our new planet (his eq.13) and take that into account.
             // This is used to find 'change_in_angular_velocity' below.
 
-            double planetaryMassInGrams = planet.MassSM * GlobalConstants.SOLAR_MASS_IN_GRAMS;
-            double equatorialRadiusInCM = planet.RadiusKM * GlobalConstants.CM_PER_KM;
-            double yearInHours = planet.OrbitalPeriodDays * 24.0;
-            bool isGasGiant = (planet.Type == PlanetType.GasGiant ||
-                         planet.Type == PlanetType.SubGasGiant ||
-                         planet.Type == PlanetType.SubSubGasGiant);
+            var yearInHours = planet.OrbitalPeriodDays * 24.0;
+            var isGasGiant = (planet.Type == PlanetType.GasGiant ||
+                               planet.Type == PlanetType.SubGasGiant ||
+                               planet.Type == PlanetType.SubSubGasGiant);
+            var baseAngularVelocity = BaseAngularVelocity(planet.MassSM, planet.RadiusKM, isGasGiant);
+            var changeInAngularVelocity = ChangeInAngularVelocity(
+                planet.DensityGCC, planet.MassSM, planet.RadiusKM, planet.SemiMajorAxisAU, planet.Star.Mass);
+            var angularVelocity = baseAngularVelocity + (changeInAngularVelocity *
+                                                            planet.Star.AgeYears);
 
-            planet.HasResonantPeriod = false; // Warning: Modify the planet
-
-            double k2 = 0.33;
-            if (isGasGiant)
-            {
-                k2 = 0.24;
-            }
-
-            double baseAngularVelocity = Math.Sqrt(2.0 * GlobalConstants.J * (planetaryMassInGrams) /
-                                         (k2 * Utilities.Pow2(equatorialRadiusInCM)));
-
-            // This next calculation determines how much the planet's rotation is
-            // slowed by the presence of the star
-            double changeInAngularVelocity = GlobalConstants.CHANGE_IN_EARTH_ANG_VEL *
-                                         (planet.DensityGCC / GlobalConstants.EARTH_DENSITY) *
-                                         (equatorialRadiusInCM / GlobalConstants.EARTH_RADIUS) *
-                                         (GlobalConstants.EARTH_MASS_IN_GRAMS / planetaryMassInGrams) *
-                                         Math.Pow(planet.Star.Mass, 2.0) *
-                                         (1.0 / Math.Pow(planet.SemiMajorAxisAU, 6.0));
-            double angularVelocity = baseAngularVelocity + (changeInAngularVelocity *
-                                                    planet.Star.AgeYears);
+            planet.HasResonantPeriod = false;
 
             // Now we change from rad/sec to hours/rotation
-            bool stopped = false;
-            double dayInHours = GlobalConstants.RADIANS_PER_ROTATION / (GlobalConstants.SECONDS_PER_HOUR * angularVelocity);
+            var stopped = false;
+            var dayInHours = GlobalConstants.RADIANS_PER_ROTATION / (GlobalConstants.SECONDS_PER_HOUR * angularVelocity);
             if (angularVelocity <= 0.0)
             {
                 stopped = true;
                 dayInHours = double.MaxValue;
             }
 
-            if ((dayInHours >= yearInHours) || stopped)
+            if (dayInHours >= yearInHours || stopped)
             {
                 if (planet.Eccentricity > 0.1)
                 {
-                    double spin_resonance_factor = (1.0 - planet.Eccentricity) / (1.0 + planet.Eccentricity);
+                    var spinResonanceFactor = (1.0 - planet.Eccentricity) / (1.0 + planet.Eccentricity);
                     planet.HasResonantPeriod = true;
-                    return (spin_resonance_factor * yearInHours);
+                    return spinResonanceFactor * yearInHours;
                 }
-                else
-                    return yearInHours;
+                
+                return yearInHours;
             }
 
             return dayInHours;
