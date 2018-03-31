@@ -176,6 +176,11 @@ namespace DLS.StarformNET.Display
             return String.Format("{0:0.0} F", UnitConversions.KelvinToFahrenheit(planet.NighttimeTempKelvin));
         }
 
+        public static string GetExoTemp(Planet planet)
+        {
+            return String.Format("{0:0.0} K", planet.ExosphereTempKelvin);
+        }
+
         public static string GetEstimatedHillSphereKM(Planet planet)
         {
             return String.Format("{0:n0} km", planet.HillSphereKM);
