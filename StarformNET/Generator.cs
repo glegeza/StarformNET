@@ -163,7 +163,7 @@ namespace DLS.StarformNET
             planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSM, planet.RadiusKM);
             planet.HillSphereKM = Environment.SimplifiedHillSphereKM(sun.Mass, planet.MassSM, planet.SemiMajorAxisAU);
 
-            if (planet.Type == PlanetType.GasGiant || planet.Type == PlanetType.SubGasGiant || planet.Type == PlanetType.SubSubGasGiant)
+            if (planet.IsGasGiant)
             {
                 planet.HasGreenhouseEffect = false;
                 planet.VolatileGasInventory = GlobalConstants.INCREDIBLY_LARGE_NUMBER;
@@ -193,14 +193,9 @@ namespace DLS.StarformNET
                 planet.Atmosphere.SurfacePressure = Environment.Pressure(
                     planet.VolatileGasInventory, planet.RadiusKM, planet.SurfaceGravityG);
 
-                if ((planet.Atmosphere.SurfacePressure == 0.0))
-                {
-                    planet.BoilingPointWaterKelvin = 0.0;
-                }
-                else
-                {
-                    planet.BoilingPointWaterKelvin = Environment.BoilingPoint(planet.Atmosphere.SurfacePressure);
-                }
+                planet.BoilingPointWaterKelvin = Math.Abs(planet.Atmosphere.SurfacePressure) < 0.001 
+                    ? 0.0 
+                    : Environment.BoilingPoint(planet.Atmosphere.SurfacePressure);
 
                 // Sets: planet.surf_temp, planet.greenhs_rise, planet.albedo, planet.hydrosphere,
                 // planet.cloud_cover, planet.ice_cover
