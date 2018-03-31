@@ -60,10 +60,26 @@ namespace DLS.StarformNET.UnitTests
                 CheckGasValues(4500, 0.5, 2440, expected, Weights);
             }
 
-            private static void CheckGasValues(double exo, double surfG, double radius, 
-                double[] expected, double[] weights)
+            [TestCategory("GasLife")]
+            [TestMethod]
+            public void TestReturnNaNZeroTemp()
             {
-                for (var i = 0; i < expected.Length; i++)
+                Assert.AreEqual(double.NaN, StarformNET.Environment.GasLife(
+                    GlobalConstants.ATOMIC_NITROGEN, 0, 0.5, 2440));
+            }
+
+            [TestCategory("GasLife")]
+            [TestMethod]
+            public void TestReturnNaNNegativeTemp()
+            {
+                Assert.AreEqual(double.NaN, StarformNET.Environment.GasLife(
+                    GlobalConstants.ATOMIC_NITROGEN, -100, 0.5, 2440));
+            }
+
+            private static void CheckGasValues(double exo, double surfG, double radius, 
+                IReadOnlyList<double> expected, IReadOnlyList<double> weights)
+            {
+                for (var i = 0; i < expected.Count; i++)
                 {
                     var e = expected[i];
                     var w = weights[i];
@@ -324,7 +340,6 @@ namespace DLS.StarformNET.UnitTests
             {
                 var breathe = StarformNET.Environment.Breathability(null);
             }
-
 
             [TestCategory("Breathability")]
             [TestMethod]
