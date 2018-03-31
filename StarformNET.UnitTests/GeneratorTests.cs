@@ -101,8 +101,7 @@ namespace DLS.StarformNET.UnitTests
                 planet.ExosphereTempKelvin = GlobalConstants.EARTH_EXOSPHERE_TEMP / Utilities.Pow2(planet.SemiMajorAxisAU / planet.Star.EcosphereRadiusAU);
                 planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                 planet.EscapeVelocityCMSec = Environment.EscapeVelocity(planet.MassSM, planet.RadiusKM);
-
-                planet.IsGasGiant = false;
+                
                 planet.Atmosphere.SurfacePressure = 92000;
                 planet.DaytimeTempKelvin = 737;
                 planet.NighttimeTempKelvin = 737;

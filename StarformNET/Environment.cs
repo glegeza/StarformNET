@@ -363,6 +363,43 @@ namespace DLS.StarformNET
         }
 
         /// <summary>
+        /// Returns an approximation of a planet's angular velocity in radians/sec
+        /// </summary>
+        /// <param name="massSM">Mass of the planet in solar masses</param>
+        /// <param name="radiusKM">Radius of the planet in km</param>
+        /// <param name="densityGCC">Density of the planet in grams/cm3</param>
+        /// <param name="semiMajorAxisAU">Semi-major axis of the planet's orbit
+        /// in AU</param>
+        /// <param name="isGasGiant">Is the planet a gas giant?</param>
+        /// <param name="starMassSM">Mass of the parent star in solar
+        /// masses</param>
+        /// <param name="starAgeYears">Age of the parent star in years</param>
+        /// <returns>Angular velocity in radians/sec</returns>
+        public static double GetAngularVelocity(double massSM, double radiusKM,
+            double densityGCC, double semiMajorAxisAU, bool isGasGiant,
+            double starMassSM, double starAgeYears)
+        {
+            var baseAngularVelocity = BaseAngularVelocity(massSM, radiusKM, isGasGiant);
+            var changeInAngularVelocity = ChangeInAngularVelocity(
+                densityGCC, massSM, radiusKM, semiMajorAxisAU, starMassSM);
+            return baseAngularVelocity + (changeInAngularVelocity *
+                                                         starAgeYears);
+        }
+
+        /// <summary>
+        /// Returns an approximation of a planet's angular velocity in radians/sec
+        /// </summary>
+        /// <param name="planet">The planet to calculate angular velocity
+        /// for</param>
+        /// <returns>Angular velocity in radians/sec</returns>
+        public static double GetAngularVelocity(Planet planet)
+        {
+            return GetAngularVelocity(planet.MassSM,
+                planet.RadiusKM, planet.DensityGCC, planet.SemiMajorAxisAU,
+                planet.IsGasGiant, planet.Star.Mass, planet.Star.AgeYears);
+        }
+
+        /// <summary>
         /// Returns the length of a planet's day in hours
         /// </summary>
         /// <param name="planet"></param>
@@ -379,15 +416,7 @@ namespace DLS.StarformNET
             // approximation for our new planet (his eq.13) and take that into account.
             // This is used to find 'change_in_angular_velocity' below.
 
-            var yearInHours = planet.OrbitalPeriodDays * 24.0;
-            var isGasGiant = (planet.Type == PlanetType.GasGiant ||
-                               planet.Type == PlanetType.SubGasGiant ||
-                               planet.Type == PlanetType.SubSubGasGiant);
-            var baseAngularVelocity = BaseAngularVelocity(planet.MassSM, planet.RadiusKM, isGasGiant);
-            var changeInAngularVelocity = ChangeInAngularVelocity(
-                planet.DensityGCC, planet.MassSM, planet.RadiusKM, planet.SemiMajorAxisAU, planet.Star.Mass);
-            var angularVelocity = baseAngularVelocity + (changeInAngularVelocity *
-                                                            planet.Star.AgeYears);
+            var angularVelocity = GetAngularVelocity(planet);
 
             planet.HasResonantPeriod = false;
 
@@ -400,6 +429,7 @@ namespace DLS.StarformNET
                 dayInHours = double.MaxValue;
             }
 
+            var yearInHours = planet.OrbitalPeriodDays * 24.0;
             if (dayInHours >= yearInHours || stopped)
             {
                 if (planet.Eccentricity > 0.1)

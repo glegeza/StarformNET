@@ -108,7 +108,9 @@ namespace DLS.StarformNET.Data
 
         public PlanetType Type { get; set; }
 
-        public bool IsGasGiant { get; set; }
+        public bool IsGasGiant => Type == PlanetType.GasGiant ||
+                                  Type == PlanetType.SubGasGiant ||
+                                  Type == PlanetType.SubSubGasGiant;
 
         public bool IsTidallyLocked { get; set; }
 
@@ -249,7 +251,6 @@ namespace DLS.StarformNET.Data
             MassSM = seed.Mass;
             DustMassSM = seed.DustMass;
             GasMassSM = seed.GasMass;
-            IsGasGiant = seed.IsGasGiant;
         }
 
         public bool Equals(Planet other)
