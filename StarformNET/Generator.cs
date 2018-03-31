@@ -121,33 +121,31 @@ namespace DLS.StarformNET
 
                 if ((planet.GasMassSM / planet.MassSM) > 0.000001)
                 {
-                    double h2_mass = planet.GasMassSM * 0.85;
-                    double he_mass = (planet.GasMassSM - h2_mass) * 0.999;
+                    var h2Mass = planet.GasMassSM * 0.85;
+                    var heMass = (planet.GasMassSM - h2Mass) * 0.999;
 
-                    double h2_loss = 0.0;
-                    double he_loss = 0.0;
+                    var h2Life = Environment.GasLife(GlobalConstants.MOL_HYDROGEN, planet.ExosphereTempKelvin,
+                        planet.SurfaceGravityG, planet.RadiusKM);
+                    var heLife = Environment.GasLife(GlobalConstants.HELIUM, planet.ExosphereTempKelvin,
+                        planet.SurfaceGravityG, planet.RadiusKM);
 
-
-                    double h2_life = Environment.GasLife(GlobalConstants.MOL_HYDROGEN, planet);
-                    double he_life = Environment.GasLife(GlobalConstants.HELIUM, planet);
-
-                    if (h2_life < sun.AgeYears)
+                    if (h2Life < sun.AgeYears)
                     {
-                        h2_loss = ((1.0 - (1.0 / Math.Exp(sun.AgeYears / h2_life))) * h2_mass);
+                        var h2Loss = ((1.0 - (1.0 / Math.Exp(sun.AgeYears / h2Life))) * h2Mass);
 
-                        planet.GasMassSM -= h2_loss;
-                        planet.MassSM -= h2_loss;
+                        planet.GasMassSM -= h2Loss;
+                        planet.MassSM -= h2Loss;
 
                         planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                         planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);
                     }
 
-                    if (he_life < sun.AgeYears)
+                    if (heLife < sun.AgeYears)
                     {
-                        he_loss = ((1.0 - (1.0 / Math.Exp(sun.AgeYears / he_life))) * he_mass);
+                        var heLoss = ((1.0 - (1.0 / Math.Exp(sun.AgeYears / heLife))) * heMass);
 
-                        planet.GasMassSM -= he_loss;
-                        planet.MassSM -= he_loss;
+                        planet.GasMassSM -= heLoss;
+                        planet.MassSM -= heLoss;
 
                         planet.SurfaceAccelerationCMSec2 = Environment.Acceleration(planet.MassSM, planet.RadiusKM);
                         planet.SurfaceGravityG = Environment.Gravity(planet.SurfaceAccelerationCMSec2);

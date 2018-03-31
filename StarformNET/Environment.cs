@@ -950,22 +950,26 @@ namespace DLS.StarformNET
         /// Calculates the number of years it takes for 1/e of a gas to escape from a
         /// planet's atmosphere
         /// </summary>
-        /// <param name="molecularWeight"></param>
-        /// <param name="planet"></param>
+        /// <param name="molecularWeight">Molecular weight of the gas</param>
+        /// <param name="exoTempKelvin">Exosphere temperature of the planet in Kelvin</param>
+        /// <param name="surfGravG">Surface gravity of the planet in G</param>
+        /// <param name="radiusKM">Radius of the planet in km</param>
         /// <returns></returns>
-        public static double GasLife(double molecularWeight, Planet planet)
+        public static double GasLife(double molecularWeight, 
+            double exoTempKelvin, double surfGravG, double radiusKM)
         {
             // Taken from Dole p. 34. He cites Jeans (1916) & Jones (1923)
 
-            double v = RMSVelocity(molecularWeight, planet.ExosphereTempKelvin);
-            double g = planet.SurfaceGravityG * GlobalConstants.EARTH_ACCELERATION;
-            double r = (planet.RadiusKM * GlobalConstants.CM_PER_KM);
-            double t = (Utilities.Pow3(v) / (2.0 * Utilities.Pow2(g) * r)) * Math.Exp((3.0 * g * r) / Utilities.Pow2(v));
-            double years = t / (GlobalConstants.SECONDS_PER_HOUR * 24.0 * GlobalConstants.DAYS_IN_A_YEAR);
+            var v = RMSVelocity(molecularWeight, exoTempKelvin);
+            var g = surfGravG * GlobalConstants.EARTH_ACCELERATION;
+            var r = radiusKM * GlobalConstants.CM_PER_KM;
+            var t = (Utilities.Pow3(v) / (2.0 * Utilities.Pow2(g) * r)) * Math.Exp((3.0 * g * r) / Utilities.Pow2(v));
+            var years = t / (GlobalConstants.SECONDS_PER_HOUR * 24.0 * GlobalConstants.DAYS_IN_A_YEAR);
             
-
             if (years > 2.0E10)
+            {
                 years = double.MaxValue;
+            }
 
             return years;
         }
@@ -975,17 +979,19 @@ namespace DLS.StarformNET
         /// </summary>
         public static double MinMolecularWeight(Planet planet)
         {
-            double mass = planet.MassSM;
-            double radius = planet.RadiusKM;
-            double temp = planet.ExosphereTempKelvin;
-            double target = 5.0E9;
+            var surfGrav = planet.SurfaceGravityG;
+            var mass = planet.MassSM;
+            var radius = planet.RadiusKM;
+            var exosphereTemp = planet.ExosphereTempKelvin;
+            var temp = planet.ExosphereTempKelvin;
+            var target = 5.0E9;
 
-            double guess_1 = MoleculeLimit(mass, radius, temp);
-            double guess_2 = guess_1;
+            var guess1 = MoleculeLimit(mass, radius, temp);
+            var guess2 = guess1;
 
-            double life = GasLife(guess_1, planet);
+            var life = GasLife(guess1, exosphereTemp, surfGrav, radius);
 
-            int loops = 0;
+            var loops = 0;
 
             if (planet.Star != null)
             {
@@ -996,39 +1002,39 @@ namespace DLS.StarformNET
             {
                 while ((life > target) && (loops++ < 25))
                 {
-                    guess_1 = guess_1 / 2.0;
-                    life = GasLife(guess_1, planet);
+                    guess1 = guess1 / 2.0;
+                    life = GasLife(guess1, exosphereTemp, surfGrav, radius);
                 }
             }
             else
             {
                 while ((life < target) && (loops++ < 25))
                 {
-                    guess_2 = guess_2 * 2.0;
-                    life = GasLife(guess_2, planet);
+                    guess2 = guess2 * 2.0;
+                    life = GasLife(guess2, exosphereTemp, surfGrav, radius);
                 }
             }
 
             loops = 0;
 
-            while (((guess_2 - guess_1) > 0.1) && (loops++ < 25))
+            while (((guess2 - guess1) > 0.1) && (loops++ < 25))
             {
-                double guess_3 = (guess_1 + guess_2) / 2.0;
-                life = GasLife(guess_3, planet);
+                var guess3 = (guess1 + guess2) / 2.0;
+                life = GasLife(guess3, exosphereTemp, surfGrav, radius);
 
                 if (life < target)
                 {
-                    guess_1 = guess_3;
+                    guess1 = guess3;
                 }
                 else
                 {
-                    guess_2 = guess_3;
+                    guess2 = guess3;
                 }
             }
 
-            life = GasLife(guess_2, planet);
+            life = GasLife(guess2, exosphereTemp, surfGrav, radius);
 
-            return (guess_2);
+            return guess2;
         }
 
         /// <summary>
@@ -1213,30 +1219,30 @@ namespace DLS.StarformNET
         /// <param name="planet"></param>
         public static void IterateSurfaceTemp(ref Planet planet)
         {
-            double initial_temp = EstTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
+            var initTemp = EstTemp(planet.Star.EcosphereRadiusAU, planet.SemiMajorAxisAU, planet.Albedo);
 
-            double h2_life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
-            double h2o_life = GasLife(GlobalConstants.WATER_VAPOR, planet);
-            double n2_life = GasLife(GlobalConstants.MOL_NITROGEN, planet);
-            double n_life = GasLife(GlobalConstants.ATOMIC_NITROGEN, planet);
+            //var h2Life = GasLife(GlobalConstants.MOL_HYDROGEN, planet);
+            //var h2oLife = GasLife(GlobalConstants.WATER_VAPOR, planet);
+            //var n2Life = GasLife(GlobalConstants.MOL_NITROGEN, planet);
+            //var nLife = GasLife(GlobalConstants.ATOMIC_NITROGEN, planet);
 
             CalculateSurfaceTemperature(ref planet, true, 0, 0, 0, 0, 0);
 
             for (var count = 0; count <= 25; count++)
             {
-                double last_water = planet.WaterCoverFraction;
-                double last_clouds = planet.CloudCoverFraction;
-                double last_ice = planet.IceCoverFraction;
-                double last_temp = planet.SurfaceTempKelvin;
-                double last_albedo = planet.Albedo;
+                var lastWater = planet.WaterCoverFraction;
+                var lastClouds = planet.CloudCoverFraction;
+                var lastIce = planet.IceCoverFraction;
+                var lastTemp = planet.SurfaceTempKelvin;
+                var lastAlbedo = planet.Albedo;
 
-                CalculateSurfaceTemperature(ref planet, false, last_water, last_clouds, last_ice, last_temp, last_albedo);
+                CalculateSurfaceTemperature(ref planet, false, lastWater, lastClouds, lastIce, lastTemp, lastAlbedo);
 
-                if (Math.Abs(planet.SurfaceTempKelvin - last_temp) < 0.25)
+                if (Math.Abs(planet.SurfaceTempKelvin - lastTemp) < 0.25)
                     break;
             }
 
-            planet.GreenhouseRiseKelvin = planet.SurfaceTempKelvin - initial_temp;
+            planet.GreenhouseRiseKelvin = planet.SurfaceTempKelvin - initTemp;
         }
 
         private static double Lim(double x)
